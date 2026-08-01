@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "350012378954",
+    "project_id": "aybay-e10f4",
+    "storage_bucket": "aybay-e10f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:350012378954:android:063ff851203e00ff053bb3",
+        "android_client_info": {
+          "package_name": "com.amisadman.aybay.aybay_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-B9jEGALLrn835CHv3RrPMl76qf8OyAY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
