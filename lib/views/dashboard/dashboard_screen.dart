@@ -700,7 +700,7 @@ class DashboardScreen extends StatelessWidget {
   }
 
   // Multi-Color Vector Action Grid Buttons
-  Widget _buildVectorGridButton(context: context, {
+  Widget _buildVectorGridButton({
     required BuildContext context,
     required IconData icon,
     required String label,
