@@ -96,7 +96,7 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
             Lottie.asset('assets/animations/mr_wallet.json',
                 width: 40, height: 40, repeat: true),
             const SizedBox(width: 8),
-            const Text(
+            Text(
               'Walleo AI',
               style: TextStyle(
                   color: Theme.of(context).textTheme.bodyLarge?.color ??
@@ -253,7 +253,7 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                   onTap: _sendMessage,
                   child: Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Theme.of(context).textTheme.bodyLarge?.color ??
                           AppColors.black,
                       shape: BoxShape.circle,

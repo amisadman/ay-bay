@@ -202,7 +202,7 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
               // Event Profile Card (Light UI)
               Container(
                 margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
@@ -353,7 +353,7 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                             itemBuilder: (context, index) {
                               final exp = expenses[index];
                               return Card(
-                                margin: const EdgeInsets.only(bottom: 12),
+                                margin: EdgeInsets.only(bottom: 12),
                                 color: Theme.of(context).cardColor,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(

@@ -82,7 +82,7 @@ class DashboardScreen extends StatelessWidget {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
         ),
-        title: const Text('Welcome back',
+        title: Text('Welcome back',
             style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
@@ -105,7 +105,7 @@ class DashboardScreen extends StatelessWidget {
           IconButton(
             icon: Container(
               padding: const EdgeInsets.all(6),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Theme.of(context).colorScheme.secondary),
               child: const Icon(Icons.logout, color: Colors.white, size: 18),
@@ -217,7 +217,7 @@ class DashboardScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'TOTAL BALANCE',
                               style: TextStyle(
                                   color: Colors.white70,
@@ -229,7 +229,7 @@ class DashboardScreen extends StatelessWidget {
                             Text(
                               CurrencyFormatter.formatSimple(
                                   finProv.netBalance, sym),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
@@ -275,7 +275,7 @@ class DashboardScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(validFrom,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -300,7 +300,7 @@ class DashboardScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(validThru,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
@@ -315,7 +315,7 @@ class DashboardScreen extends StatelessWidget {
                         left: 20,
                         child: Text(
                           authProv.userName.toUpperCase(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -324,14 +324,26 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
 
-                      // AyBay Logo (Bottom Right)
+                      // AyBay Logo (Bottom Right) with subtle white glow for dark themes
                       Positioned(
                         bottom: 0,
                         right: 12,
-                        child: Image.asset(
-                          'assets/images/aybay-logo.png',
-                          height: 70,
-                          fit: BoxFit.contain,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withValues(alpha: 0.5),
+                                blurRadius: 20,
+                                spreadRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: Image.asset(
+                            'assets/images/aybay-logo.png',
+                            height: 70,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     ],
@@ -373,7 +385,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Income',
+                        Text('Income',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -385,7 +397,7 @@ class DashboardScreen extends StatelessWidget {
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalIncome, sym),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.green)),
@@ -398,7 +410,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Expense',
+                        Text('Expense',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -410,7 +422,7 @@ class DashboardScreen extends StatelessWidget {
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalExpense, sym),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.brown)),
@@ -426,7 +438,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Loan',
+                        Text('Loan',
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -438,7 +450,7 @@ class DashboardScreen extends StatelessWidget {
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalLoanGiven, sym),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
                                 color: Color(0xFFFF5722))),
@@ -451,7 +463,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Owe',
+                        Text('Owe',
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -463,7 +475,7 @@ class DashboardScreen extends StatelessWidget {
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalOweBorrowed, sym),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.purple)),
@@ -476,7 +488,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Savings',
+                        Text('Savings',
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -488,7 +500,7 @@ class DashboardScreen extends StatelessWidget {
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalSavings, sym),
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.vibrantGold)),
@@ -688,7 +700,7 @@ class DashboardScreen extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.white),
@@ -974,7 +986,7 @@ class DashboardScreen extends StatelessWidget {
                           _showSuccessAnimation(context);
                         }
                       },
-                      child: const Text('Save Transaction',
+                      child: Text('Save Transaction',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                     ),

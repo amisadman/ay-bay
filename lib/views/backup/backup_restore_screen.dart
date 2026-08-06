@@ -382,7 +382,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       const SizedBox(height: 12),
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.sd_storage,
+                        leading: Icon(Icons.sd_storage,
                             color: Theme.of(context).iconTheme.color),
                         title: const Text('Create Local Backup'),
                         subtitle: const Text('Save to Downloads folder'),
@@ -390,7 +390,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                       ),
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.restore,
+                        leading: Icon(Icons.restore,
                             color: Theme.of(context).iconTheme.color),
                         title: const Text('Restore Local Backup'),
                         subtitle: const Text('Select a .json backup file'),

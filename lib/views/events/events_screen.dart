@@ -204,7 +204,7 @@ class _EventsScreenState extends State<EventsScreen> {
                         },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 14),
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),

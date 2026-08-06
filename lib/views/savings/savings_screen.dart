@@ -121,7 +121,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
           // Total Savings Widget
           Container(
             padding: const EdgeInsets.all(20),
-            margin: const EdgeInsets.symmetric(horizontal: 16),
+            margin: EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
@@ -180,7 +180,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 14),
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),
