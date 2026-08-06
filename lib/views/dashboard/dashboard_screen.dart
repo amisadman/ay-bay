@@ -327,17 +327,20 @@ class DashboardScreen extends StatelessWidget {
                       // AyBay Logo (Bottom Right) with subtle white glow for dark themes
                       Positioned(
                         bottom: 0,
-                        right: 12,
+                        right: 10,
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white.withValues(alpha: 0.5),
-                                blurRadius: 20,
-                                spreadRadius: 5,
-                              ),
-                            ],
+                            boxShadow: themeProv.cardThemeIndex == 5
+                                ? [
+                                    BoxShadow(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.15),
+                                      blurRadius: 10,
+                                      spreadRadius: 3,
+                                    ),
+                                  ]
+                                : null,
                           ),
                           child: Image.asset(
                             'assets/images/aybay-logo.png',
@@ -516,7 +519,8 @@ class DashboardScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.account_balance_wallet_rounded,
                     label: 'Income',
                     color: AppColors.green,
@@ -527,7 +531,8 @@ class DashboardScreen extends StatelessWidget {
                                 const FilterScreen(initialType: 'income'))),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.receipt_long_rounded,
                     label: 'Expense',
                     color: AppColors.brown,
@@ -538,7 +543,8 @@ class DashboardScreen extends StatelessWidget {
                                 const FilterScreen(initialType: 'expense'))),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.handshake_rounded,
                     label: 'Loan',
                     color: const Color(0xFFFF5722),
@@ -549,7 +555,8 @@ class DashboardScreen extends StatelessWidget {
                                 const LoanScreen(initialType: 'loan'))),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.credit_score_rounded,
                     label: 'Owe',
                     color: AppColors.purple,
@@ -568,7 +575,8 @@ class DashboardScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.savings_rounded,
                     label: 'Savings',
                     color: AppColors.vibrantGold,
@@ -578,7 +586,8 @@ class DashboardScreen extends StatelessWidget {
                             builder: (_) => const SavingsScreen())),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.pie_chart_rounded,
                     label: 'Budget',
                     color: AppColors.green,
@@ -588,7 +597,8 @@ class DashboardScreen extends StatelessWidget {
                             builder: (_) => const BudgetScreen())),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.favorite_rounded,
                     label: 'Donations',
                     color: AppColors.purple,
@@ -598,7 +608,8 @@ class DashboardScreen extends StatelessWidget {
                             builder: (_) => const DonationScreen())),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.event_available_rounded,
                     label: 'Event\nManagement',
                     color: AppColors.blue,
@@ -616,7 +627,8 @@ class DashboardScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.insert_chart_rounded,
                     label: 'Daily Analytics',
                     color: AppColors.blue,
@@ -627,7 +639,8 @@ class DashboardScreen extends StatelessWidget {
                                 const AnalyticsScreen(initialTab: 0))),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.pie_chart_outline_rounded,
                     label: 'Monthly Analytics',
                     color: AppColors.vibrantGold,
@@ -638,7 +651,8 @@ class DashboardScreen extends StatelessWidget {
                                 const AnalyticsScreen(initialTab: 1))),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.ssid_chart_rounded,
                     label: 'Yearly Analytics',
                     color: AppColors.red,
@@ -649,7 +663,8 @@ class DashboardScreen extends StatelessWidget {
                                 const AnalyticsScreen(initialTab: 2))),
                   )),
                   Expanded(
-                      child: _buildVectorGridButton(context: context, 
+                      child: _buildVectorGridButton(
+                    context: context,
                     icon: Icons.sd_storage_rounded,
                     label: 'Backup/Restore',
                     color: AppColors.deepTeal,
