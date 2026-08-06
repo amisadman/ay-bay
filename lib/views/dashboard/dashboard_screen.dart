@@ -43,8 +43,19 @@ class DashboardScreen extends StatelessWidget {
       case 4:
         cardColor = Colors.orange.shade800;
         break;
+      case 5:
+      case 6:
+        cardColor = Colors.black87; // Base color for shadow when image is used
+        break;
       default:
         cardColor = AppColors.green;
+    }
+    
+    DecorationImage? cardImage;
+    if (themeProv.cardThemeIndex == 5) {
+      cardImage = const DecorationImage(image: AssetImage('assets/images/vangogh_card.jpg'), fit: BoxFit.cover, opacity: 0.85);
+    } else if (themeProv.cardThemeIndex == 6) {
+      cardImage = const DecorationImage(image: AssetImage('assets/images/cartoon_card.jpg'), fit: BoxFit.cover, opacity: 0.85);
     }
 
     final sym = themeProv.currencySymbol;
@@ -112,7 +123,8 @@ class DashboardScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 235,
                 decoration: BoxDecoration(
-                  color: cardColor,
+                  color: cardImage == null ? cardColor : null,
+                  image: cardImage,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
@@ -654,6 +666,7 @@ class DashboardScreen extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
@@ -661,12 +674,18 @@ class DashboardScreen extends StatelessWidget {
             child: Icon(icon, color: color, size: 36),
           ),
           const SizedBox(height: 2),
-          Text(
-            label,
-            style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.black,
-                fontWeight: FontWeight.w600),
+          SizedBox(
+            height: 36, // Ensure uniform height for text so icons align
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.black,
+                  fontWeight: FontWeight.w600,
+                  height: 1.2),
+            ),
           ),
         ],
       ),
