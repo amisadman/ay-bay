@@ -9,16 +9,14 @@ import 'package:aybay_flutter/core/utils/currency_formatter.dart';
 class YearlyAnalyticsTab extends StatefulWidget {
   final int selectedYear;
   final Function(int) onYearChanged;
-  const YearlyAnalyticsTab({super.key, required this.selectedYear, required this.onYearChanged});
-  
+  const YearlyAnalyticsTab(
+      {super.key, required this.selectedYear, required this.onYearChanged});
 
   @override
   State<YearlyAnalyticsTab> createState() => _YearlyAnalyticsTabState();
 }
 
 class _YearlyAnalyticsTabState extends State<YearlyAnalyticsTab> {
-  
-
   @override
   Widget build(BuildContext context) {
     final finProv = Provider.of<FinanceProvider>(context);
@@ -74,7 +72,20 @@ class _YearlyAnalyticsTabState extends State<YearlyAnalyticsTab> {
       );
     }
 
-    final monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final monthLabels = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
 
     return Column(
       children: [
@@ -83,19 +94,29 @@ class _YearlyAnalyticsTabState extends State<YearlyAnalyticsTab> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(icon: const Icon(Icons.arrow_back_ios), onPressed: () => widget.onYearChanged(widget.selectedYear - 1)),
-              Expanded(child: Text('${widget.selectedYear}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
-              IconButton(icon: const Icon(Icons.arrow_forward_ios), onPressed: () => widget.onYearChanged(widget.selectedYear + 1)),
+              IconButton(
+                  icon: const Icon(Icons.arrow_back_ios),
+                  onPressed: () =>
+                      widget.onYearChanged(widget.selectedYear - 1)),
+              Expanded(
+                  child: Text('${widget.selectedYear}',
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center)),
+              IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios),
+                  onPressed: () =>
+                      widget.onYearChanged(widget.selectedYear + 1)),
             ],
           ),
         ),
-        
         Container(
           height: 300,
-          padding: const EdgeInsets.only(right: 20, left: 10, top: 20, bottom: 10),
+          padding:
+              const EdgeInsets.only(right: 20, left: 10, top: 20, bottom: 10),
           margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.white1,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(20),
           ),
           child: LineChart(
@@ -111,13 +132,18 @@ class _YearlyAnalyticsTabState extends State<YearlyAnalyticsTab> {
                     interval: 2,
                     getTitlesWidget: (val, meta) => Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(monthLabels[val.toInt() % 12], style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                      child: Text(monthLabels[val.toInt() % 12],
+                          style: const TextStyle(
+                              fontSize: 10, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ),
-                leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(show: false),
               minX: 0,
@@ -131,39 +157,51 @@ class _YearlyAnalyticsTabState extends State<YearlyAnalyticsTab> {
             ),
           ),
         ),
-        
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.circle, color: AppColors.green, size: 12), SizedBox(width: 4), Text('Income'),
+              Icon(Icons.circle, color: AppColors.green, size: 12),
+              SizedBox(width: 4),
+              Text('Income'),
               SizedBox(width: 16),
-              Icon(Icons.circle, color: AppColors.red, size: 12), SizedBox(width: 4), Text('Expense'),
+              Icon(Icons.circle, color: AppColors.red, size: 12),
+              SizedBox(width: 4),
+              Text('Expense'),
             ],
           ),
         ),
-        
         const Padding(
           padding: EdgeInsets.all(20.0),
-          child: Align(alignment: Alignment.centerLeft, child: Text('Monthly Breakdown', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.brown))),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text('Monthly Breakdown',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.brown))),
         ),
-        
         Expanded(
           child: ListView.builder(
             itemCount: 12,
             itemBuilder: (context, index) {
-              if (monthlyIncome[index] == 0 && monthlyExpense[index] == 0) return const SizedBox.shrink();
+              if (monthlyIncome[index] == 0 && monthlyExpense[index] == 0)
+                return const SizedBox.shrink();
               return ListTile(
-                title: Text(monthLabels[index], style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text('Inc: ${CurrencyFormatter.formatSimple(monthlyIncome[index], sym)} | Exp: ${CurrencyFormatter.formatSimple(monthlyExpense[index], sym)}'),
+                title: Text(monthLabels[index],
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(
+                    'Inc: ${CurrencyFormatter.formatSimple(monthlyIncome[index], sym)} | Exp: ${CurrencyFormatter.formatSimple(monthlyExpense[index], sym)}'),
                 trailing: Text(
-                  CurrencyFormatter.formatSimple(monthlyIncome[index] - monthlyExpense[index], sym),
-                  style: TextStyle(
-                    color: (monthlyIncome[index] - monthlyExpense[index]) >= 0 ? AppColors.green : AppColors.red,
-                    fontWeight: FontWeight.bold,
-                  )
-                ),
+                    CurrencyFormatter.formatSimple(
+                        monthlyIncome[index] - monthlyExpense[index], sym),
+                    style: TextStyle(
+                      color: (monthlyIncome[index] - monthlyExpense[index]) >= 0
+                          ? AppColors.green
+                          : AppColors.red,
+                      fontWeight: FontWeight.bold,
+                    )),
               );
             },
           ),

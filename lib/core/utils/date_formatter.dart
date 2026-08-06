@@ -1,4 +1,4 @@
-﻿import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
 
 class DateFormatter {
   static String formatShort(DateTime date) {

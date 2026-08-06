@@ -1,4 +1,4 @@
-﻿class TransactionModel {
+class TransactionModel {
   final int? id;
   final String title;
   final double amount;

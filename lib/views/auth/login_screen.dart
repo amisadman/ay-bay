@@ -74,7 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final bool didAuthenticate = await _localAuth.authenticate(
         localizedReason: 'Please authenticate to log in',
-        options: const AuthenticationOptions(useErrorDialogs: true, stickyAuth: true),
+        options: const AuthenticationOptions(
+            useErrorDialogs: true, stickyAuth: true),
       );
       if (didAuthenticate) {
         if (!mounted) return;
@@ -112,7 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Future.delayed(const Duration(seconds: 1), () {
                       if (!mounted) return;
                       if (_isPasswordFocused) {
-                        _teddyControls.play(_obscurePin ? 'hands_up' : 'hands_down');
+                        _teddyControls
+                            .play(_obscurePin ? 'hands_up' : 'hands_down');
                       }
                     });
                   },
@@ -146,17 +148,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         labelText: 'Enter 4-digit PIN',
-                        prefixIcon: const Icon(Icons.lock, color: AppColors.brown),
+                        prefixIcon:
+                            const Icon(Icons.lock, color: AppColors.brown),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePin ? Icons.visibility_off : Icons.visibility,
+                            _obscurePin
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: AppColors.brown,
                           ),
                           onPressed: () {
                             setState(() {
                               _obscurePin = !_obscurePin;
                               if (_isPasswordFocused) {
-                                _teddyControls.play(_obscurePin ? 'hands_up' : 'hands_down');
+                                _teddyControls.play(
+                                    _obscurePin ? 'hands_up' : 'hands_down');
                               }
                             });
                           },
@@ -182,7 +188,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: _doLogin,
                       child: const Text(
                         'Log in',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                     Consumer<AuthProvider>(
@@ -191,7 +198,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(top: 16.0),
                             child: IconButton(
-                              icon: const Icon(Icons.fingerprint, size: 48, color: AppColors.green),
+                              icon: const Icon(Icons.fingerprint,
+                                  size: 48, color: AppColors.green),
                               onPressed: _doBiometricLogin,
                             ),
                           );

@@ -1,4 +1,4 @@
-﻿class ChatMessageModel {
+class ChatMessageModel {
   final String id;
   final String sender; // 'user' or 'walleo'
   final String text;

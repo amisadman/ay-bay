@@ -228,7 +228,8 @@ class DatabaseHelper {
       return List.from(_webTransactions);
     }
     final db = await instance.database;
-    final result = await db!.query('transactions', orderBy: 'date DESC, id DESC');
+    final result =
+        await db!.query('transactions', orderBy: 'date DESC, id DESC');
     return result.map((json) => TransactionModel.fromMap(json)).toList();
   }
 
@@ -248,7 +249,8 @@ class DatabaseHelper {
       return 1;
     }
     final db = await instance.database;
-    return await db!.update('transactions', tx.toMap(), where: 'id = ?', whereArgs: [tx.id]);
+    return await db!.update('transactions', tx.toMap(),
+        where: 'id = ?', whereArgs: [tx.id]);
   }
 
   Future<int> insertLoan(LoanModel loan) async {
@@ -276,7 +278,8 @@ class DatabaseHelper {
       return 1;
     }
     final db = await instance.database;
-    return await db!.update('loans', loan.toMap(), where: 'id = ?', whereArgs: [loan.id]);
+    return await db!
+        .update('loans', loan.toMap(), where: 'id = ?', whereArgs: [loan.id]);
   }
 
   Future<int> deleteLoan(int id) async {
@@ -304,7 +307,6 @@ class DatabaseHelper {
     await db.delete('budgets');
   }
 
-
   Future<int> insertSavings(SavingsModel savings) async {
     if (kIsWeb) {
       _webSavings.insert(0, savings);
@@ -330,7 +332,8 @@ class DatabaseHelper {
       return 1;
     }
     final db = await instance.database;
-    return await db!.update('savings', savings.toMap(), where: 'id = ?', whereArgs: [savings.id]);
+    return await db!.update('savings', savings.toMap(),
+        where: 'id = ?', whereArgs: [savings.id]);
   }
 
   Future<int> deleteSavings(int id) async {
@@ -341,7 +344,6 @@ class DatabaseHelper {
     final db = await instance.database;
     return await db!.delete('savings', where: 'id = ?', whereArgs: [id]);
   }
-
 
   Future<int> insertBudget(BudgetModel budget) async {
     if (kIsWeb) {
@@ -368,7 +370,8 @@ class DatabaseHelper {
       return 1;
     }
     final db = await instance.database;
-    return await db!.update('budgets', budget.toMap(), where: 'id = ?', whereArgs: [budget.id]);
+    return await db!.update('budgets', budget.toMap(),
+        where: 'id = ?', whereArgs: [budget.id]);
   }
 
   Future<int> deleteBudget(int id) async {
@@ -383,7 +386,10 @@ class DatabaseHelper {
   // --- CRUD for Donations ---
   Future<int> insertDonation(DonationModel donation) async {
     if (kIsWeb) {
-      final newId = _webDonations.isEmpty ? 1 : (_webDonations.map((e) => e.id!).reduce((a, b) => a > b ? a : b)) + 1;
+      final newId = _webDonations.isEmpty
+          ? 1
+          : (_webDonations.map((e) => e.id!).reduce((a, b) => a > b ? a : b)) +
+              1;
       final newDonation = DonationModel(
         id: newId,
         organizationName: donation.organizationName,

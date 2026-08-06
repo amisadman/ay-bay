@@ -39,16 +39,23 @@ class _DonationScreenState extends State<DonationScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('New Donation Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.brown)),
+                const Text('New Donation Profile',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.brown)),
                 const SizedBox(height: 20),
                 TextFormField(
                   controller: _orgController,
                   decoration: InputDecoration(
                     labelText: 'Organization / Cause',
-                    prefixIcon: const Icon(Icons.business_rounded, color: AppColors.blue),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    prefixIcon: const Icon(Icons.business_rounded,
+                        color: AppColors.blue),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
-                  validator: (v) => v!.isEmpty ? 'Enter organization name' : null,
+                  validator: (v) =>
+                      v!.isEmpty ? 'Enter organization name' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -56,8 +63,10 @@ class _DonationScreenState extends State<DonationScreen> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: 'Target Amount (Optional)',
-                    prefixIcon: const Icon(Icons.attach_money_rounded, color: AppColors.green),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    prefixIcon: const Icon(Icons.attach_money_rounded,
+                        color: AppColors.green),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -65,8 +74,10 @@ class _DonationScreenState extends State<DonationScreen> {
                   controller: _noteController,
                   decoration: InputDecoration(
                     labelText: 'Note (Optional)',
-                    prefixIcon: const Icon(Icons.note_alt_outlined, color: AppColors.brown),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    prefixIcon: const Icon(Icons.note_alt_outlined,
+                        color: AppColors.brown),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -74,7 +85,8 @@ class _DonationScreenState extends State<DonationScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.blue,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
@@ -85,11 +97,16 @@ class _DonationScreenState extends State<DonationScreen> {
                         note: _noteController.text,
                         createdAt: DateTime.now().toIso8601String(),
                       );
-                      Provider.of<FinanceProvider>(context, listen: false).addDonation(newDonation);
+                      Provider.of<FinanceProvider>(context, listen: false)
+                          .addDonation(newDonation);
                       Navigator.pop(ctx);
                     }
                   },
-                  child: const Text('Add Profile', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                  child: const Text('Add Profile',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
                 ),
               ],
             ),
@@ -113,19 +130,31 @@ class _DonationScreenState extends State<DonationScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Donations', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+        title: const Text('Donations',
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22)),
       ),
       body: finProv.donations.isEmpty
-          ? const Center(child: Text('No donation profiles found. Create one!', style: TextStyle(color: Colors.grey, fontSize: 16)))
+          ? const Center(
+              child: Text('No donation profiles found. Create one!',
+                  style: TextStyle(color: Colors.grey, fontSize: 16)))
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: finProv.donations.length,
               itemBuilder: (context, index) {
                 final d = finProv.donations[index];
-                final progress = d.amount > 0 ? (d.totalDonated / d.amount).clamp(0.0, 1.0) : 0.0;
-                
+                final progress = d.amount > 0
+                    ? (d.totalDonated / d.amount).clamp(0.0, 1.0)
+                    : 0.0;
+
                 return GestureDetector(
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DonationProfileScreen(donationId: d.id!))),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              DonationProfileScreen(donationId: d.id!))),
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(16),
@@ -133,7 +162,10 @@ class _DonationScreenState extends State<DonationScreen> {
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
-                        BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))
+                        BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4))
                       ],
                     ),
                     child: Column(
@@ -145,19 +177,31 @@ class _DonationScreenState extends State<DonationScreen> {
                             Expanded(
                               child: Text(
                                 d.organizationName,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.black),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        AppColors.black),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
                                 color: AppColors.blue.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                CurrencyFormatter.formatSimple(d.totalDonated, sym),
-                                style: const TextStyle(color: AppColors.blue, fontWeight: FontWeight.bold, fontSize: 14),
+                                CurrencyFormatter.formatSimple(
+                                    d.totalDonated, sym),
+                                style: const TextStyle(
+                                    color: AppColors.blue,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14),
                               ),
                             ),
                           ],
@@ -174,7 +218,8 @@ class _DonationScreenState extends State<DonationScreen> {
                           const SizedBox(height: 8),
                           Text(
                             'Target: ${CurrencyFormatter.formatSimple(d.amount, sym)}',
-                            style: const TextStyle(color: Colors.grey, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 12),
                           ),
                         ]
                       ],

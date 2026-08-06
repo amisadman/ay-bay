@@ -1,4 +1,4 @@
-﻿class AppStrings {
+class AppStrings {
   static const Map<String, Map<String, String>> localizedValues = {
     'en': {
       'app_name': 'AyBay',
@@ -15,7 +15,7 @@
       'name': 'Full Name',
       'guest_login': 'Continue as Guest',
       'logout': 'Log Out',
-      
+
       // Dashboard
       'dashboard': 'Dashboard',
       'net_balance': 'Net Wallet Balance',
@@ -27,13 +27,13 @@
       'see_all': 'See All',
       'no_data': 'No financial records found',
       'quick_actions': 'Quick Actions',
-      
+
       // Types
       'income': 'Income',
       'expense': 'Expense',
       'loan': 'Loan',
       'owe': 'Owe',
-      
+
       // Form Fields
       'add_transaction': 'Add Transaction',
       'edit_transaction': 'Edit Transaction',
@@ -53,7 +53,7 @@
       'status': 'Status',
       'pending': 'Pending',
       'settled': 'Settled',
-      
+
       // Categories
       'cat_salary': 'Salary',
       'cat_business': 'Business',
@@ -65,7 +65,7 @@
       'cat_bills': 'Bills & Utilities',
       'cat_health': 'Medical & Health',
       'cat_other': 'Other',
-      
+
       // Filter
       'filter': 'Filter Records',
       'filter_date': 'By Date',
@@ -78,16 +78,17 @@
       'custom_range': 'Custom Date Range',
       'apply_filter': 'Apply Filter',
       'reset_filter': 'Reset',
-      
+
       // AI Chat
       'walleo_ai': 'Walleo AI Agent',
-      'ai_greeting': 'Hello! I am Walleo, your AI financial assistant. Ask me anything or tell me to add/remove transactions!',
+      'ai_greeting':
+          'Hello! I am Walleo, your AI financial assistant. Ask me anything or tell me to add/remove transactions!',
       'ask_walleo': 'Type a query or command...',
       'thinking': 'Walleo is thinking...',
       'quick_prompt_1': 'Add expense 150 for snacks',
       'quick_prompt_2': 'Show my total expenses this month',
       'quick_prompt_3': 'Add loan 2000 to Rahim due Friday',
-      
+
       // Backup
       'backup_restore': 'Backup & Restore',
       'backup_now': 'Backup Now (1-Tap)',
@@ -96,7 +97,7 @@
       'last_backup': 'Last Backup',
       'backup_success': 'Backup created successfully!',
       'restore_success': 'Data restored successfully!',
-      
+
       // Settings
       'settings': 'Settings & Profile',
       'currency': 'Currency Symbol',
@@ -119,7 +120,7 @@
       'name': 'পূর্ণ নাম',
       'guest_login': 'গেস্ট হিসেবে চালিয়ে যান',
       'logout': 'লগ আউট',
-      
+
       // Dashboard
       'dashboard': 'ড্যাশবোর্ড',
       'net_balance': 'মোট ওয়ালেট ব্যালেন্স',
@@ -131,13 +132,13 @@
       'see_all': 'সব দেখুন',
       'no_data': 'কোন আর্থিক তথ্য পাওয়া যায়নি',
       'quick_actions': 'দ্রুত অ্যাকশন',
-      
+
       // Types
       'income': 'আয়',
       'expense': 'ব্যয়',
       'loan': 'ঋণ দেওয়া',
       'owe': 'ঋণ নেওয়া',
-      
+
       // Form Fields
       'add_transaction': 'লেনদেন যোগ করুন',
       'edit_transaction': 'লেনদেন এডিট করুন',
@@ -157,7 +158,7 @@
       'status': 'স্ট্যাটাস',
       'pending': 'বকেয়া',
       'settled': 'পরিশোধিত',
-      
+
       // Categories
       'cat_salary': 'বেতন',
       'cat_business': 'ব্যবসা',
@@ -169,7 +170,7 @@
       'cat_bills': 'বিল ও ইউটিলিটি',
       'cat_health': 'চিকিৎসা',
       'cat_other': 'অন্যান্য',
-      
+
       // Filter
       'filter': 'ফিল্টার করুন',
       'filter_date': 'তারিখ অনুযায়ী',
@@ -182,16 +183,17 @@
       'custom_range': 'নির্দিষ্ট সময়সীমা',
       'apply_filter': 'ফিল্টার প্রয়োগ করুন',
       'reset_filter': 'রিসেট',
-      
+
       // AI Chat
       'walleo_ai': 'ওয়ালিও এআই এজেন্ট',
-      'ai_greeting': 'হ্যালো! আমি ওয়ালিও, আপনার এআই অর্থ সহকারী। যেকোনো হিসাব জানতে প্রশ্ন করুন বা লেনদেন যোগ করতে বলুন!',
+      'ai_greeting':
+          'হ্যালো! আমি ওয়ালিও, আপনার এআই অর্থ সহকারী। যেকোনো হিসাব জানতে প্রশ্ন করুন বা লেনদেন যোগ করতে বলুন!',
       'ask_walleo': 'প্রশ্ন বা নির্দেশ লিখুন...',
       'thinking': 'ওয়ালিও চিন্তা করছে...',
       'quick_prompt_1': 'আজকে ১৫০ টাকা নাস্তা খরচ যোগ করো',
       'quick_prompt_2': 'এই মাসের মোট খরচের হিসাব দেখাও',
       'quick_prompt_3': 'রহিমকে ২০০০ টাকা ঋণ দেওয়া যোগ করো',
-      
+
       // Backup
       'backup_restore': 'ব্যাকআপ ও রিস্টোর',
       'backup_now': 'এখনই ব্যাকআপ নিন (১-ট্যাপ)',
@@ -200,7 +202,7 @@
       'last_backup': 'সর্বশেষ ব্যাকআপ',
       'backup_success': 'ব্যাকআপ সফলভাবে তৈরি হয়েছে!',
       'restore_success': 'তথ্য সফলভাবে রিস্টোর হয়েছে!',
-      
+
       // Settings
       'settings': 'সেটিংস ও প্রোফাইল',
       'currency': 'মুদ্রার প্রতীক',
@@ -211,6 +213,8 @@
   };
 
   static String getString(String key, String langCode) {
-    return localizedValues[langCode]?[key] ?? localizedValues['en']?[key] ?? key;
+    return localizedValues[langCode]?[key] ??
+        localizedValues['en']?[key] ??
+        key;
   }
 }

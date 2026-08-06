@@ -29,8 +29,9 @@ class _MultiColorBrandLoaderState extends State<MultiColorBrandLoader>
     )..repeat();
 
     _controller.addListener(() {
-      final newIndex = (_controller.value * AppColors.brandSpinnerColors.length).floor() %
-          AppColors.brandSpinnerColors.length;
+      final newIndex =
+          (_controller.value * AppColors.brandSpinnerColors.length).floor() %
+              AppColors.brandSpinnerColors.length;
       if (newIndex != _colorIndex) {
         setState(() {
           _colorIndex = newIndex;

@@ -59,7 +59,8 @@ class LanguageSelectionScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.emeraldGreen,
                   minimumSize: const Size(double.infinity, 52),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
                 ),
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -69,7 +70,10 @@ class LanguageSelectionScreen extends StatelessWidget {
                 },
                 child: const Text(
                   'Continue / এগিয়ে যান',
-                  style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 20),
@@ -93,7 +97,9 @@ class LanguageSelectionScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.emeraldGreen.withValues(alpha: 0.12) : Colors.white,
+          color: isSelected
+              ? AppColors.emeraldGreen.withValues(alpha: 0.12)
+              : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? AppColors.emeraldGreen : Colors.grey.shade300,
@@ -115,11 +121,14 @@ class LanguageSelectionScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? AppColors.emeraldGreen : AppColors.lightTextPrimary,
+                    color: isSelected
+                        ? AppColors.emeraldGreen
+                        : AppColors.lightTextPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                Text(subtitle,
+                    style: const TextStyle(fontSize: 13, color: Colors.grey)),
               ],
             ),
           ],

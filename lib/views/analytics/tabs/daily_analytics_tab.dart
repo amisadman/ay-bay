@@ -10,23 +10,23 @@ import 'package:intl/intl.dart';
 class DailyAnalyticsTab extends StatefulWidget {
   final DateTime selectedDate;
   final Function(DateTime) onDateChanged;
-  const DailyAnalyticsTab({super.key, required this.selectedDate, required this.onDateChanged});
-  
+  const DailyAnalyticsTab(
+      {super.key, required this.selectedDate, required this.onDateChanged});
 
   @override
   State<DailyAnalyticsTab> createState() => _DailyAnalyticsTabState();
 }
 
 class _DailyAnalyticsTabState extends State<DailyAnalyticsTab> {
-  
-
   @override
   Widget build(BuildContext context) {
     final finProv = Provider.of<FinanceProvider>(context);
     final sym = Provider.of<ThemeProvider>(context).currencySymbol;
 
     final dateStr = widget.selectedDate.toIso8601String().split('T')[0];
-    final todayTxs = finProv.transactions.where((tx) => tx.date.startsWith(dateStr)).toList();
+    final todayTxs = finProv.transactions
+        .where((tx) => tx.date.startsWith(dateStr))
+        .toList();
 
     double income = 0;
     double expense = 0;
@@ -37,8 +37,12 @@ class _DailyAnalyticsTabState extends State<DailyAnalyticsTab> {
 
     // Check if it's today for a nice label
     final now = DateTime.now();
-    final isToday = now.year == widget.selectedDate.year && now.month == widget.selectedDate.month && now.day == widget.selectedDate.day;
-    final dateLabel = isToday ? 'Today, ${DateFormat.yMMMd().format(widget.selectedDate)}' : DateFormat.yMMMd().format(widget.selectedDate);
+    final isToday = now.year == widget.selectedDate.year &&
+        now.month == widget.selectedDate.month &&
+        now.day == widget.selectedDate.day;
+    final dateLabel = isToday
+        ? 'Today, ${DateFormat.yMMMd().format(widget.selectedDate)}'
+        : DateFormat.yMMMd().format(widget.selectedDate);
 
     return Column(
       children: [
@@ -50,7 +54,8 @@ class _DailyAnalyticsTabState extends State<DailyAnalyticsTab> {
             children: [
               IconButton(
                 icon: const Icon(Icons.arrow_back_ios),
-                onPressed: () => widget.onDateChanged(widget.selectedDate.subtract(const Duration(days: 1))),
+                onPressed: () => widget.onDateChanged(
+                    widget.selectedDate.subtract(const Duration(days: 1))),
               ),
               Expanded(
                 child: GestureDetector(
@@ -64,27 +69,31 @@ class _DailyAnalyticsTabState extends State<DailyAnalyticsTab> {
                     if (picked != null) widget.onDateChanged(picked);
                   },
                   child: Text(
-                    dateLabel, 
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+                    dateLabel,
+                    style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.arrow_forward_ios),
-                onPressed: () => widget.onDateChanged(widget.selectedDate.add(const Duration(days: 1))),
+                onPressed: () => widget.onDateChanged(
+                    widget.selectedDate.add(const Duration(days: 1))),
               ),
             ],
           ),
         ),
-        
+
         // Bar Chart
         Container(
           height: 250,
           padding: const EdgeInsets.all(20),
           margin: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: AppColors.white1,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(20),
           ),
           child: BarChart(
@@ -99,40 +108,64 @@ class _DailyAnalyticsTabState extends State<DailyAnalyticsTab> {
                     showTitles: true,
                     getTitlesWidget: (val, meta) => Padding(
                       padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(val == 0 ? 'Income' : 'Expense', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      child: Text(val == 0 ? 'Income' : 'Expense',
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ),
-                leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles:
+                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               ),
               borderData: FlBorderData(show: false),
               barGroups: [
                 BarChartGroupData(
                   x: 0,
-                  barRods: [BarChartRodData(toY: income, color: AppColors.green, width: 40, borderRadius: BorderRadius.circular(4))],
+                  barRods: [
+                    BarChartRodData(
+                        toY: income,
+                        color: AppColors.green,
+                        width: 40,
+                        borderRadius: BorderRadius.circular(4))
+                  ],
                 ),
                 BarChartGroupData(
                   x: 1,
-                  barRods: [BarChartRodData(toY: expense, color: AppColors.red, width: 40, borderRadius: BorderRadius.circular(4))],
+                  barRods: [
+                    BarChartRodData(
+                        toY: expense,
+                        color: AppColors.red,
+                        width: 40,
+                        borderRadius: BorderRadius.circular(4))
+                  ],
                 ),
               ],
             ),
           ),
         ),
-        
+
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: Align(
-            alignment: Alignment.centerLeft, 
-            child: Text(isToday ? 'Today\'s Transactions' : 'Transactions', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.brown))
-          ),
+              alignment: Alignment.centerLeft,
+              child: Text(isToday ? 'Today\'s Transactions' : 'Transactions',
+                  style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.brown))),
         ),
-        
+
         Expanded(
           child: todayTxs.isEmpty
-              ? Center(child: Text(isToday ? 'No transactions today.' : 'No transactions on this date.', style: const TextStyle(color: Colors.grey)))
+              ? Center(
+                  child: Text(
+                      isToday
+                          ? 'No transactions today.'
+                          : 'No transactions on this date.',
+                      style: const TextStyle(color: Colors.grey)))
               : ListView.builder(
                   itemCount: todayTxs.length,
                   itemBuilder: (context, index) {
@@ -140,13 +173,24 @@ class _DailyAnalyticsTabState extends State<DailyAnalyticsTab> {
                     final isIncome = tx.type == 'income';
                     return ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: isIncome ? AppColors.green.withValues(alpha: 0.1) : AppColors.red.withValues(alpha: 0.1),
-                        child: Icon(isIncome ? Icons.arrow_downward : Icons.arrow_upward, color: isIncome ? AppColors.green : AppColors.red),
+                        backgroundColor: isIncome
+                            ? AppColors.green.withValues(alpha: 0.1)
+                            : AppColors.red.withValues(alpha: 0.1),
+                        child: Icon(
+                            isIncome
+                                ? Icons.arrow_downward
+                                : Icons.arrow_upward,
+                            color: isIncome ? AppColors.green : AppColors.red),
                       ),
-                      title: Text(tx.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(tx.title,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text(tx.category),
-                      trailing: Text("${isIncome ? '+' : '-'} ${CurrencyFormatter.formatSimple(tx.amount, sym)}", 
-                        style: TextStyle(color: isIncome ? AppColors.green : AppColors.red, fontWeight: FontWeight.bold, fontSize: 16)),
+                      trailing: Text(
+                          "${isIncome ? '+' : '-'} ${CurrencyFormatter.formatSimple(tx.amount, sym)}",
+                          style: TextStyle(
+                              color: isIncome ? AppColors.green : AppColors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
                     );
                   },
                 ),

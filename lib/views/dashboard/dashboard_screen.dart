@@ -50,12 +50,18 @@ class DashboardScreen extends StatelessWidget {
       default:
         cardColor = AppColors.green;
     }
-    
+
     DecorationImage? cardImage;
     if (themeProv.cardThemeIndex == 5) {
-      cardImage = const DecorationImage(image: AssetImage('assets/images/vangogh_card.jpg'), fit: BoxFit.cover, opacity: 0.85);
+      cardImage = const DecorationImage(
+          image: AssetImage('assets/images/vangogh_card.jpg'),
+          fit: BoxFit.cover,
+          opacity: 0.85);
     } else if (themeProv.cardThemeIndex == 6) {
-      cardImage = const DecorationImage(image: AssetImage('assets/images/cartoon_card.jpg'), fit: BoxFit.cover, opacity: 0.85);
+      cardImage = const DecorationImage(
+          image: AssetImage('assets/images/cartoon_card.jpg'),
+          fit: BoxFit.cover,
+          opacity: 0.85);
     }
 
     final sym = themeProv.currencySymbol;
@@ -100,7 +106,8 @@ class DashboardScreen extends StatelessWidget {
             icon: Container(
               padding: const EdgeInsets.all(6),
               decoration: const BoxDecoration(
-                  shape: BoxShape.circle, color: AppColors.black),
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).colorScheme.secondary),
               child: const Icon(Icons.logout, color: Colors.white, size: 18),
             ),
             onPressed: () {
@@ -175,6 +182,23 @@ class DashboardScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+
+                      // Gradient overlay for better text/logo visibility on image backgrounds
+                      if (themeProv.cardThemeIndex >= 5)
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.black.withValues(alpha: 0.6),
+                                Colors.black.withValues(alpha: 0.1),
+                                Colors.black.withValues(alpha: 0.7),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                        ),
 
                       // --- Card Content ---
 
@@ -353,7 +377,11 @@ class DashboardScreen extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.black)),
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    AppColors.black)),
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalIncome, sym),
@@ -374,7 +402,11 @@ class DashboardScreen extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.black)),
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    AppColors.black)),
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalExpense, sym),
@@ -398,7 +430,11 @@ class DashboardScreen extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.black)),
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    AppColors.black)),
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalLoanGiven, sym),
@@ -419,7 +455,11 @@ class DashboardScreen extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.black)),
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    AppColors.black)),
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalOweBorrowed, sym),
@@ -440,7 +480,11 @@ class DashboardScreen extends StatelessWidget {
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.black)),
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    AppColors.black)),
                         Text(
                             CurrencyFormatter.formatSimple(
                                 finProv.totalSavings, sym),
@@ -680,9 +724,10 @@ class DashboardScreen extends StatelessWidget {
               label,
               textAlign: TextAlign.center,
               maxLines: 2,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 13,
-                  color: AppColors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      AppColors.black,
                   fontWeight: FontWeight.w600,
                   height: 1.2),
             ),
@@ -828,8 +873,13 @@ class DashboardScreen extends StatelessWidget {
                             const SizedBox(width: 12),
                             Text(
                               "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}",
-                              style: const TextStyle(
-                                  fontSize: 16, color: AppColors.black),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color ??
+                                      AppColors.black),
                             ),
                           ],
                         ),

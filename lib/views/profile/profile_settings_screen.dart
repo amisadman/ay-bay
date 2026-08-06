@@ -13,18 +13,27 @@ class ProfileSettingsScreen extends StatelessWidget {
 
   String getThemeName(int index) {
     switch (index) {
-      case 0: return 'AyBay Green';
-      case 1: return 'Ocean Blue';
-      case 2: return 'Midnight Black';
-      case 3: return 'Royal Purple';
-      case 4: return 'Sunset Orange';
-      case 5: return 'Van Gogh Starry Night';
-      case 6: return 'Cartoon Pattern';
-      default: return 'AyBay Green';
+      case 0:
+        return 'AyBay Green';
+      case 1:
+        return 'Ocean Blue';
+      case 2:
+        return 'Midnight Black';
+      case 3:
+        return 'Royal Purple';
+      case 4:
+        return 'Sunset Orange';
+      case 5:
+        return 'Van Gogh Starry Night';
+      case 6:
+        return 'Cartoon Pattern';
+      default:
+        return 'AyBay Green';
     }
   }
 
-  void _showChangeCardThemeDialog(BuildContext context, ThemeProvider themeProv) {
+  void _showChangeCardThemeDialog(
+      BuildContext context, ThemeProvider themeProv) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -39,33 +48,47 @@ class ProfileSettingsScreen extends StatelessWidget {
           children: [
             const Padding(
               padding: EdgeInsets.all(20.0),
-              child: Text('Select Card Theme', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              child: Text('Select Card Theme',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             ),
             Expanded(
               child: PageView.builder(
-                controller: PageController(viewportFraction: 0.8, initialPage: themeProv.cardThemeIndex),
+                controller: PageController(
+                    viewportFraction: 0.8,
+                    initialPage: themeProv.cardThemeIndex),
                 itemCount: 7,
                 onPageChanged: (index) => themeProv.setCardTheme(index),
                 itemBuilder: (ctx, index) {
                   final isSelected = themeProv.cardThemeIndex == index;
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
-                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: isSelected ? 20 : 40),
+                    margin: EdgeInsets.symmetric(
+                        horizontal: 10, vertical: isSelected ? 20 : 40),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: index < 5 ? _getColorForTheme(index) : null,
-                      image: index >= 5 ? DecorationImage(
-                        image: AssetImage(index == 5 ? 'assets/images/vangogh_card.jpg' : 'assets/images/cartoon_card.jpg'),
-                        fit: BoxFit.cover,
-                      ) : null,
+                      image: index >= 5
+                          ? DecorationImage(
+                              image: AssetImage(index == 5
+                                  ? 'assets/images/vangogh_card.jpg'
+                                  : 'assets/images/cartoon_card.jpg'),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                       boxShadow: [
-                        BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 5))
+                        BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 10,
+                            offset: const Offset(0, 5))
                       ],
                     ),
                     child: Center(
                       child: Text(
                         getThemeName(index),
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -87,13 +110,19 @@ class ProfileSettingsScreen extends StatelessWidget {
   }
 
   Color _getColorForTheme(int index) {
-    switch(index) {
-      case 0: return AppColors.green;
-      case 1: return const Color(0xFF1E88E5);
-      case 2: return const Color(0xFF212121);
-      case 3: return const Color(0xFF7B1FA2);
-      case 4: return const Color(0xFFF57C00);
-      default: return AppColors.green;
+    switch (index) {
+      case 0:
+        return AppColors.green;
+      case 1:
+        return const Color(0xFF1E88E5);
+      case 2:
+        return const Color(0xFF212121);
+      case 3:
+        return const Color(0xFF7B1FA2);
+      case 4:
+        return const Color(0xFFF57C00);
+      default:
+        return AppColors.green;
     }
   }
 
@@ -102,12 +131,16 @@ class ProfileSettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Change Username', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
+        title: Text('Change Username',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
         content: TextField(
           controller: nameController,
           decoration: InputDecoration(
             labelText: 'Enter your name',
-            prefixIcon: Icon(Icons.person, color: Theme.of(context).iconTheme.color),
+            prefixIcon:
+                Icon(Icons.person, color: Theme.of(context).iconTheme.color),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
@@ -117,13 +150,16 @@ class ProfileSettingsScreen extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white),
             onPressed: () async {
               await authProv.changeUserName(nameController.text);
               if (ctx.mounted) Navigator.pop(ctx);
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Username updated successfully!')),
+                  const SnackBar(
+                      content: Text('Username updated successfully!')),
                 );
               }
             },
@@ -140,7 +176,10 @@ class ProfileSettingsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Change Security PIN', style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold)),
+        title: Text('Change Security PIN',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
         content: TextField(
           controller: pinController,
           keyboardType: TextInputType.number,
@@ -148,7 +187,8 @@ class ProfileSettingsScreen extends StatelessWidget {
           maxLength: 4,
           decoration: InputDecoration(
             labelText: 'Enter 4-digit PIN',
-            prefixIcon: Icon(Icons.lock, color: Theme.of(context).iconTheme.color),
+            prefixIcon:
+                Icon(Icons.lock, color: Theme.of(context).iconTheme.color),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
@@ -158,16 +198,20 @@ class ProfileSettingsScreen extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white),
             onPressed: () async {
               final success = await authProv.changePin(pinController.text);
               if (ctx.mounted) Navigator.pop(ctx);
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(success ? 'PIN updated successfully!' : 'Invalid PIN (Min 4 digits)')),
+                  SnackBar(
+                      content: Text(success
+                          ? 'PIN updated successfully!'
+                          : 'Invalid PIN (Min 4 digits)')),
                 );
-              
-  }
+              }
             },
             child: const Text('Save PIN'),
           ),
@@ -175,8 +219,9 @@ class ProfileSettingsScreen extends StatelessWidget {
       ),
     );
   }
-  
-  Future<void> _pickProfileImage(BuildContext context, AuthProvider authProv) async {
+
+  Future<void> _pickProfileImage(
+      BuildContext context, AuthProvider authProv) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -196,12 +241,19 @@ class ProfileSettingsScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Theme.of(context).iconTheme.color),
-          onPressed: () => Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const MainNavigationScreen()), (route) => false),
+          icon: Icon(Icons.arrow_back_ios,
+              color: Theme.of(context).iconTheme.color),
+          onPressed: () => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const MainNavigationScreen()),
+              (route) => false),
         ),
         title: Text(
           'Settings',
-          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color, fontWeight: FontWeight.bold, fontSize: 24),
+          style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              fontWeight: FontWeight.bold,
+              fontSize: 24),
         ),
       ),
       body: ListView(
@@ -220,13 +272,15 @@ class ProfileSettingsScreen extends StatelessWidget {
                         ? FileImage(File(authProv.profileImagePath!))
                         : null,
                     child: authProv.profileImagePath == null
-                        ? const Icon(Icons.person, size: 48, color: Colors.white)
+                        ? const Icon(Icons.person,
+                            size: 48, color: Colors.white)
                         : null,
                   ),
                   const CircleAvatar(
                     radius: 14,
                     backgroundColor: AppColors.green,
-                    child: Icon(Icons.camera_alt, size: 14, color: Colors.white),
+                    child:
+                        Icon(Icons.camera_alt, size: 14, color: Colors.white),
                   ),
                 ],
               ),
@@ -239,10 +293,14 @@ class ProfileSettingsScreen extends StatelessWidget {
               children: [
                 Text(
                   authProv.userName,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.bodyLarge?.color),
                 ),
                 IconButton(
-                  icon: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary),
+                  icon: Icon(Icons.edit,
+                      size: 20, color: Theme.of(context).colorScheme.primary),
                   onPressed: () => _showChangeNameDialog(context, authProv),
                 )
               ],
@@ -253,19 +311,27 @@ class ProfileSettingsScreen extends StatelessWidget {
 
           // Security PIN Lock Switch
           SwitchListTile(
-            secondary: Icon(Icons.security, color: Theme.of(context).iconTheme.color),
-            title: const Text('Require PIN Lock on Launch', style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(authProv.isPinEnabled ? 'PIN Security is ON' : 'Bypass Login directly to App'),
+            secondary:
+                Icon(Icons.security, color: Theme.of(context).iconTheme.color),
+            title: const Text('Require PIN Lock on Launch',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(authProv.isPinEnabled
+                ? 'PIN Security is ON'
+                : 'Bypass Login directly to App'),
             value: authProv.isPinEnabled,
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (val) => authProv.togglePinEnabled(val),
           ),
-          
+
           // Biometric Fingerprint Lock Switch
           SwitchListTile(
-            secondary: Icon(Icons.fingerprint, color: Theme.of(context).iconTheme.color),
-            title: const Text('Use Biometrics / Fingerprint', style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(authProv.isBiometricEnabled ? 'Biometrics ON' : 'Biometrics OFF'),
+            secondary: Icon(Icons.fingerprint,
+                color: Theme.of(context).iconTheme.color),
+            title: const Text('Use Biometrics / Fingerprint',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(authProv.isBiometricEnabled
+                ? 'Biometrics ON'
+                : 'Biometrics OFF'),
             value: authProv.isBiometricEnabled,
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (val) => authProv.toggleBiometrics(val),
@@ -273,20 +339,25 @@ class ProfileSettingsScreen extends StatelessWidget {
 
           // Change PIN Button
           ListTile(
-            leading: Icon(Icons.lock_outline, color: Theme.of(context).iconTheme.color),
+            leading: Icon(Icons.lock_outline,
+                color: Theme.of(context).iconTheme.color),
             title: const Text('Change Security PIN'),
-            subtitle: const Text('Current PIN: ****'), // Don't show actual hashed PIN
-            trailing: Icon(Icons.edit, size: 20, color: Theme.of(context).colorScheme.primary),
+            subtitle:
+                const Text('Current PIN: ****'), // Don't show actual hashed PIN
+            trailing: Icon(Icons.edit,
+                size: 20, color: Theme.of(context).colorScheme.primary),
             onTap: () => _showChangePinDialog(context, authProv),
           ),
           const Divider(color: Colors.grey),
 
-
           // Currency Setting
           ListTile(
-            leading: Icon(Icons.attach_money, color: Theme.of(context).colorScheme.primary),
+            leading: Icon(Icons.attach_money,
+                color: Theme.of(context).colorScheme.primary),
             title: const Text('Currency'),
-            subtitle: Text(themeProv.currencySymbol == '৳' ? 'Taka (৳ BDT)' : 'Dollar (\$ USD)'),
+            subtitle: Text(themeProv.currencySymbol == '৳'
+                ? 'Taka (৳ BDT)'
+                : 'Dollar (\$ USD)'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               final newSym = themeProv.currencySymbol == '৳' ? '\$' : '৳';
@@ -296,8 +367,10 @@ class ProfileSettingsScreen extends StatelessWidget {
 
           // Reset Balance Monthly
           SwitchListTile(
-            secondary: Icon(Icons.calendar_today, color: Theme.of(context).iconTheme.color),
-            title: const Text('Reset Balance Monthly', style: TextStyle(fontWeight: FontWeight.bold)),
+            secondary: Icon(Icons.calendar_today,
+                color: Theme.of(context).iconTheme.color),
+            title: const Text('Reset Balance Monthly',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: const Text('Start fresh with a zero balance every month'),
             value: finProv.resetBalanceMonthly,
             activeColor: Theme.of(context).colorScheme.primary,
@@ -306,16 +379,18 @@ class ProfileSettingsScreen extends StatelessWidget {
 
           // Card Theme Setting
           ListTile(
-            leading: Icon(Icons.credit_card, color: Theme.of(context).colorScheme.primary),
+            leading: Icon(Icons.credit_card,
+                color: Theme.of(context).colorScheme.primary),
             title: const Text('Aybay Card Theme'),
             subtitle: Text(getThemeName(themeProv.cardThemeIndex)),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () => _showChangeCardThemeDialog(context, themeProv),
           ),
-          
+
           // Dark Theme Setting
           SwitchListTile(
-            secondary: const Icon(Icons.dark_mode, color: AppColors.vibrantGold),
+            secondary:
+                const Icon(Icons.dark_mode, color: AppColors.vibrantGold),
             title: const Text('Dark Mode'),
             subtitle: const Text('Switch between light and dark themes'),
             value: themeProv.isDarkMode,

@@ -32,7 +32,7 @@ class BackupService {
       };
 
       final jsonStr = jsonEncode(backupData);
-      
+
       Directory? dir;
       if (isCloud) {
         dir = await getApplicationDocumentsDirectory();
@@ -40,9 +40,10 @@ class BackupService {
         if (Platform.isAndroid) {
           var status = await Permission.storage.status;
           if (!status.isGranted) await Permission.storage.request();
-          
+
           var manageStatus = await Permission.manageExternalStorage.status;
-          if (!manageStatus.isGranted) await Permission.manageExternalStorage.request();
+          if (!manageStatus.isGranted)
+            await Permission.manageExternalStorage.request();
 
           dir = Directory('/storage/emulated/0/Download/Aybay_Backup');
         } else {
@@ -55,9 +56,10 @@ class BackupService {
         await dir.create(recursive: true);
       }
 
-      final fileName = 'aybay_backup_${DateTime.now().millisecondsSinceEpoch}.json';
+      final fileName =
+          'aybay_backup_${DateTime.now().millisecondsSinceEpoch}.json';
       final backupFile = File('${dir!.path}/$fileName');
-      
+
       await backupFile.writeAsString(jsonStr);
       return backupFile.path;
     } catch (e) {
@@ -86,7 +88,8 @@ class BackupService {
 
         final txs = map['transactions'] as List<dynamic>? ?? [];
         for (var item in txs) {
-          await txn.insert('transactions', Map<String, dynamic>.from(item as Map));
+          await txn.insert(
+              'transactions', Map<String, dynamic>.from(item as Map));
         }
 
         final loans = map['loans'] as List<dynamic>? ?? [];

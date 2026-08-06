@@ -17,13 +17,13 @@ class FinanceProvider extends ChangeNotifier {
   List<SavingsModel> _savings = [];
   List<BudgetModel> _budgets = [];
   List<DonationModel> _donations = [];
-  
+
   bool _isLoading = false;
   String _selectedCategory = 'all';
   String _selectedType = 'all'; // 'all', 'income', 'expense', 'loan', 'owe'
   FilterTimeFrame _timeFrame = FilterTimeFrame.all;
   DateTimeRange? _customDateRange;
-  
+
   bool _resetBalanceMonthly = true;
   bool get resetBalanceMonthly => _resetBalanceMonthly;
 
@@ -49,7 +49,8 @@ class FinanceProvider extends ChangeNotifier {
       if (t.type != 'income') return false;
       if (_resetBalanceMonthly) {
         final tDate = DateTime.tryParse(t.date);
-        if (tDate != null && (tDate.year != now.year || tDate.month != now.month)) return false;
+        if (tDate != null &&
+            (tDate.year != now.year || tDate.month != now.month)) return false;
       }
       return true;
     }).fold(0.0, (sum, t) => sum + t.amount);
@@ -61,7 +62,8 @@ class FinanceProvider extends ChangeNotifier {
       if (t.type != 'expense') return false;
       if (_resetBalanceMonthly) {
         final tDate = DateTime.tryParse(t.date);
-        if (tDate != null && (tDate.year != now.year || tDate.month != now.month)) return false;
+        if (tDate != null &&
+            (tDate.year != now.year || tDate.month != now.month)) return false;
       }
       return true;
     }).fold(0.0, (sum, t) => sum + t.amount);
@@ -122,7 +124,8 @@ class FinanceProvider extends ChangeNotifier {
   List<TransactionModel> get _filteredTransactions {
     return _transactions.where((t) {
       if (_selectedType != 'all' && _selectedType != t.type) return false;
-      if (_selectedCategory != 'all' && _selectedCategory != t.category) return false;
+      if (_selectedCategory != 'all' && _selectedCategory != t.category)
+        return false;
 
       final tDate = DateTime.tryParse(t.date);
       if (tDate == null) return true;
@@ -131,15 +134,19 @@ class FinanceProvider extends ChangeNotifier {
 
       switch (_timeFrame) {
         case FilterTimeFrame.today:
-          return tDate.year == now.year && tDate.month == now.month && tDate.day == now.day;
+          return tDate.year == now.year &&
+              tDate.month == now.month &&
+              tDate.day == now.day;
         case FilterTimeFrame.thisMonth:
           return tDate.year == now.year && tDate.month == now.month;
         case FilterTimeFrame.thisYear:
           return tDate.year == now.year;
         case FilterTimeFrame.custom:
           if (_customDateRange != null) {
-            return tDate.isAfter(_customDateRange!.start.subtract(const Duration(days: 1))) &&
-                tDate.isBefore(_customDateRange!.end.add(const Duration(days: 1)));
+            return tDate.isAfter(_customDateRange!.start
+                    .subtract(const Duration(days: 1))) &&
+                tDate.isBefore(
+                    _customDateRange!.end.add(const Duration(days: 1)));
           }
           return true;
         case FilterTimeFrame.all:
@@ -218,7 +225,9 @@ class FinanceProvider extends ChangeNotifier {
     await fetchData();
   }
 
-  Future<void> addLoanInstallment(int loanId, double installmentAmount, String date, {bool logToTransactions = false}) async {
+  Future<void> addLoanInstallment(
+      int loanId, double installmentAmount, String date,
+      {bool logToTransactions = false}) async {
     final idx = _loans.indexWhere((l) => l.id == loanId);
     if (idx != -1) {
       final loan = _loans[idx];
@@ -253,7 +262,7 @@ class FinanceProvider extends ChangeNotifier {
       );
 
       await DatabaseHelper.instance.updateLoan(updatedLoan);
-      
+
       if (logToTransactions) {
         final tx = TransactionModel(
           title: 'Loan Installment: ${loan.personName}',
@@ -265,7 +274,7 @@ class FinanceProvider extends ChangeNotifier {
         );
         await DatabaseHelper.instance.insertTransaction(tx);
       }
-      
+
       await fetchData();
     }
   }
@@ -345,7 +354,9 @@ class FinanceProvider extends ChangeNotifier {
     await fetchData();
   }
 
-  Future<void> addSavingsTransaction(int savingsId, double amount, String type, String date, {bool logToTransactions = false}) async {
+  Future<void> addSavingsTransaction(
+      int savingsId, double amount, String type, String date,
+      {bool logToTransactions = false}) async {
     final idx = _savings.indexWhere((s) => s.id == savingsId);
     if (idx != -1) {
       final acc = _savings[idx];
@@ -365,7 +376,8 @@ class FinanceProvider extends ChangeNotifier {
         newBalance += amount;
       } else if (type == 'retrieve') {
         newBalance -= amount;
-        if (newBalance < 0) newBalance = 0; // Prevent negative balance if desired
+        if (newBalance < 0)
+          newBalance = 0; // Prevent negative balance if desired
       }
 
       final updatedAcc = SavingsModel(
@@ -379,14 +391,17 @@ class FinanceProvider extends ChangeNotifier {
       );
 
       await DatabaseHelper.instance.updateSavings(updatedAcc);
-      
+
       if (logToTransactions) {
         final tx = TransactionModel(
-          title: 'Savings ${type == 'add' ? 'Deposit' : 'Withdrawal'}: ${acc.bankName}',
+          title:
+              'Savings ${type == 'add' ? 'Deposit' : 'Withdrawal'}: ${acc.bankName}',
           amount: amount,
           date: date,
           category: 'Savings',
-          type: type == 'add' ? 'expense' : 'income', // Depositing into savings is an expense from main balance. Withdrawing is income.
+          type: type == 'add'
+              ? 'expense'
+              : 'income', // Depositing into savings is an expense from main balance. Withdrawing is income.
           createdAt: DateTime.now().toIso8601String(),
         );
         await DatabaseHelper.instance.insertTransaction(tx);
@@ -412,7 +427,8 @@ class FinanceProvider extends ChangeNotifier {
     await fetchData();
   }
 
-  Future<void> addBudgetCategory(int budgetId, String category, double amount) async {
+  Future<void> addBudgetCategory(
+      int budgetId, String category, double amount) async {
     final idx = _budgets.indexWhere((b) => b.id == budgetId);
     if (idx != -1) {
       final b = _budgets[idx];
@@ -439,7 +455,8 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> adjustBudgetCategory(int budgetId, String catId, double change) async {
+  Future<void> adjustBudgetCategory(
+      int budgetId, String catId, double change) async {
     final idx = _budgets.indexWhere((b) => b.id == budgetId);
     if (idx != -1) {
       final b = _budgets[idx];
@@ -467,7 +484,8 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> logBudgetExpense(int budgetId, String catId, double expense, {bool logToTransactions = false}) async {
+  Future<void> logBudgetExpense(int budgetId, String catId, double expense,
+      {bool logToTransactions = false}) async {
     final idx = _budgets.indexWhere((b) => b.id == budgetId);
     if (idx != -1) {
       final b = _budgets[idx];
@@ -543,9 +561,10 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addDonationExpense(int donationId, double amountPaid, String note) async {
+  Future<void> addDonationExpense(
+      int donationId, double amountPaid, String note) async {
     final donation = _donations.firstWhere((d) => d.id == donationId);
-    
+
     // Add transaction
     final tx = TransactionModel(
       title: 'Donation: ${donation.organizationName}',

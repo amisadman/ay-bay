@@ -5,7 +5,7 @@ import 'dart:math';
 
 class CloudEventProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
   List<CloudEventModel> _myEvents = [];
   List<CloudEventModel> get myEvents => _myEvents;
 
@@ -17,16 +17,20 @@ class CloudEventProvider extends ChangeNotifier {
         .where('members', arrayContains: uid)
         .snapshots()
         .listen((snapshot) {
-      _myEvents = snapshot.docs.map((doc) => CloudEventModel.fromMap(doc.data(), doc.id)).toList();
+      _myEvents = snapshot.docs
+          .map((doc) => CloudEventModel.fromMap(doc.data(), doc.id))
+          .toList();
       notifyListeners();
     });
   }
 
-  Future<String> createEvent(String title, String description, double budget, String creatorUid) async {
+  Future<String> createEvent(String title, String description, double budget,
+      String creatorUid) async {
     // generate a random 6 char invite code
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final random = Random();
-    final inviteCode = String.fromCharCodes(Iterable.generate(6, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
+    final inviteCode = String.fromCharCodes(Iterable.generate(
+        6, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
 
     final newEvent = CloudEventModel(
       eventId: '', // Firestore generates this
@@ -43,22 +47,26 @@ class CloudEventProvider extends ChangeNotifier {
   }
 
   Future<bool> joinEvent(String inviteCode, String uid) async {
-    final query = await _firestore.collection('events').where('inviteCode', isEqualTo: inviteCode).get();
+    final query = await _firestore
+        .collection('events')
+        .where('inviteCode', isEqualTo: inviteCode)
+        .get();
     if (query.docs.isEmpty) {
       return false; // Code not found
     }
     final doc = query.docs.first;
     final event = CloudEventModel.fromMap(doc.data(), doc.id);
-    
+
     if (!event.members.contains(uid)) {
       final updatedMembers = List<String>.from(event.members)..add(uid);
-      await _firestore.collection('events').doc(event.eventId).update({
-        'members': updatedMembers
-      });
+      await _firestore
+          .collection('events')
+          .doc(event.eventId)
+          .update({'members': updatedMembers});
     }
     return true;
   }
-  
+
   Stream<List<CloudEventExpenseModel>> streamEventExpenses(String eventId) {
     return _firestore
         .collection('events')
@@ -66,10 +74,13 @@ class CloudEventProvider extends ChangeNotifier {
         .collection('expenses')
         .orderBy('timestamp', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => CloudEventExpenseModel.fromMap(doc.data(), doc.id)).toList());
+        .map((snapshot) => snapshot.docs
+            .map((doc) => CloudEventExpenseModel.fromMap(doc.data(), doc.id))
+            .toList());
   }
 
-  Future<void> addExpense(String eventId, CloudEventExpenseModel expense) async {
+  Future<void> addExpense(
+      String eventId, CloudEventExpenseModel expense) async {
     await _firestore
         .collection('events')
         .doc(eventId)
@@ -78,8 +89,9 @@ class CloudEventProvider extends ChangeNotifier {
   }
 
   Future<void> updateEventBudget(String eventId, double newBudget) async {
-    await _firestore.collection('events').doc(eventId).update({
-      'budget': newBudget
-    });
+    await _firestore
+        .collection('events')
+        .doc(eventId)
+        .update({'budget': newBudget});
   }
 }

@@ -63,10 +63,11 @@ class AuthProvider extends ChangeNotifier {
     _userName = name.trim();
     _currentPin = _hashPin(pin.trim());
     _hasSetup = true;
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_name', _userName);
-    await prefs.setString('user_pin', _currentPin); // _currentPin is already hashed
+    await prefs.setString(
+        'user_pin', _currentPin); // _currentPin is already hashed
     await prefs.setBool('has_setup', true);
     notifyListeners();
   }

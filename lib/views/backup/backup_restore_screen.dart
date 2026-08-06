@@ -31,10 +31,10 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     setState(() => _isLoading = true);
     final prefs = await SharedPreferences.getInstance();
     _schedule = prefs.getString('backup_schedule') ?? 'Never';
-    
+
     final account = await CloudBackupService.signInSilently();
     setState(() => _currentUser = account);
-    
+
     if (account != null) {
       await _fetchMetadata();
     }
@@ -51,22 +51,22 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   void _showSuccessAnimation() {
     BuildContext? dialogContext;
     showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) {
-        dialogContext = ctx;
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Lottie.asset('assets/animations/success.json', width: 200, height: 200, repeat: false),
-            ],
-          ),
-        );
-      }
-    );
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) {
+          dialogContext = ctx;
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Lottie.asset('assets/animations/success.json',
+                    width: 200, height: 200, repeat: false),
+              ],
+            ),
+          );
+        });
 
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (dialogContext != null && dialogContext!.mounted) {
@@ -78,22 +78,22 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
   void _showRestoreAnimation() {
     BuildContext? dialogContext;
     showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) {
-        dialogContext = ctx;
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Lottie.asset('assets/animations/restore.json', width: 200, height: 200, repeat: false),
-            ],
-          ),
-        );
-      }
-    );
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) {
+          dialogContext = ctx;
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Lottie.asset('assets/animations/restore.json',
+                    width: 200, height: 200, repeat: false),
+              ],
+            ),
+          );
+        });
 
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (dialogContext != null && dialogContext!.mounted) {
@@ -113,7 +113,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
     }
     setState(() => _isLoading = false);
   }
-  
+
   void _handleGoogleSignOut() async {
     setState(() => _isLoading = true);
     await CloudBackupService.signOut();
@@ -126,7 +126,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
 
   void _doCloudBackup() async {
     setState(() => _isLoading = true);
-    
+
     // First create local backup (for cloud upload, don't require external storage permission)
     final localPath = await BackupService.createLocalBackup(isCloud: true);
     if (localPath != null) {
@@ -135,30 +135,38 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
         await _fetchMetadata();
         if (mounted) _showSuccessAnimation();
       } else {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cloud backup failed.')));
+        if (mounted)
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Cloud backup failed.')));
       }
     } else {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to create snapshot for cloud.')));
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Failed to create snapshot for cloud.')));
     }
-    
+
     setState(() => _isLoading = false);
   }
-  
+
   void _doCloudRestore() async {
     setState(() => _isLoading = true);
-    
+
     final file = await CloudBackupService.downloadBackup();
     if (file != null) {
       final success = await BackupService.restoreLocalBackup(file);
       if (success) {
         if (mounted) _showRestoreAnimation();
       } else {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Restore failed.')));
+        if (mounted)
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Restore failed.')));
       }
     } else {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No cloud backup found.')));
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No cloud backup found.')));
     }
-    
+
     setState(() => _isLoading = false);
   }
 
@@ -177,7 +185,7 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       type: FileType.custom,
       allowedExtensions: ['json'],
     );
-    
+
     if (result != null && result.files.single.path != null) {
       setState(() => _isLoading = true);
       final file = File(result.files.single.path!);
@@ -186,36 +194,38 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
       if (success && mounted) {
         _showRestoreAnimation();
       } else {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Restore failed.')));
+        if (mounted)
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('Restore failed.')));
       }
     }
   }
 
   void _showScheduleDialog() {
     showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Back up to Google Drive'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: ['Never', 'Daily', 'Weekly', 'Monthly'].map((opt) => 
-            RadioListTile<String>(
-              title: Text(opt),
-              value: opt,
-              groupValue: _schedule,
-              onChanged: (val) async {
-                if (val != null) {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setString('backup_schedule', val);
-                  setState(() => _schedule = val);
-                  Navigator.pop(ctx);
-                }
-              },
-            )
-          ).toList(),
-        ),
-      )
-    );
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: const Text('Back up to Google Drive'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: ['Never', 'Daily', 'Weekly', 'Monthly']
+                    .map((opt) => RadioListTile<String>(
+                          title: Text(opt),
+                          value: opt,
+                          groupValue: _schedule,
+                          onChanged: (val) async {
+                            if (val != null) {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setString('backup_schedule', val);
+                              setState(() => _schedule = val);
+                              Navigator.pop(ctx);
+                            }
+                          },
+                        ))
+                    .toList(),
+              ),
+            ));
   }
 
   @override
@@ -229,7 +239,11 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Backup & Restore', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+        title: const Text('Backup & Restore',
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22)),
       ),
       body: Stack(
         children: [
@@ -239,7 +253,8 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.only(bottom: 20, top: 12),
                 child: Center(
-                  child: Lottie.asset('assets/animations/restore.json', width: 140, height: 140),
+                  child: Lottie.asset('assets/animations/restore.json',
+                      width: 140, height: 140),
                 ),
               ),
               Expanded(
@@ -248,110 +263,152 @@ class _BackupRestoreScreenState extends State<BackupRestoreScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                const SizedBox(height: 16),
-                const Text('Last backup', style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 8),
-                const Text(
-                  'Back up your data and settings to Google Drive. You can restore them when you reinstall Aybay.',
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    const Icon(Icons.cloud_done, color: Colors.grey, size: 20),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Google Drive', style: TextStyle(color: Colors.grey, fontSize: 14)),
-                        Text(_metadata?.date ?? 'Never', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const SizedBox(width: 32),
-                    Text('Size: ${_metadata?.size ?? 'Unknown'}', style: const TextStyle(color: Colors.grey, fontSize: 14)),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.green, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
-                        onPressed: _currentUser != null ? _doCloudBackup : null,
-                        child: const Text('Back up', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      const SizedBox(height: 16),
+                      const Text('Last backup',
+                          style: TextStyle(
+                              color: AppColors.brown,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Back up your data and settings to Google Drive. You can restore them when you reinstall Aybay.',
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.black, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
-                        onPressed: _currentUser != null ? _doCloudRestore : null,
-                        child: const Text('Restore', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          const Icon(Icons.cloud_done,
+                              color: Colors.grey, size: 20),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Google Drive',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 14)),
+                              Text(_metadata?.date ?? 'Never',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const SizedBox(width: 32),
+                          Text('Size: ${_metadata?.size ?? 'Unknown'}',
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 14)),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.green,
+                                  foregroundColor: Colors.white,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20))),
+                              onPressed:
+                                  _currentUser != null ? _doCloudBackup : null,
+                              child: const Text('Back up',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.black,
+                                  foregroundColor: Colors.white,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20))),
+                              onPressed:
+                                  _currentUser != null ? _doCloudRestore : null,
+                              child: const Text('Restore',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+                      const Divider(),
+                      const SizedBox(height: 16),
+                      const Text('Google Drive settings',
+                          style: TextStyle(
+                              color: AppColors.brown,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                      const SizedBox(height: 12),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('Back up to Google Drive'),
+                        subtitle: Text(_schedule),
+                        onTap: _showScheduleDialog,
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('Google Account'),
+                        subtitle: Text(_currentUser?.email ?? 'Not selected'),
+                        onTap: _currentUser == null
+                            ? _handleGoogleSignIn
+                            : _handleGoogleSignOut,
+                        trailing: _currentUser != null
+                            ? IconButton(
+                                icon:
+                                    const Icon(Icons.logout, color: Colors.red),
+                                onPressed: _handleGoogleSignOut)
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 16),
+                      const Text('Local Backup',
+                          style: TextStyle(
+                              color: AppColors.brown,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16)),
+                      const SizedBox(height: 12),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.sd_storage,
+                            color: Theme.of(context).iconTheme.color),
+                        title: const Text('Create Local Backup'),
+                        subtitle: const Text('Save to Downloads folder'),
+                        onTap: _doLocalBackup,
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.restore,
+                            color: Theme.of(context).iconTheme.color),
+                        title: const Text('Restore Local Backup'),
+                        subtitle: const Text('Select a .json backup file'),
+                        onTap: _doLocalRestore,
+                      ),
+                    ],
+                  ),
                 ),
-                
-                const SizedBox(height: 32),
-                const Divider(),
-                const SizedBox(height: 16),
-                
-                const Text('Google Drive settings', style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 12),
-                
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Back up to Google Drive'),
-                  subtitle: Text(_schedule),
-                  onTap: _showScheduleDialog,
-                ),
-                
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Google Account'),
-                  subtitle: Text(_currentUser?.email ?? 'Not selected'),
-                  onTap: _currentUser == null ? _handleGoogleSignIn : _handleGoogleSignOut,
-                  trailing: _currentUser != null ? IconButton(icon: const Icon(Icons.logout, color: Colors.red), onPressed: _handleGoogleSignOut) : null,
-                ),
-                
-                const SizedBox(height: 16),
-                const Divider(),
-                const SizedBox(height: 16),
-                
-                const Text('Local Backup', style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 12),
-                
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.sd_storage, color: AppColors.black),
-                  title: const Text('Create Local Backup'),
-                  subtitle: const Text('Save to Downloads folder'),
-                  onTap: _doLocalBackup,
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.restore, color: AppColors.black),
-                  title: const Text('Restore Local Backup'),
-                  subtitle: const Text('Select a .json backup file'),
-                  onTap: _doLocalRestore,
-                ),
-                
-              ],
-            ),
-          ),
-        ),
+              ),
             ],
           ),
           if (_isLoading)
             Container(
               color: Colors.black.withOpacity(0.3),
-              child: const Center(child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.green))),
+              child: const Center(
+                  child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.green))),
             ),
         ],
       ),

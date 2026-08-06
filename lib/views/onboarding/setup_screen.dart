@@ -88,7 +88,7 @@ class _SetupScreenState extends State<SetupScreen> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: AppColors.white1,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(20),
                   border:
                       Border.all(color: AppColors.brown.withValues(alpha: 0.2)),

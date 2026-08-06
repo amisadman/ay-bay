@@ -39,30 +39,43 @@ class _EventsScreenState extends State<EventsScreen> {
       builder: (ctx) {
         return AlertDialog(
           backgroundColor: Theme.of(context).cardColor,
-          title: const Text('Join Event', style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+          title: const Text('Join Event',
+              style: TextStyle(
+                  color: AppColors.brown, fontWeight: FontWeight.bold)),
           content: TextField(
             controller: _joinCodeController,
             decoration: InputDecoration(
               labelText: 'Invite Code (e.g. A1B2C3)',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel')),
             ElevatedButton(
               onPressed: () async {
-                final authProv = Provider.of<AuthProvider>(context, listen: false);
-                final evProv = Provider.of<CloudEventProvider>(context, listen: false);
-                final uid = authProv.userName.toLowerCase().replaceAll(' ', '_');
-                final success = await evProv.joinEvent(_joinCodeController.text.trim().toUpperCase(), uid);
+                final authProv =
+                    Provider.of<AuthProvider>(context, listen: false);
+                final evProv =
+                    Provider.of<CloudEventProvider>(context, listen: false);
+                final uid =
+                    authProv.userName.toLowerCase().replaceAll(' ', '_');
+                final success = await evProv.joinEvent(
+                    _joinCodeController.text.trim().toUpperCase(), uid);
                 if (mounted) {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(success ? 'Successfully joined event!' : 'Invalid code or event not found.'),
+                    content: Text(success
+                        ? 'Successfully joined event!'
+                        : 'Invalid code or event not found.'),
                   ));
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.black, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.black,
+                  foregroundColor: Colors.white),
               child: const Text('Join'),
             ),
           ],
@@ -77,48 +90,68 @@ class _EventsScreenState extends State<EventsScreen> {
       builder: (ctx) {
         return AlertDialog(
           backgroundColor: Theme.of(context).cardColor,
-          title: const Text('Create Event', style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+          title: const Text('Create Event',
+              style: TextStyle(
+                  color: AppColors.brown, fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  controller: _createTitleController, 
-                  decoration: InputDecoration(labelText: 'Event Title', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                  controller: _createTitleController,
+                  decoration: InputDecoration(
+                      labelText: 'Event Title',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12))),
                 ),
                 const SizedBox(height: 12),
                 TextField(
-                  controller: _createDescController, 
-                  decoration: InputDecoration(labelText: 'Description', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                  controller: _createDescController,
+                  decoration: InputDecoration(
+                      labelText: 'Description',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12))),
                 ),
                 const SizedBox(height: 12),
                 TextField(
-                  controller: _createBudgetController, 
-                  decoration: InputDecoration(labelText: 'Total Budget', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                  controller: _createBudgetController,
+                  decoration: InputDecoration(
+                      labelText: 'Total Budget',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12))),
                   keyboardType: TextInputType.number,
                 ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel')),
             ElevatedButton(
               onPressed: () async {
-                final authProv = Provider.of<AuthProvider>(context, listen: false);
-                final evProv = Provider.of<CloudEventProvider>(context, listen: false);
-                final uid = authProv.userName.toLowerCase().replaceAll(' ', '_');
+                final authProv =
+                    Provider.of<AuthProvider>(context, listen: false);
+                final evProv =
+                    Provider.of<CloudEventProvider>(context, listen: false);
+                final uid =
+                    authProv.userName.toLowerCase().replaceAll(' ', '_');
                 final title = _createTitleController.text.trim();
                 final desc = _createDescController.text.trim();
-                final budget = double.tryParse(_createBudgetController.text.trim()) ?? 0.0;
+                final budget =
+                    double.tryParse(_createBudgetController.text.trim()) ?? 0.0;
                 if (title.isNotEmpty) {
                   await evProv.createEvent(title, desc, budget, uid);
                   if (mounted) {
                     Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Event Created!')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Event Created!')));
                   }
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.black, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.black,
+                  foregroundColor: Colors.white),
               child: const Text('Create'),
             ),
           ],
@@ -142,14 +175,20 @@ class _EventsScreenState extends State<EventsScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Event Management', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+        title: const Text('Event Management',
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22)),
       ),
       body: Column(
         children: [
           const SizedBox(height: 16),
           Expanded(
             child: evProv.myEvents.isEmpty
-                ? const Center(child: Text('No events yet. Join or create one!', style: TextStyle(color: Colors.grey, fontSize: 16)))
+                ? const Center(
+                    child: Text('No events yet. Join or create one!',
+                        style: TextStyle(color: Colors.grey, fontSize: 16)))
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: evProv.myEvents.length,
@@ -157,13 +196,17 @@ class _EventsScreenState extends State<EventsScreen> {
                       final event = evProv.myEvents[index];
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => EventProfileScreen(event: event)));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) =>
+                                      EventProfileScreen(event: event)));
                         },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 14),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.white1,
+                            color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: Colors.grey.shade300),
                           ),
@@ -173,22 +216,41 @@ class _EventsScreenState extends State<EventsScreen> {
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: AppColors.brown.withOpacity(0.1),
-                                    child: const Icon(Icons.event, color: AppColors.brown),
+                                    backgroundColor:
+                                        AppColors.brown.withOpacity(0.1),
+                                    child: const Icon(Icons.event,
+                                        color: AppColors.brown),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text(event.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.black)),
-                                        Text('${event.members.length} members • Code: ${event.inviteCode}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                        Text(event.title,
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge
+                                                        ?.color ??
+                                                    AppColors.black)),
+                                        Text(
+                                            '${event.members.length} members • Code: ${event.inviteCode}',
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey)),
                                       ],
                                     ),
                                   ),
                                   Text(
-                                    CurrencyFormatter.formatSimple(event.budget, sym),
-                                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.brown),
+                                    CurrencyFormatter.formatSimple(
+                                        event.budget, sym),
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.brown),
                                   ),
                                 ],
                               ),

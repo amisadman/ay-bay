@@ -33,8 +33,9 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: AppColors.lightTextPrimary),
-        titleTextStyle: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)
-            .copyWith(color: AppColors.lightTextPrimary),
+        titleTextStyle:
+            GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)
+                .copyWith(color: AppColors.lightTextPrimary),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.emeraldGreen,
@@ -44,7 +45,8 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -91,8 +93,9 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: AppColors.darkTextPrimary),
-        titleTextStyle: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)
-            .copyWith(color: AppColors.darkTextPrimary),
+        titleTextStyle:
+            GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)
+                .copyWith(color: AppColors.darkTextPrimary),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.emeraldGreen,
@@ -102,7 +105,8 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.darkSurface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade700),

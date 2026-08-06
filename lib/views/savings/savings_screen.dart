@@ -15,7 +15,6 @@ class SavingsScreen extends StatefulWidget {
 }
 
 class _SavingsScreenState extends State<SavingsScreen> {
-
   void _showAddSavingsDialog() {
     final bankCtrl = TextEditingController();
     final accountCtrl = TextEditingController();
@@ -24,38 +23,52 @@ class _SavingsScreenState extends State<SavingsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Add Savings Account', style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+        title: const Text('Add Savings Account',
+            style:
+                TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: bankCtrl,
-                decoration: InputDecoration(labelText: 'Bank Name', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                decoration: InputDecoration(
+                    labelText: 'Bank Name',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12))),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: accountCtrl,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: 'Account Number', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                decoration: InputDecoration(
+                    labelText: 'Account Number',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12))),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: branchCtrl,
-                decoration: InputDecoration(labelText: 'Branch Address', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                decoration: InputDecoration(
+                    labelText: 'Branch Address',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12))),
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.black, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.black,
+                foregroundColor: Colors.white),
             onPressed: () {
               final bank = bankCtrl.text.trim();
               final account = accountCtrl.text.trim();
               final branch = branchCtrl.text.trim();
-              
+
               if (bank.isNotEmpty && account.isNotEmpty) {
                 final newAccount = SavingsModel(
                   bankName: bank,
@@ -65,7 +78,8 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   transactions: '[]',
                   createdAt: DateTime.now().toIso8601String(),
                 );
-                Provider.of<FinanceProvider>(context, listen: false).addSavingsAccount(newAccount);
+                Provider.of<FinanceProvider>(context, listen: false)
+                    .addSavingsAccount(newAccount);
                 Navigator.pop(ctx);
               }
             },
@@ -91,7 +105,11 @@ class _SavingsScreenState extends State<SavingsScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Savings Accounts', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+        title: const Text('Savings Accounts',
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22)),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.black,
@@ -105,7 +123,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
             padding: const EdgeInsets.all(20),
             margin: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: AppColors.white1,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: Colors.grey.shade300),
             ),
@@ -115,7 +133,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Total Saved', style: TextStyle(fontSize: 16, color: Colors.grey.shade700)),
+                    Text('Total Saved',
+                        style: TextStyle(
+                            fontSize: 16, color: Colors.grey.shade700)),
                     const SizedBox(height: 4),
                     Text(
                       CurrencyFormatter.formatSimple(finProv.totalSavings, sym),
@@ -140,7 +160,9 @@ class _SavingsScreenState extends State<SavingsScreen> {
           // List of Accounts
           Expanded(
             child: finProv.savings.isEmpty
-                ? const Center(child: Text('No savings accounts found.', style: TextStyle(color: Colors.grey, fontSize: 16)))
+                ? const Center(
+                    child: Text('No savings accounts found.',
+                        style: TextStyle(color: Colors.grey, fontSize: 16)))
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: finProv.savings.length,
@@ -151,14 +173,16 @@ class _SavingsScreenState extends State<SavingsScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => SavingsProfileScreen(savingsId: acc.id!)),
+                            MaterialPageRoute(
+                                builder: (_) =>
+                                    SavingsProfileScreen(savingsId: acc.id!)),
                           );
                         },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 14),
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppColors.white1,
+                            color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: Colors.grey.shade300),
                           ),
@@ -166,16 +190,28 @@ class _SavingsScreenState extends State<SavingsScreen> {
                             children: [
                               CircleAvatar(
                                 radius: 25,
-                                backgroundColor: AppColors.vibrantGold.withOpacity(0.15),
-                                child: const Icon(Icons.account_balance_rounded, color: AppColors.vibrantGold, size: 28),
+                                backgroundColor:
+                                    AppColors.vibrantGold.withOpacity(0.15),
+                                child: const Icon(Icons.account_balance_rounded,
+                                    color: AppColors.vibrantGold, size: 28),
                               ),
                               const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(acc.bankName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.black)),
-                                    Text('A/C: ${acc.accountNumber}', style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                                    Text(acc.bankName,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge
+                                                    ?.color ??
+                                                AppColors.black)),
+                                    Text('A/C: ${acc.accountNumber}',
+                                        style: const TextStyle(
+                                            fontSize: 14, color: Colors.grey)),
                                   ],
                                 ),
                               ),
@@ -183,11 +219,16 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    CurrencyFormatter.formatSimple(acc.balance, sym),
-                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.brown),
+                                    CurrencyFormatter.formatSimple(
+                                        acc.balance, sym),
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.brown),
                                   ),
                                   const SizedBox(height: 4),
-                                  const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                                  const Icon(Icons.arrow_forward_ios,
+                                      size: 14, color: Colors.grey),
                                 ],
                               ),
                             ],

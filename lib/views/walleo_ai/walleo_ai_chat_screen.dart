@@ -55,7 +55,8 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
               // Wait until user stops speaking to send
             }
           },
-          localeId: 'bn_BD', // Try to support Bengali explicitly if available, or default
+          localeId:
+              'bn_BD', // Try to support Bengali explicitly if available, or default
         );
       }
     } else {
@@ -72,10 +73,12 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
 
     final text = _textController.text.trim();
     _textController.clear();
-    
-    final financeProvider = Provider.of<FinanceProvider>(context, listen: false);
-    Provider.of<AIProvider>(context, listen: false).sendMessage(text, financeProvider);
-    
+
+    final financeProvider =
+        Provider.of<FinanceProvider>(context, listen: false);
+    Provider.of<AIProvider>(context, listen: false)
+        .sendMessage(text, financeProvider);
+
     Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
   }
 
@@ -90,11 +93,16 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
         elevation: 0,
         title: Row(
           children: [
-            Lottie.asset('assets/animations/mr_wallet.json', width: 40, height: 40, repeat: true),
+            Lottie.asset('assets/animations/mr_wallet.json',
+                width: 40, height: 40, repeat: true),
             const SizedBox(width: 8),
             const Text(
               'Walleo AI',
-              style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold, fontSize: 22),
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      AppColors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22),
             ),
           ],
         ),
@@ -108,11 +116,14 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Lottie.asset('assets/animations/balance.json', width: 60, height: 60),
+                  Lottie.asset('assets/animations/balance.json',
+                      width: 60, height: 60),
                   const SizedBox(width: 10),
                   AnimatedTextKit(
                     animatedTexts: [
-                      WavyAnimatedText('Thinking...', textStyle: const TextStyle(color: Colors.grey, fontSize: 16)),
+                      WavyAnimatedText('Thinking...',
+                          textStyle: const TextStyle(
+                              color: Colors.grey, fontSize: 16)),
                     ],
                     isRepeatingAnimation: true,
                   ),
@@ -130,29 +141,47 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                 final isUser = msg.isUser;
 
                 return Align(
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: isUser ? AppColors.black : AppColors.white1,
+                      color: isUser
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20).copyWith(
-                        bottomRight: isUser ? const Radius.circular(0) : const Radius.circular(20),
-                        bottomLeft: isUser ? const Radius.circular(20) : const Radius.circular(0),
+                        bottomRight: isUser
+                            ? const Radius.circular(0)
+                            : const Radius.circular(20),
+                        bottomLeft: isUser
+                            ? const Radius.circular(20)
+                            : const Radius.circular(0),
                       ),
-                      border: isUser ? null : Border.all(color: Colors.grey.shade300),
+                      border: isUser
+                          ? null
+                          : Border.all(color: Colors.grey.shade300),
                     ),
-                    constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.75),
                     child: isUser
                         ? Text(
                             msg.text,
-                            style: const TextStyle(color: Colors.white, fontSize: 15),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 15),
                           )
                         : AnimatedTextKit(
                             animatedTexts: [
                               TypewriterAnimatedText(
                                 msg.text,
-                                textStyle: const TextStyle(color: AppColors.black, fontSize: 15),
+                                textStyle: TextStyle(
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        AppColors.black,
+                                    fontSize: 15),
                                 speed: const Duration(milliseconds: 30),
                               ),
                             ],
@@ -164,14 +193,17 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
               },
             ),
           ),
-          
+
           // Input Area
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: AppColors.white,
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5))
               ],
             ),
             child: Row(
@@ -183,11 +215,16 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                     decoration: BoxDecoration(
                       color: _isListening ? AppColors.red : AppColors.white1,
                       shape: BoxShape.circle,
-                      border: Border.all(color: _isListening ? AppColors.red : Colors.grey.shade300),
+                      border: Border.all(
+                          color: _isListening
+                              ? AppColors.red
+                              : Colors.grey.shade300),
                     ),
                     child: Icon(
                       _isListening ? Icons.mic : Icons.mic_none,
-                      color: _isListening ? Colors.white : AppColors.black,
+                      color: _isListening
+                          ? Colors.white
+                          : Theme.of(context).iconTheme.color,
                     ),
                   ),
                 ),
@@ -196,12 +233,17 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                   child: TextField(
                     controller: _textController,
                     decoration: InputDecoration(
-                      hintText: _isListening ? 'Listening...' : 'Type or speak your request...',
+                      hintText: _isListening
+                          ? 'Listening...'
+                          : 'Type or speak your request...',
                       hintStyle: const TextStyle(color: Colors.grey),
                       filled: true,
                       fillColor: AppColors.white1,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 14),
                     ),
                     onSubmitted: (_) => _sendMessage(),
                   ),
@@ -212,10 +254,12 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: const BoxDecoration(
-                      color: AppColors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          AppColors.black,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.send, color: Colors.white, size: 20),
+                    child:
+                        const Icon(Icons.send, color: Colors.white, size: 20),
                   ),
                 ),
               ],

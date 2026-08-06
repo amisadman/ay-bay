@@ -49,7 +49,8 @@ class AIService {
 
     try {
       final url = Uri.parse(
-          'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey);
+          'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' +
+              apiKey);
 
       final systemContext = '''
 You are Walleo, an intelligent AI financial assistant for the app AyBay.
@@ -85,8 +86,11 @@ Instructions:
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final replyText = data['candidates']?[0]?['content']?['parts']?[0]?['text'] ??
-            (langCode == 'bn' ? 'দুঃখিত, কোনো উত্তর পাওয়া যায়নি।' : 'Sorry, no response generated.');
+        final replyText = data['candidates']?[0]?['content']?['parts']?[0]
+                ?['text'] ??
+            (langCode == 'bn'
+                ? 'দুঃখিত, কোনো উত্তর পাওয়া যায়নি।'
+                : 'Sorry, no response generated.');
 
         return AIServiceResponse(textResponse: replyText);
       } else {
@@ -105,18 +109,27 @@ Instructions:
     }
   }
 
-  static AIServiceResponse? _parseQuickAction(String promptLower, String rawPrompt) {
+  static AIServiceResponse? _parseQuickAction(
+      String promptLower, String rawPrompt) {
     final nowStr = DateTime.now().toIso8601String().split('T')[0];
 
     final numMatch = RegExp(r'(\d+(\.\d+)?)').firstMatch(promptLower);
     final amount = numMatch != null ? double.parse(numMatch.group(1)!) : 0.0;
 
-    if ((promptLower.contains('expense') || promptLower.contains('খরচ')) && amount > 0) {
-      String title = rawPrompt.replaceAll(RegExp(r'\d+'), '').replaceAll(RegExp(r'(add|expense|taka|bdt|খরচ|যোগ|করো|টাকা)'), '').trim();
+    if ((promptLower.contains('expense') || promptLower.contains('খরচ')) &&
+        amount > 0) {
+      String title = rawPrompt
+          .replaceAll(RegExp(r'\d+'), '')
+          .replaceAll(RegExp(r'(add|expense|taka|bdt|খরচ|যোগ|করো|টাকা)'), '')
+          .trim();
       if (title.isEmpty) title = 'Quick Expense';
 
       return AIServiceResponse(
-        textResponse: 'Expense of ৳' + amount.toString() + ' (' + title + ') recorded successfully!',
+        textResponse: 'Expense of ৳' +
+            amount.toString() +
+            ' (' +
+            title +
+            ') recorded successfully!',
         isActionExecuted: true,
         actionType: 'add_expense',
         actionData: {
@@ -131,12 +144,23 @@ Instructions:
       );
     }
 
-    if ((promptLower.contains('income') || promptLower.contains('আয়') || promptLower.contains('insert') || promptLower.contains('আয়')) && amount > 0) {
-      String title = rawPrompt.replaceAll(RegExp(r'\d+'), '').replaceAll(RegExp(r'(add|income|taka|bdt|আয়|আয়|যোগ|করো|টাকা)'), '').trim();
+    if ((promptLower.contains('income') ||
+            promptLower.contains('আয়') ||
+            promptLower.contains('insert') ||
+            promptLower.contains('আয়')) &&
+        amount > 0) {
+      String title = rawPrompt
+          .replaceAll(RegExp(r'\d+'), '')
+          .replaceAll(RegExp(r'(add|income|taka|bdt|আয়|আয়|যোগ|করো|টাকা)'), '')
+          .trim();
       if (title.isEmpty) title = 'Quick Income';
 
       return AIServiceResponse(
-        textResponse: 'Income of ৳' + amount.toString() + ' (' + title + ') recorded successfully!',
+        textResponse: 'Income of ৳' +
+            amount.toString() +
+            ' (' +
+            title +
+            ') recorded successfully!',
         isActionExecuted: true,
         actionType: 'add_income',
         actionData: {

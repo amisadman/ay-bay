@@ -28,7 +28,9 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
       final authProv = Provider.of<AuthProvider>(context, listen: false);
       final evProv = Provider.of<CloudEventProvider>(context, listen: false);
       // Generate a temporary UID if none exists (since we aren't enforcing Firebase Auth fully yet)
-      final uid = authProv.userName.toLowerCase().replaceAll(' ', '_'); // Just a fake UID for now
+      final uid = authProv.userName
+          .toLowerCase()
+          .replaceAll(' ', '_'); // Just a fake UID for now
       evProv.listenToMyEvents(uid);
     });
   }
@@ -42,24 +44,35 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
           title: const Text('Join Event'),
           content: TextField(
             controller: _joinCodeController,
-            decoration: const InputDecoration(labelText: 'Invite Code (e.g. A1B2C3)'),
+            decoration:
+                const InputDecoration(labelText: 'Invite Code (e.g. A1B2C3)'),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('CANCEL')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('CANCEL')),
             ElevatedButton(
               onPressed: () async {
-                final authProv = Provider.of<AuthProvider>(context, listen: false);
-                final evProv = Provider.of<CloudEventProvider>(context, listen: false);
-                final uid = authProv.userName.toLowerCase().replaceAll(' ', '_');
-                final success = await evProv.joinEvent(_joinCodeController.text.trim().toUpperCase(), uid);
+                final authProv =
+                    Provider.of<AuthProvider>(context, listen: false);
+                final evProv =
+                    Provider.of<CloudEventProvider>(context, listen: false);
+                final uid =
+                    authProv.userName.toLowerCase().replaceAll(' ', '_');
+                final success = await evProv.joinEvent(
+                    _joinCodeController.text.trim().toUpperCase(), uid);
                 if (mounted) {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(success ? 'Successfully joined event!' : 'Invalid code or event not found.'),
+                    content: Text(success
+                        ? 'Successfully joined event!'
+                        : 'Invalid code or event not found.'),
                   ));
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.green, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.green,
+                  foregroundColor: Colors.white),
               child: const Text('JOIN'),
             ),
           ],
@@ -79,31 +92,50 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(controller: _createTitleController, decoration: const InputDecoration(labelText: 'Event Title')),
-                TextField(controller: _createDescController, decoration: const InputDecoration(labelText: 'Description')),
-                TextField(controller: _createBudgetController, decoration: const InputDecoration(labelText: 'Total Budget'), keyboardType: TextInputType.number),
+                TextField(
+                    controller: _createTitleController,
+                    decoration:
+                        const InputDecoration(labelText: 'Event Title')),
+                TextField(
+                    controller: _createDescController,
+                    decoration:
+                        const InputDecoration(labelText: 'Description')),
+                TextField(
+                    controller: _createBudgetController,
+                    decoration:
+                        const InputDecoration(labelText: 'Total Budget'),
+                    keyboardType: TextInputType.number),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('CANCEL')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('CANCEL')),
             ElevatedButton(
               onPressed: () async {
-                final authProv = Provider.of<AuthProvider>(context, listen: false);
-                final evProv = Provider.of<CloudEventProvider>(context, listen: false);
-                final uid = authProv.userName.toLowerCase().replaceAll(' ', '_');
+                final authProv =
+                    Provider.of<AuthProvider>(context, listen: false);
+                final evProv =
+                    Provider.of<CloudEventProvider>(context, listen: false);
+                final uid =
+                    authProv.userName.toLowerCase().replaceAll(' ', '_');
                 final title = _createTitleController.text.trim();
                 final desc = _createDescController.text.trim();
-                final budget = double.tryParse(_createBudgetController.text.trim()) ?? 0.0;
+                final budget =
+                    double.tryParse(_createBudgetController.text.trim()) ?? 0.0;
                 if (title.isNotEmpty) {
                   await evProv.createEvent(title, desc, budget, uid);
                   if (mounted) {
                     Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Event Created!')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Event Created!')));
                   }
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.green, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.green,
+                  foregroundColor: Colors.white),
               child: const Text('CREATE'),
             ),
           ],
@@ -126,7 +158,9 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
         ),
       ),
       body: evProv.myEvents.isEmpty
-          ? const Center(child: Text('No events yet. Join or create one!', style: TextStyle(color: Colors.grey)))
+          ? const Center(
+              child: Text('No events yet. Join or create one!',
+                  style: TextStyle(color: Colors.grey)))
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: evProv.myEvents.length,
@@ -134,18 +168,26 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
                 final event = evProv.myEvents[index];
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(16),
                     leading: const CircleAvatar(
                       backgroundColor: AppColors.vibrantGold,
                       child: Icon(Icons.event, color: Colors.white),
                     ),
-                    title: Text(event.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                    subtitle: Text('${event.members.length} members • Code: ${event.inviteCode}'),
+                    title: Text(event.title,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    subtitle: Text(
+                        '${event.members.length} members • Code: ${event.inviteCode}'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => EventProfileScreen(event: event)));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  EventProfileScreen(event: event)));
                     },
                   ),
                 );

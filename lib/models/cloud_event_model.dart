@@ -77,7 +77,8 @@ class CloudEventExpenseModel {
     };
   }
 
-  factory CloudEventExpenseModel.fromMap(Map<String, dynamic> map, String docId) {
+  factory CloudEventExpenseModel.fromMap(
+      Map<String, dynamic> map, String docId) {
     return CloudEventExpenseModel(
       expenseId: docId,
       eventId: map['eventId'] ?? '',
@@ -87,7 +88,9 @@ class CloudEventExpenseModel {
       paidBy: map['paidBy'] ?? '',
       addedBy: map['addedBy'] ?? '',
       addedByName: map['addedByName'] ?? 'Unknown',
-      timestamp: map['timestamp'] != null ? DateTime.parse(map['timestamp']) : DateTime.now(),
+      timestamp: map['timestamp'] != null
+          ? DateTime.parse(map['timestamp'])
+          : DateTime.now(),
     );
   }
 }

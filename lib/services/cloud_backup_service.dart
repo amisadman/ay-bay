@@ -22,7 +22,7 @@ class GoogleAuthClient extends http.BaseClient {
 class CloudBackupMetadata {
   final String date;
   final String size;
-  
+
   CloudBackupMetadata({required this.date, required this.size});
 }
 
@@ -39,7 +39,7 @@ class CloudBackupService {
       return null;
     }
   }
-  
+
   static Future<GoogleSignInAccount?> signInSilently() async {
     try {
       return await _googleSignIn.signInSilently();
@@ -55,7 +55,7 @@ class CloudBackupService {
   static Future<drive.DriveApi?> _getDriveApi() async {
     final account = _googleSignIn.currentUser ?? await signInSilently();
     if (account == null) return null;
-    
+
     final authHeaders = await account.authHeaders;
     final client = GoogleAuthClient(authHeaders);
     return drive.DriveApi(client);
@@ -76,15 +76,18 @@ class CloudBackupService {
         final file = fileList.files!.first;
         final sizeBytes = int.tryParse(file.size ?? '0') ?? 0;
         final kb = sizeBytes / 1024;
-        String sizeStr = kb > 1024 ? '${(kb / 1024).toStringAsFixed(2)} MB' : '${kb.toStringAsFixed(2)} KB';
-        
+        String sizeStr = kb > 1024
+            ? '${(kb / 1024).toStringAsFixed(2)} MB'
+            : '${kb.toStringAsFixed(2)} KB';
+
         // Format date
         String dateStr = 'Unknown';
         if (file.modifiedTime != null) {
-           final localTime = file.modifiedTime!.toLocal();
-           dateStr = "${localTime.year}-${localTime.month.toString().padLeft(2, '0')}-${localTime.day.toString().padLeft(2, '0')} ${localTime.hour.toString().padLeft(2, '0')}:${localTime.minute.toString().padLeft(2, '0')}";
+          final localTime = file.modifiedTime!.toLocal();
+          dateStr =
+              "${localTime.year}-${localTime.month.toString().padLeft(2, '0')}-${localTime.day.toString().padLeft(2, '0')} ${localTime.hour.toString().padLeft(2, '0')}:${localTime.minute.toString().padLeft(2, '0')}";
         }
-        
+
         return CloudBackupMetadata(date: dateStr, size: sizeStr);
       }
     } catch (e) {
@@ -139,17 +142,18 @@ class CloudBackupService {
       );
 
       if (fileList.files == null || fileList.files!.isEmpty) return null;
-      
+
       final fileId = fileList.files!.first.id!;
-      final drive.Media media = await api.files.get(fileId, downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
-      
+      final drive.Media media = await api.files.get(fileId,
+          downloadOptions: drive.DownloadOptions.fullMedia) as drive.Media;
+
       final dir = Directory.systemTemp;
       final localFile = File('${dir.path}/aybay_cloud_backup.json');
-      
+
       final sink = localFile.openWrite();
       await media.stream.pipe(sink);
       await sink.close();
-      
+
       return localFile;
     } catch (e) {
       debugPrint('Error downloading backup: $e');
@@ -165,7 +169,7 @@ class CloudBackupService {
 
       final lastBackupStr = prefs.getString('last_auto_backup_date');
       final now = DateTime.now();
-      
+
       bool shouldBackup = false;
       if (lastBackupStr == null) {
         shouldBackup = true;
@@ -184,12 +188,13 @@ class CloudBackupService {
       if (shouldBackup) {
         final account = await signInSilently();
         if (account == null) return;
-        
+
         final localPath = await BackupService.createLocalBackup(isCloud: true);
         if (localPath != null) {
           final success = await uploadBackup(localPath);
           if (success) {
-            await prefs.setString('last_auto_backup_date', now.toIso8601String());
+            await prefs.setString(
+                'last_auto_backup_date', now.toIso8601String());
           }
         }
       }

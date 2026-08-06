@@ -46,7 +46,6 @@ class MrWalletMascot extends StatelessWidget {
           assetPath,
           height: height,
           fit: BoxFit.contain,
-          
         ),
         if (isPasswordFocused)
           Positioned(
@@ -64,7 +63,10 @@ class MrWalletMascot extends StatelessWidget {
                   SizedBox(width: 6),
                   Text(
                     '🙈 Eyes Covered!',
-                    style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

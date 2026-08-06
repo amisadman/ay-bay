@@ -27,18 +27,26 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
       builder: (ctx) {
         return AlertDialog(
           backgroundColor: Theme.of(context).cardColor,
-          title: const Text('Add Event Expense', style: TextStyle(color: AppColors.red, fontWeight: FontWeight.bold)),
+          title: const Text('Add Event Expense',
+              style:
+                  TextStyle(color: AppColors.red, fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: _descController,
-                decoration: InputDecoration(labelText: 'Description', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                decoration: InputDecoration(
+                    labelText: 'Description',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12))),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: _amountController,
-                decoration: InputDecoration(labelText: 'Amount Spent', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                decoration: InputDecoration(
+                    labelText: 'Amount Spent',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12))),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -49,13 +57,19 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.red, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.red,
+                  foregroundColor: Colors.white),
               onPressed: () async {
-                final authProv = Provider.of<AuthProvider>(context, listen: false);
-                final evProv = Provider.of<CloudEventProvider>(context, listen: false);
-                final uid = authProv.userName.toLowerCase().replaceAll(' ', '_');
-                final amount = double.tryParse(_amountController.text.trim()) ?? 0.0;
-                
+                final authProv =
+                    Provider.of<AuthProvider>(context, listen: false);
+                final evProv =
+                    Provider.of<CloudEventProvider>(context, listen: false);
+                final uid =
+                    authProv.userName.toLowerCase().replaceAll(' ', '_');
+                final amount =
+                    double.tryParse(_amountController.text.trim()) ?? 0.0;
+
                 if (amount > 0 && _descController.text.isNotEmpty) {
                   final expense = CloudEventExpenseModel(
                     expenseId: '',
@@ -91,7 +105,9 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
       builder: (ctx) {
         return AlertDialog(
           backgroundColor: Theme.of(context).cardColor,
-          title: const Text('Add Balance to Event', style: TextStyle(color: AppColors.green, fontWeight: FontWeight.bold)),
+          title: const Text('Add Balance to Event',
+              style: TextStyle(
+                  color: AppColors.green, fontWeight: FontWeight.bold)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -99,7 +115,10 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
               const SizedBox(height: 12),
               TextField(
                 controller: balanceCtrl,
-                decoration: InputDecoration(labelText: 'Amount to Add', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+                decoration: InputDecoration(
+                    labelText: 'Amount to Add',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12))),
                 keyboardType: TextInputType.number,
               ),
             ],
@@ -110,15 +129,20 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.green, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.green,
+                  foregroundColor: Colors.white),
               onPressed: () async {
-                final evProv = Provider.of<CloudEventProvider>(context, listen: false);
+                final evProv =
+                    Provider.of<CloudEventProvider>(context, listen: false);
                 final amount = double.tryParse(balanceCtrl.text.trim()) ?? 0.0;
                 if (amount > 0) {
-                  await evProv.updateEventBudget(widget.event.eventId, currentBudget + amount);
+                  await evProv.updateEventBudget(
+                      widget.event.eventId, currentBudget + amount);
                   if (mounted) {
                     Navigator.pop(ctx);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Balance Added!')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Balance Added!')));
                   }
                 }
               },
@@ -145,28 +169,33 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(widget.event.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+        title: Text(widget.event.title,
+            style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22)),
       ),
       body: StreamBuilder<List<CloudEventExpenseModel>>(
         stream: evProv.streamEventExpenses(widget.event.eventId),
         builder: (context, snapshot) {
           double totalSpent = 0.0;
           List<CloudEventExpenseModel> expenses = [];
-          
+
           if (snapshot.hasData) {
             expenses = snapshot.data!;
             totalSpent = expenses.fold(0.0, (sum, item) => sum + item.amount);
           }
-          
-          // Note: Because we don't have real-time sync for the event metadata itself in this view (it relies on the passed widget.event), 
+
+          // Note: Because we don't have real-time sync for the event metadata itself in this view (it relies on the passed widget.event),
           // we fetch the most up to date event from the provider.
           final updatedEvent = evProv.myEvents.firstWhere(
-            (e) => e.eventId == widget.event.eventId, 
-            orElse: () => widget.event
-          );
+              (e) => e.eventId == widget.event.eventId,
+              orElse: () => widget.event);
 
           final remainingBalance = updatedEvent.budget - totalSpent;
-          final progress = updatedEvent.budget > 0 ? (totalSpent / updatedEvent.budget).clamp(0.0, 1.0) : 0.0;
+          final progress = updatedEvent.budget > 0
+              ? (totalSpent / updatedEvent.budget).clamp(0.0, 1.0)
+              : 0.0;
 
           return Column(
             children: [
@@ -175,7 +204,7 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                 margin: const EdgeInsets.all(16),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.white1,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.grey.shade300),
                 ),
@@ -188,38 +217,56 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Remaining Balance', style: TextStyle(fontSize: 16, color: Colors.grey.shade700)),
+                            Text('Remaining Balance',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.grey.shade700)),
                             const SizedBox(height: 4),
                             Text(
-                              CurrencyFormatter.formatSimple(remainingBalance, sym),
+                              CurrencyFormatter.formatSimple(
+                                  remainingBalance, sym),
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: remainingBalance < 0 ? AppColors.red : AppColors.green,
+                                color: remainingBalance < 0
+                                    ? AppColors.red
+                                    : AppColors.green,
                               ),
                             ),
                           ],
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(color: AppColors.brown.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
-                          child: Text('CODE: ${updatedEvent.inviteCode}', style: const TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                              color: AppColors.brown.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8)),
+                          child: Text('CODE: ${updatedEvent.inviteCode}',
+                              style: const TextStyle(
+                                  color: AppColors.brown,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5)),
                         )
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Text(updatedEvent.description, style: TextStyle(color: Colors.grey.shade700, fontSize: 14)),
+                    Text(updatedEvent.description,
+                        style: TextStyle(
+                            color: Colors.grey.shade700, fontSize: 14)),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'Spent: ${CurrencyFormatter.formatSimple(totalSpent, sym)}',
-                          style: const TextStyle(fontSize: 14, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                         Text(
                           'Budget: ${CurrencyFormatter.formatSimple(updatedEvent.budget, sym)}',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.brown),
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.brown),
                         ),
                       ],
                     ),
@@ -241,16 +288,23 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Shared Ledger', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.brown)),
+                    const Text('Shared Ledger',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.brown)),
                     Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.add_circle, color: AppColors.green),
+                          icon: const Icon(Icons.add_circle,
+                              color: AppColors.green),
                           tooltip: 'Add Balance to Budget',
-                          onPressed: () => _showAddBalanceDialog(updatedEvent.budget),
+                          onPressed: () =>
+                              _showAddBalanceDialog(updatedEvent.budget),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.picture_as_pdf, color: AppColors.red),
+                          icon: const Icon(Icons.picture_as_pdf,
+                              color: AppColors.red),
                           tooltip: 'Export PDF',
                           onPressed: () async {
                             if (mounted) {
@@ -264,7 +318,8 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                           },
                         ),
                         IconButton(
-                          icon: const Icon(Icons.table_chart, color: AppColors.green),
+                          icon: const Icon(Icons.table_chart,
+                              color: AppColors.green),
                           tooltip: 'Export Excel',
                           onPressed: () async {
                             if (mounted) {
@@ -289,7 +344,9 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                 child: snapshot.connectionState == ConnectionState.waiting
                     ? const Center(child: CircularProgressIndicator())
                     : expenses.isEmpty
-                        ? const Center(child: Text('No expenses logged yet.', style: TextStyle(color: Colors.grey)))
+                        ? const Center(
+                            child: Text('No expenses logged yet.',
+                                style: TextStyle(color: Colors.grey)))
                         : ListView.builder(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             itemCount: expenses.length,
@@ -297,7 +354,7 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                               final exp = expenses[index];
                               return Card(
                                 margin: const EdgeInsets.only(bottom: 12),
-                                color: AppColors.white1,
+                                color: Theme.of(context).cardColor,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
@@ -308,24 +365,45 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                                   child: Row(
                                     children: [
                                       CircleAvatar(
-                                        backgroundColor: AppColors.red.withOpacity(0.1),
-                                        child: const Icon(Icons.receipt, color: AppColors.red),
+                                        backgroundColor:
+                                            AppColors.red.withOpacity(0.1),
+                                        child: const Icon(Icons.receipt,
+                                            color: AppColors.red),
                                       ),
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text(exp.description, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.black)),
+                                            Text(exp.description,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyLarge
+                                                            ?.color ??
+                                                        AppColors.black)),
                                             const SizedBox(height: 4),
-                                            Text('Added by ${exp.addedByName}', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                            Text('${exp.timestamp.day}/${exp.timestamp.month}/${exp.timestamp.year} ${exp.timestamp.hour}:${exp.timestamp.minute.toString().padLeft(2, '0')}', style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                                            Text('Added by ${exp.addedByName}',
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey)),
+                                            Text(
+                                                '${exp.timestamp.day}/${exp.timestamp.month}/${exp.timestamp.year} ${exp.timestamp.hour}:${exp.timestamp.minute.toString().padLeft(2, '0')}',
+                                                style: const TextStyle(
+                                                    fontSize: 10,
+                                                    color: Colors.grey)),
                                           ],
                                         ),
                                       ),
                                       Text(
                                         '- ${CurrencyFormatter.formatSimple(exp.amount, sym)}',
-                                        style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.red, fontSize: 16),
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.red,
+                                            fontSize: 16),
                                       ),
                                     ],
                                   ),
