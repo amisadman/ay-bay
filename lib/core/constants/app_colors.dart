@@ -22,10 +22,11 @@ class AppColors {
   static const Color deepTeal = Color(0xFF00897B);
   static const Color expenseRed = red;
   static const Color loanOrange = Color(0xFFF57C00);
+  static const Color orange = loanOrange;
   static const Color owePurple = purple;
 
   static const Color lightBg = white;
-  static const Color lightSurface = white1;
+  static const Color lightSurface = white;
   static const Color lightTextPrimary = black;
   static const Color lightTextSecondary = Colors.grey;
 
