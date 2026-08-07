@@ -56,4 +56,32 @@ class LoanModel {
       createdAt: map['createdAt'] as String,
     );
   }
+
+  LoanModel copyWith({
+    int? id,
+    String? personName,
+    String? phoneNumber,
+    double? amount,
+    double? amountPaid,
+    String? type,
+    String? dueDate,
+    String? status,
+    String? installments,
+    String? note,
+    String? createdAt,
+  }) {
+    return LoanModel(
+      id: id ?? this.id,
+      personName: personName ?? this.personName,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      amount: amount ?? this.amount,
+      amountPaid: amountPaid ?? this.amountPaid,
+      type: type ?? this.type,
+      dueDate: dueDate ?? this.dueDate,
+      status: status ?? this.status,
+      installments: installments ?? this.installments,
+      note: note ?? this.note,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
