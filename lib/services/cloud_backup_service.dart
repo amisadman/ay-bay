@@ -115,14 +115,15 @@ class CloudBackupService {
       }
 
       final media = drive.Media(localFile.openRead(), localFile.lengthSync());
-      final driveFile = drive.File()
-        ..name = 'aybay_backup.json'
-        ..parents = ['appDataFolder'];
-
       if (fileId != null) {
-        await api.files.update(driveFile, fileId, uploadMedia: media);
+        // Do not pass parents when updating a file
+        final updateFile = drive.File()..name = 'aybay_backup.json';
+        await api.files.update(updateFile, fileId, uploadMedia: media);
       } else {
-        await api.files.create(driveFile, uploadMedia: media);
+        final createFile = drive.File()
+          ..name = 'aybay_backup.json'
+          ..parents = ['appDataFolder'];
+        await api.files.create(createFile, uploadMedia: media);
       }
       return true;
     } catch (e) {
