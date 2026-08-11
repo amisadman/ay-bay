@@ -7,6 +7,8 @@ class AuthProvider extends ChangeNotifier {
   bool _isPinEnabled = true;
   bool _isBiometricEnabled = false;
   bool _hasSetup = false;
+  bool _isHomeOwnerMode = false;
+  bool _isShopOwnerMode = false;
   String _currentPin = '1234';
   String _userName = 'AyBay User';
   String? _profileImagePath;
@@ -14,6 +16,8 @@ class AuthProvider extends ChangeNotifier {
   bool get isPinEnabled => _isPinEnabled;
   bool get isBiometricEnabled => _isBiometricEnabled;
   bool get hasSetup => _hasSetup;
+  bool get isHomeOwnerMode => _isHomeOwnerMode;
+  bool get isShopOwnerMode => _isShopOwnerMode;
   String get currentPin => _currentPin;
   String get userName => _userName;
   String? get profileImagePath => _profileImagePath;
@@ -30,6 +34,8 @@ class AuthProvider extends ChangeNotifier {
     _isPinEnabled = prefs.getBool('is_pin_enabled') ?? true;
     _isBiometricEnabled = prefs.getBool('is_biometric_enabled') ?? false;
     _hasSetup = prefs.getBool('has_setup') ?? false;
+    _isHomeOwnerMode = prefs.getBool('is_home_owner_mode') ?? false;
+    _isShopOwnerMode = prefs.getBool('is_shop_owner_mode') ?? false;
     _currentPin = prefs.getString('user_pin') ?? '1234';
     _userName = prefs.getString('user_name') ?? 'AyBay User';
     _profileImagePath = prefs.getString('profile_image_path');
@@ -47,6 +53,20 @@ class AuthProvider extends ChangeNotifier {
     _isBiometricEnabled = enabled;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('is_biometric_enabled', enabled);
+    notifyListeners();
+  }
+
+  Future<void> toggleHomeOwnerMode(bool enabled) async {
+    _isHomeOwnerMode = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_home_owner_mode', enabled);
+    notifyListeners();
+  }
+
+  Future<void> toggleShopOwnerMode(bool enabled) async {
+    _isShopOwnerMode = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_shop_owner_mode', enabled);
     notifyListeners();
   }
 
