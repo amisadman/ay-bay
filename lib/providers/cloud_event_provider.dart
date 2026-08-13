@@ -46,13 +46,13 @@ class CloudEventProvider extends ChangeNotifier {
     return docRef.id;
   }
 
-  Future<bool> joinEvent(String inviteCode, String uid) async {
+  Future<String> joinEvent(String inviteCode, String uid) async {
     final query = await _firestore
         .collection('events')
         .where('inviteCode', isEqualTo: inviteCode)
         .get();
     if (query.docs.isEmpty) {
-      return false; // Code not found
+      return 'not_found';
     }
     final doc = query.docs.first;
     final event = CloudEventModel.fromMap(doc.data(), doc.id);
@@ -63,8 +63,10 @@ class CloudEventProvider extends ChangeNotifier {
           .collection('events')
           .doc(event.eventId)
           .update({'members': updatedMembers});
+      return 'success';
+    } else {
+      return 'already_joined';
     }
-    return true;
   }
 
   Stream<List<CloudEventExpenseModel>> streamEventExpenses(String eventId) {
@@ -93,5 +95,47 @@ class CloudEventProvider extends ChangeNotifier {
         .collection('events')
         .doc(eventId)
         .update({'budget': newBudget});
+  }
+
+  Future<void> updateEventTitle(String eventId, String newTitle) async {
+    await _firestore
+        .collection('events')
+        .doc(eventId)
+        .update({'title': newTitle});
+  }
+
+  Future<void> updateExpense(String eventId, String expenseId, String newTitle, double newAmount) async {
+    await _firestore
+        .collection('events')
+        .doc(eventId)
+        .collection('expenses')
+        .doc(expenseId)
+        .update({
+      'description': newTitle,
+      'amount': newAmount,
+    });
+  }
+
+  Future<void> deleteExpense(String eventId, String expenseId) async {
+    await _firestore
+        .collection('events')
+        .doc(eventId)
+        .collection('expenses')
+        .doc(expenseId)
+        .delete();
+  }
+
+  Future<void> unjoinEvent(String eventId, String uid) async {
+    final docRef = _firestore.collection('events').doc(eventId);
+    final doc = await docRef.get();
+    if (doc.exists) {
+      final event = CloudEventModel.fromMap(doc.data()!, doc.id);
+      final updatedMembers = List<String>.from(event.members)..remove(uid);
+      await docRef.update({'members': updatedMembers});
+    }
+  }
+
+  Future<void> deleteEvent(String eventId) async {
+    await _firestore.collection('events').doc(eventId).delete();
   }
 }
