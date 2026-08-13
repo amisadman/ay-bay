@@ -279,6 +279,90 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateLoanInstallment(int loanId, int installmentIndex, double newAmount, String newDate) async {
+    final idx = _loans.indexWhere((l) => l.id == loanId);
+    if (idx != -1) {
+      final loan = _loans[idx];
+      List<dynamic> parsedInstallments = [];
+      try {
+        parsedInstallments = jsonDecode(loan.installments);
+      } catch (e) {}
+
+      if (installmentIndex >= 0 && installmentIndex < parsedInstallments.length) {
+        final oldAmount = (parsedInstallments[installmentIndex]['amount'] as num?)?.toDouble() ?? 0.0;
+        
+        parsedInstallments[installmentIndex]['amount'] = newAmount;
+        parsedInstallments[installmentIndex]['date'] = newDate;
+
+        final amountDifference = newAmount - oldAmount;
+        final newAmountPaid = loan.amountPaid + amountDifference;
+        
+        String newStatus = loan.status;
+        if (newAmountPaid >= loan.amount) {
+          newStatus = 'settled';
+        } else if (newStatus == 'settled' && newAmountPaid < loan.amount) {
+          newStatus = 'active';
+        }
+
+        final updatedLoan = LoanModel(
+          id: loan.id,
+          personName: loan.personName,
+          phoneNumber: loan.phoneNumber,
+          amount: loan.amount,
+          amountPaid: newAmountPaid < 0 ? 0 : newAmountPaid,
+          type: loan.type,
+          dueDate: loan.dueDate,
+          status: newStatus,
+          installments: jsonEncode(parsedInstallments),
+          note: loan.note,
+          createdAt: loan.createdAt,
+        );
+
+        await DatabaseHelper.instance.updateLoan(updatedLoan);
+        await fetchData();
+      }
+    }
+  }
+
+  Future<void> deleteLoanInstallment(int loanId, int installmentIndex) async {
+    final idx = _loans.indexWhere((l) => l.id == loanId);
+    if (idx != -1) {
+      final loan = _loans[idx];
+      List<dynamic> parsedInstallments = [];
+      try {
+        parsedInstallments = jsonDecode(loan.installments);
+      } catch (e) {}
+
+      if (installmentIndex >= 0 && installmentIndex < parsedInstallments.length) {
+        final removed = parsedInstallments.removeAt(installmentIndex);
+        final amountRemoved = (removed['amount'] as num?)?.toDouble() ?? 0.0;
+        
+        final newAmountPaid = loan.amountPaid - amountRemoved;
+        String newStatus = loan.status;
+        if (newStatus == 'settled' && newAmountPaid < loan.amount) {
+          newStatus = 'active';
+        }
+
+        final updatedLoan = LoanModel(
+          id: loan.id,
+          personName: loan.personName,
+          phoneNumber: loan.phoneNumber,
+          amount: loan.amount,
+          amountPaid: newAmountPaid < 0 ? 0 : newAmountPaid,
+          type: loan.type,
+          dueDate: loan.dueDate,
+          status: newStatus,
+          installments: jsonEncode(parsedInstallments),
+          note: loan.note,
+          createdAt: loan.createdAt,
+        );
+
+        await DatabaseHelper.instance.updateLoan(updatedLoan);
+        await fetchData();
+      }
+    }
+  }
+
   Future<void> completeLoan(int loanId) async {
     final idx = _loans.indexWhere((l) => l.id == loanId);
     if (idx != -1) {
@@ -411,6 +495,87 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateSavingsTransaction(int savingsId, int transactionIndex, double newAmount, String newDate) async {
+    final idx = _savings.indexWhere((s) => s.id == savingsId);
+    if (idx != -1) {
+      final acc = _savings[idx];
+      List<dynamic> parsedTransactions = [];
+      try {
+        parsedTransactions = jsonDecode(acc.transactions);
+      } catch (e) {}
+
+      if (transactionIndex >= 0 && transactionIndex < parsedTransactions.length) {
+        final oldAmount = (parsedTransactions[transactionIndex]['amount'] as num?)?.toDouble() ?? 0.0;
+        final type = parsedTransactions[transactionIndex]['type'] as String? ?? 'add';
+        
+        parsedTransactions[transactionIndex]['amount'] = newAmount;
+        parsedTransactions[transactionIndex]['date'] = newDate;
+
+        double newBalance = acc.balance;
+        final amountDifference = newAmount - oldAmount;
+        
+        if (type == 'add') {
+          newBalance += amountDifference;
+        } else if (type == 'retrieve') {
+          newBalance -= amountDifference;
+        }
+
+        if (newBalance < 0) newBalance = 0;
+
+        final updatedAcc = SavingsModel(
+          id: acc.id,
+          bankName: acc.bankName,
+          accountNumber: acc.accountNumber,
+          branchAddress: acc.branchAddress,
+          balance: newBalance,
+          transactions: jsonEncode(parsedTransactions),
+          createdAt: acc.createdAt,
+        );
+
+        await DatabaseHelper.instance.updateSavings(updatedAcc);
+        await fetchData();
+      }
+    }
+  }
+
+  Future<void> deleteSavingsTransaction(int savingsId, int transactionIndex) async {
+    final idx = _savings.indexWhere((s) => s.id == savingsId);
+    if (idx != -1) {
+      final acc = _savings[idx];
+      List<dynamic> parsedTransactions = [];
+      try {
+        parsedTransactions = jsonDecode(acc.transactions);
+      } catch (e) {}
+
+      if (transactionIndex >= 0 && transactionIndex < parsedTransactions.length) {
+        final removed = parsedTransactions.removeAt(transactionIndex);
+        final amountRemoved = (removed['amount'] as num?)?.toDouble() ?? 0.0;
+        final typeRemoved = removed['type'] as String? ?? 'add';
+
+        double newBalance = acc.balance;
+        if (typeRemoved == 'add') {
+          newBalance -= amountRemoved;
+          if (newBalance < 0) newBalance = 0;
+        } else if (typeRemoved == 'retrieve') {
+          newBalance += amountRemoved;
+        }
+
+        final updatedAcc = SavingsModel(
+          id: acc.id,
+          bankName: acc.bankName,
+          accountNumber: acc.accountNumber,
+          branchAddress: acc.branchAddress,
+          balance: newBalance,
+          transactions: jsonEncode(parsedTransactions),
+          createdAt: acc.createdAt,
+        );
+
+        await DatabaseHelper.instance.updateSavings(updatedAcc);
+        await fetchData();
+      }
+    }
+  }
+
   // --- Budget Operations ---
   Future<void> addBudgetMonth(BudgetModel budget) async {
     await DatabaseHelper.instance.insertBudget(budget);
@@ -443,6 +608,54 @@ class FinanceProvider extends ChangeNotifier {
         'amount': amount,
         'spent': 0.0,
       });
+
+      final updated = BudgetModel(
+        id: b.id,
+        monthYear: b.monthYear,
+        budgets: jsonEncode(parsed),
+        createdAt: b.createdAt,
+      );
+      await DatabaseHelper.instance.updateBudget(updated);
+      await fetchData();
+    }
+  }
+
+  Future<void> updateBudgetCategory(int budgetId, String catId, String newName, double newAmount) async {
+    final idx = _budgets.indexWhere((b) => b.id == budgetId);
+    if (idx != -1) {
+      final b = _budgets[idx];
+      List<dynamic> parsed = [];
+      try {
+        parsed = jsonDecode(b.budgets);
+      } catch (e) {}
+
+      final catIndex = parsed.indexWhere((item) => item['id'] == catId);
+      if (catIndex != -1) {
+        parsed[catIndex]['category'] = newName;
+        parsed[catIndex]['amount'] = newAmount;
+
+        final updated = BudgetModel(
+          id: b.id,
+          monthYear: b.monthYear,
+          budgets: jsonEncode(parsed),
+          createdAt: b.createdAt,
+        );
+        await DatabaseHelper.instance.updateBudget(updated);
+        await fetchData();
+      }
+    }
+  }
+
+  Future<void> deleteBudgetCategory(int budgetId, String catId) async {
+    final idx = _budgets.indexWhere((b) => b.id == budgetId);
+    if (idx != -1) {
+      final b = _budgets[idx];
+      List<dynamic> parsed = [];
+      try {
+        parsed = jsonDecode(b.budgets);
+      } catch (e) {}
+
+      parsed.removeWhere((item) => item['id'] == catId);
 
       final updated = BudgetModel(
         id: b.id,
