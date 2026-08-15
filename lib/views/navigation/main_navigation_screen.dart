@@ -31,18 +31,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
+      body: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: IndexedStack(
+          index: _currentIndex,
+          children: _pages,
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: AppColors.green,
-        unselectedItemColor: AppColors.brown,
-        backgroundColor: AppColors.white,
+        unselectedItemColor: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.brown,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 10,
         type: BottomNavigationBarType.fixed,
         onTap: (index) {
+          FocusManager.instance.primaryFocus?.unfocus();
           setState(() {
             _currentIndex = index;
           });
