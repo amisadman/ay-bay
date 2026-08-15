@@ -8,6 +8,8 @@ import 'providers/finance_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/ai_provider.dart';
 import 'providers/cloud_event_provider.dart';
+import 'providers/home_owner_provider.dart';
+import 'providers/shop_owner_provider.dart';
 import 'views/splash/splash_screen.dart';
 
 import 'services/cloud_backup_service.dart';
@@ -34,6 +36,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => FinanceProvider()),
         ChangeNotifierProvider(create: (_) => AIProvider()),
         ChangeNotifierProvider(create: (_) => CloudEventProvider()),
+        ChangeNotifierProvider(create: (_) => HomeOwnerProvider()),
+        ChangeNotifierProvider(create: (_) => ShopOwnerProvider()),
       ],
       child: const AyBayApp(),
     ),
