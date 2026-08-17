@@ -6,6 +6,8 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:aybay_flutter/core/constants/app_colors.dart';
 import 'package:aybay_flutter/providers/ai_provider.dart';
 import 'package:aybay_flutter/providers/finance_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
 
 class WalleoAIChatScreen extends StatefulWidget {
   const WalleoAIChatScreen({super.key});
@@ -19,6 +21,8 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
   final ScrollController _scrollController = ScrollController();
   late stt.SpeechToText _speech;
   bool _isListening = false;
+  Uint8List? _selectedImageBytes;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -69,17 +73,65 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
   }
 
   void _sendMessage() {
-    if (_textController.text.trim().isEmpty) return;
+    if (_textController.text.trim().isEmpty && _selectedImageBytes == null) return;
 
     final text = _textController.text.trim();
     _textController.clear();
+    final imageBytes = _selectedImageBytes;
+    
+    setState(() {
+      _selectedImageBytes = null;
+    });
 
     final financeProvider =
         Provider.of<FinanceProvider>(context, listen: false);
     Provider.of<AIProvider>(context, listen: false)
-        .sendMessage(text, financeProvider);
+        .sendMessage(text, financeProvider, imageBytes: imageBytes);
 
     Future.delayed(const Duration(milliseconds: 100), _scrollToBottom);
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(source: source, maxWidth: 1024, maxHeight: 1024);
+      if (image != null) {
+        final bytes = await image.readAsBytes();
+        setState(() {
+          _selectedImageBytes = bytes;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  void _showAttachmentOptions() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take a photo'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from gallery'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -89,7 +141,7 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: Row(
           children: [
@@ -166,10 +218,22 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                     constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width * 0.75),
                     child: isUser
-                        ? Text(
-                            msg.text,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 15),
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              if (msg.imageBytes != null) ...[
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.memory(msg.imageBytes!, width: 200, fit: BoxFit.cover),
+                                ),
+                                const SizedBox(height: 8),
+                              ],
+                              Text(
+                                msg.text,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                            ],
                           )
                         : AnimatedTextKit(
                             animatedTexts: [
@@ -198,7 +262,7 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: Theme.of(context).cardColor,
               boxShadow: [
                 BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -206,61 +270,108 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                     offset: const Offset(0, -5))
               ],
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: _listen,
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: _isListening ? AppColors.red : AppColors.white1,
-                      shape: BoxShape.circle,
-                      border: Border.all(
+                if (_selectedImageBytes != null)
+                  Stack(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        height: 80,
+                        width: 80,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: DecorationImage(
+                            image: MemoryImage(_selectedImageBytes!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: -10,
+                        top: -10,
+                        child: IconButton(
+                          icon: const Icon(Icons.cancel, color: Colors.black54),
+                          onPressed: () {
+                            setState(() {
+                              _selectedImageBytes = null;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _showAttachmentOptions,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                        ),
+                        child: Icon(Icons.attach_file, color: Theme.of(context).iconTheme.color),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: _listen,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _isListening ? AppColors.red : Theme.of(context).scaffoldBackgroundColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: _isListening
+                                  ? AppColors.red
+                                  : Colors.grey.withOpacity(0.3)),
+                        ),
+                        child: Icon(
+                          _isListening ? Icons.mic : Icons.mic_none,
                           color: _isListening
-                              ? AppColors.red
-                              : Colors.grey.shade300),
+                              ? Colors.white
+                              : Theme.of(context).iconTheme.color,
+                        ),
+                      ),
                     ),
-                    child: Icon(
-                      _isListening ? Icons.mic : Icons.mic_none,
-                      color: _isListening
-                          ? Colors.white
-                          : Theme.of(context).iconTheme.color,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                          hintText: _isListening
+                              ? 'Listening...'
+                              : 'Type or speak your request...',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          filled: true,
+                          fillColor: Theme.of(context).scaffoldBackgroundColor,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 14),
+                        ),
+                        onSubmitted: (_) => _sendMessage(),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      hintText: _isListening
-                          ? 'Listening...'
-                          : 'Type or speak your request...',
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      filled: true,
-                      fillColor: AppColors.white1,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 14),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: _sendMessage,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              AppColors.black,
+                          shape: BoxShape.circle,
+                        ),
+                        child:
+                            const Icon(Icons.send, color: Colors.white, size: 20),
+                      ),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                GestureDetector(
-                  onTap: _sendMessage,
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).textTheme.bodyLarge?.color ??
-                          AppColors.black,
-                      shape: BoxShape.circle,
-                    ),
-                    child:
-                        const Icon(Icons.send, color: Colors.white, size: 20),
-                  ),
+                  ],
                 ),
               ],
             ),
