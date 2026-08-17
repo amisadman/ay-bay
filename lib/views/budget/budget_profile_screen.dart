@@ -122,6 +122,53 @@ class _BudgetProfileScreenState extends State<BudgetProfileScreen> {
     );
   }
 
+  void _showEditCategoryDialog(BuildContext context, FinanceProvider finProv,
+      String catId, String currentName, double currentAmount) {
+    final catCtrl = TextEditingController(text: currentName);
+    final amountCtrl = TextEditingController(text: currentAmount.toString());
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit Budget Category',
+            style:
+                TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+                controller: catCtrl,
+                decoration: const InputDecoration(
+                    labelText: 'Category Name')),
+            TextField(
+                controller: amountCtrl,
+                keyboardType: TextInputType.number,
+                decoration:
+                    const InputDecoration(labelText: 'Allocated Amount')),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.black,
+                foregroundColor: Colors.white),
+            onPressed: () {
+              final cat = catCtrl.text.trim();
+              final amt = double.tryParse(amountCtrl.text.trim()) ?? 0.0;
+              if (cat.isNotEmpty && amt > 0) {
+                finProv.updateBudgetCategory(widget.budgetId, catId, cat, amt);
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final finProv = Provider.of<FinanceProvider>(context);
@@ -161,12 +208,20 @@ class _BudgetProfileScreenState extends State<BudgetProfileScreen> {
                 fontWeight: FontWeight.bold,
                 fontSize: 22)),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.white),
-            onPressed: () {
-              finProv.deleteBudgetMonth(budget.id!);
-              Navigator.pop(context);
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onSelected: (val) async {
+              if (val == 'delete') {
+                await finProv.deleteBudgetMonth(budget.id!);
+                if (mounted) Navigator.pop(context);
+              }
             },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'delete',
+                child: Text('Delete Profile'),
+              )
+            ],
           )
         ],
       ),
@@ -283,9 +338,36 @@ class _BudgetProfileScreenState extends State<BudgetProfileScreen> {
                                           color: AppColors.green),
                                       onPressed: () =>
                                           finProv.adjustBudgetCategory(
-                                              budget.id!,
-                                              catId,
-                                              50.0), // Increment by 50
+                                              budget.id!, catId, 50.0),
+                                    ),
+                                    PopupMenuButton<String>(
+                                      icon: const Icon(Icons.more_vert, color: Colors.grey),
+                                      onSelected: (val) async {
+                                        if (val == 'log') {
+                                          _showLogExpenseDialog(
+                                              context, finProv, catId, catName);
+                                        } else if (val == 'delete') {
+                                          await finProv.deleteBudgetCategory(
+                                              widget.budgetId, catId);
+                                        } else if (val == 'edit') {
+                                          _showEditCategoryDialog(
+                                              context, finProv, catId, catName, amount);
+                                        }
+                                      },
+                                      itemBuilder: (context) => [
+                                        const PopupMenuItem(
+                                          value: 'log',
+                                          child: Text('Log Expense'),
+                                        ),
+                                        const PopupMenuItem(
+                                          value: 'edit',
+                                          child: Text('Edit Category'),
+                                        ),
+                                        const PopupMenuItem(
+                                          value: 'delete',
+                                          child: Text('Delete Category'),
+                                        )
+                                      ],
                                     ),
                                   ],
                                 )
