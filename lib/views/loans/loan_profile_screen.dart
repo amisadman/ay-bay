@@ -87,6 +87,110 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
             ));
   }
 
+  void _showEditProfileDialog(BuildContext context, FinanceProvider finProv, var loan) {
+    final amountCtrl = TextEditingController(text: loan.amount.toString());
+    final nameCtrl = TextEditingController(text: loan.personName);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit Profile',
+            style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameCtrl,
+              decoration: InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: amountCtrl,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Amount',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.black, foregroundColor: Colors.white),
+            onPressed: () async {
+              final newAmount = double.tryParse(amountCtrl.text.trim()) ?? 0.0;
+              final newName = nameCtrl.text.trim();
+              if (newAmount > 0 && newName.isNotEmpty) {
+                final updatedLoan = loan.copyWith(
+                  personName: newName,
+                  amount: newAmount,
+                );
+                await finProv.updateLoan(updatedLoan);
+                if (mounted) Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditInstallmentDialog(BuildContext context, FinanceProvider finProv, int originalIndex, double currentAmount, String currentDate) {
+    final amountCtrl = TextEditingController(text: currentAmount.toString());
+    final dateCtrl = TextEditingController(text: currentDate);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit Installment',
+            style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: amountCtrl,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Installment Amount',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: dateCtrl,
+              decoration: InputDecoration(
+                labelText: 'Date (YYYY-MM-DD)',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.black, foregroundColor: Colors.white),
+            onPressed: () async {
+              final newAmount = double.tryParse(amountCtrl.text.trim()) ?? 0.0;
+              final newDate = dateCtrl.text.trim();
+              if (newAmount > 0 && newDate.isNotEmpty) {
+                await finProv.updateLoanInstallment(widget.loanId, originalIndex, newAmount, newDate);
+                if (mounted) Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final finProv = Provider.of<FinanceProvider>(context);
@@ -131,6 +235,27 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
               icon: const Icon(Icons.phone, color: Colors.white),
               onPressed: () => _makeCall(loan.phoneNumber),
             ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onSelected: (val) async {
+              if (val == 'delete') {
+                await finProv.deleteLoan(loan);
+                if (mounted) Navigator.pop(context);
+              } else if (val == 'edit') {
+                _showEditProfileDialog(context, finProv, loan);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'edit',
+                child: Text('Edit Profile'),
+              ),
+              const PopupMenuItem(
+                value: 'delete',
+                child: Text('Delete Profile'),
+              )
+            ],
+          )
         ],
       ),
       body: Column(
@@ -307,12 +432,40 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
                             style:
                                 const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(date),
-                        trailing: Text(
-                            '+ ${CurrencyFormatter.formatSimple(amount, sym)}',
-                            style: const TextStyle(
-                                color: AppColors.green,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                                '+ ${CurrencyFormatter.formatSimple(amount, sym)}',
+                                style: const TextStyle(
+                                    color: AppColors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16)),
+                            PopupMenuButton<String>(
+                              icon: const Icon(Icons.more_vert, color: Colors.grey),
+                              onSelected: (val) async {
+                                if (val == 'delete') {
+                                  // The index in the reversed list maps to the original index
+                                  final originalIndex = installments.length - 1 - index;
+                                  await finProv.deleteLoanInstallment(widget.loanId, originalIndex);
+                                } else if (val == 'edit') {
+                                  final originalIndex = installments.length - 1 - index;
+                                  _showEditInstallmentDialog(context, finProv, originalIndex, amount, date);
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                  value: 'edit',
+                                  child: Text('Edit'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Text('Delete'),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
