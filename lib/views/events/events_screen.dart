@@ -62,14 +62,16 @@ class _EventsScreenState extends State<EventsScreen> {
                     Provider.of<CloudEventProvider>(context, listen: false);
                 final uid =
                     authProv.userName.toLowerCase().replaceAll(' ', '_');
-                final success = await evProv.joinEvent(
+                final result = await evProv.joinEvent(
                     _joinCodeController.text.trim().toUpperCase(), uid);
                 if (mounted) {
                   Navigator.pop(ctx);
+                  String message = 'Successfully joined event!';
+                  if (result == 'not_found') message = 'Invalid code or event not found.';
+                  if (result == 'already_joined') message = 'You are already a member of this event.';
+                  
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(success
-                        ? 'Successfully joined event!'
-                        : 'Invalid code or event not found.'),
+                    content: Text(message),
                   ));
                 }
               },
