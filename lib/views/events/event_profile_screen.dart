@@ -7,6 +7,7 @@ import 'package:aybay_flutter/providers/auth_provider.dart';
 import 'package:aybay_flutter/core/utils/currency_formatter.dart';
 import 'package:aybay_flutter/providers/theme_provider.dart';
 import 'package:aybay_flutter/services/export_service.dart';
+import 'package:flutter/services.dart';
 
 class EventProfileScreen extends StatefulWidget {
   final CloudEventModel event;
@@ -154,6 +155,97 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
     );
   }
 
+  void _showEditProfileDialog(CloudEventProvider evProv) {
+    final titleCtrl = TextEditingController(text: widget.event.title);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit Event Title',
+            style:
+                TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+        content: TextField(
+          controller: titleCtrl,
+          decoration: InputDecoration(
+              labelText: 'Title',
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.black,
+                foregroundColor: Colors.white),
+            onPressed: () async {
+              final newTitle = titleCtrl.text.trim();
+              if (newTitle.isNotEmpty) {
+                await evProv.updateEventTitle(widget.event.eventId, newTitle);
+                if (mounted) Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditExpenseDialog(
+      CloudEventProvider evProv, CloudEventExpenseModel exp) {
+    final titleCtrl = TextEditingController(text: exp.description);
+    final amountCtrl = TextEditingController(text: exp.amount.toString());
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit Expense',
+            style:
+                TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleCtrl,
+              decoration: InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12))),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: amountCtrl,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  labelText: 'Amount',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12))),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.black,
+                foregroundColor: Colors.white),
+            onPressed: () async {
+              final newAmount = double.tryParse(amountCtrl.text.trim()) ?? 0.0;
+              final newTitle = titleCtrl.text.trim();
+              if (newAmount > 0 && newTitle.isNotEmpty) {
+                await evProv.updateExpense(
+                    widget.event.eventId, exp.expenseId, newTitle, newAmount);
+                if (mounted) Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProv = Provider.of<ThemeProvider>(context);
@@ -174,6 +266,49 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 22)),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onSelected: (val) async {
+              final authProv =
+                  Provider.of<AuthProvider>(context, listen: false);
+              final uid = authProv.userName.toLowerCase().replaceAll(' ', '_');
+
+              if (val == 'leave') {
+                await evProv.unjoinEvent(widget.event.eventId, uid);
+                if (mounted) Navigator.pop(context);
+              } else if (val == 'delete') {
+                await evProv.deleteEvent(widget.event.eventId);
+                if (mounted) Navigator.pop(context);
+              } else if (val == 'edit') {
+                _showEditProfileDialog(evProv);
+              }
+            },
+            itemBuilder: (context) {
+              final authProv =
+                  Provider.of<AuthProvider>(context, listen: false);
+              final uid = authProv.userName.toLowerCase().replaceAll(' ', '_');
+              final isCreator = widget.event.createdBy == uid;
+
+              return [
+                if (isCreator)
+                  const PopupMenuItem(
+                    value: 'edit',
+                    child: Text('Edit Title'),
+                  ),
+                const PopupMenuItem(
+                  value: 'leave',
+                  child: Text('Leave Event Room'),
+                ),
+                if (isCreator)
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Text('Delete Event Room'),
+                  ),
+              ];
+            },
+          )
+        ],
       ),
       body: StreamBuilder<List<CloudEventExpenseModel>>(
         stream: evProv.streamEventExpenses(widget.event.eventId),
@@ -238,13 +373,30 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                              color: AppColors.brown.withOpacity(0.1),
+                              color: AppColors.brown.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8)),
-                          child: Text('CODE: ${updatedEvent.inviteCode}',
-                              style: const TextStyle(
-                                  color: AppColors.brown,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.5)),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text('${updatedEvent.inviteCode}',
+                                  style: const TextStyle(
+                                      color: AppColors.brown,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.5)),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  Clipboard.setData(ClipboardData(
+                                      text: updatedEvent.inviteCode));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Code copied!')));
+                                },
+                                child: const Icon(Icons.copy,
+                                    size: 16, color: AppColors.brown),
+                              ),
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -404,6 +556,29 @@ class _EventProfileScreenState extends State<EventProfileScreen> {
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.red,
                                             fontSize: 16),
+                                      ),
+                                      PopupMenuButton<String>(
+                                        icon: const Icon(Icons.more_vert,
+                                            color: Colors.grey),
+                                        onSelected: (val) async {
+                                          if (val == 'delete') {
+                                            await evProv.deleteExpense(
+                                                widget.event.eventId,
+                                                exp.expenseId);
+                                          } else if (val == 'edit') {
+                                            _showEditExpenseDialog(evProv, exp);
+                                          }
+                                        },
+                                        itemBuilder: (context) => [
+                                          const PopupMenuItem(
+                                            value: 'edit',
+                                            child: Text('Edit'),
+                                          ),
+                                          const PopupMenuItem(
+                                            value: 'delete',
+                                            child: Text('Delete'),
+                                          )
+                                        ],
                                       ),
                                     ],
                                   ),
