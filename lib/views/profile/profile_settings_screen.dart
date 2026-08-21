@@ -5,6 +5,7 @@ import 'package:aybay_flutter/providers/auth_provider.dart';
 import 'package:aybay_flutter/providers/theme_provider.dart';
 import 'package:aybay_flutter/providers/finance_provider.dart';
 import 'package:aybay_flutter/views/navigation/main_navigation_screen.dart';
+import 'package:aybay_flutter/services/update_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
@@ -396,6 +397,41 @@ class ProfileSettingsScreen extends StatelessWidget {
             value: themeProv.isDarkMode,
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (val) => themeProv.toggleTheme(val),
+          ),
+          
+          // Check for Updates
+          ListTile(
+            leading: Icon(Icons.system_update, color: Theme.of(context).colorScheme.primary),
+            title: const Text('Check for Updates'),
+            subtitle: const Text('Ensure you have the latest features'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => UpdateService.checkForUpdate(context, manualCheck: true),
+          ),
+
+          const Divider(color: Colors.grey),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text('Add-on Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.grey)),
+          ),
+          
+          // Home Owner Mode
+          SwitchListTile(
+            secondary: Icon(Icons.home_work, color: Theme.of(context).colorScheme.primary),
+            title: const Text('My Home (Home Owner)'),
+            subtitle: const Text('Manage apartments, boarders, and rent'),
+            value: authProv.isHomeOwnerMode,
+            activeColor: Theme.of(context).colorScheme.primary,
+            onChanged: (val) => authProv.toggleHomeOwnerMode(val),
+          ),
+
+          // Shop Owner Mode
+          SwitchListTile(
+            secondary: Icon(Icons.storefront, color: Theme.of(context).colorScheme.primary),
+            title: const Text('My Shop (Shop Owner)'),
+            subtitle: const Text('Manage inventory, sales, and POS'),
+            value: authProv.isShopOwnerMode,
+            activeColor: Theme.of(context).colorScheme.primary,
+            onChanged: (val) => authProv.toggleShopOwnerMode(val),
           ),
         ],
       ),
