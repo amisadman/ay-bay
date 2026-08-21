@@ -4,6 +4,7 @@ import 'package:aybay_flutter/core/constants/app_colors.dart';
 import 'package:aybay_flutter/providers/cloud_event_provider.dart';
 import 'package:aybay_flutter/providers/auth_provider.dart';
 import 'package:aybay_flutter/models/cloud_event_model.dart';
+import 'package:flutter/services.dart';
 
 import 'event_profile_screen.dart';
 
@@ -59,14 +60,16 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
                     Provider.of<CloudEventProvider>(context, listen: false);
                 final uid =
                     authProv.userName.toLowerCase().replaceAll(' ', '_');
-                final success = await evProv.joinEvent(
+                final result = await evProv.joinEvent(
                     _joinCodeController.text.trim().toUpperCase(), uid);
                 if (mounted) {
                   Navigator.pop(ctx);
+                  String message = 'Successfully joined event!';
+                  if (result == 'not_found') message = 'Invalid code or event not found.';
+                  if (result == 'already_joined') message = 'You are already a member of this event.';
+                  
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(success
-                        ? 'Successfully joined event!'
-                        : 'Invalid code or event not found.'),
+                    content: Text(message),
                   ));
                 }
               },
@@ -179,8 +182,18 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
                     title: Text(event.title,
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18)),
-                    subtitle: Text(
-                        '${event.members.length} members • Code: ${event.inviteCode}'),
+                    subtitle: Row(
+                      children: [
+                        Expanded(child: Text('${event.members.length} members • Code: ${event.inviteCode}')),
+                        IconButton(
+                          icon: const Icon(Icons.copy, size: 16, color: AppColors.brown),
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: event.inviteCode));
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Code copied!')));
+                          },
+                        ),
+                      ],
+                    ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.push(
