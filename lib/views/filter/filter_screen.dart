@@ -80,7 +80,7 @@ class _FilterScreenState extends State<FilterScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return Dialog(
-              backgroundColor: AppColors.white,
+              backgroundColor: Theme.of(context).dialogBackgroundColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24)),
               child: SingleChildScrollView(
@@ -177,6 +177,8 @@ class _FilterScreenState extends State<FilterScreen> {
                         child: DropdownButton<String>(
                           isExpanded: true,
                           value: selectedCategory,
+                          dropdownColor:
+                              Theme.of(context).dialogBackgroundColor,
                           icon: Icon(Icons.arrow_drop_down, color: themeColor),
                           items: categories
                               .map((cat) => DropdownMenuItem(
@@ -337,7 +339,8 @@ class _FilterScreenState extends State<FilterScreen> {
                     onChanged: (val) => setState(() => _query = val),
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
-                      labelText: 'Search...',
+                      filled: false,
+                      labelText: 'Search',
                       labelStyle: const TextStyle(color: Colors.white70),
                       prefixIcon: const Icon(Icons.search, color: Colors.white),
                       enabledBorder: OutlineInputBorder(
@@ -381,7 +384,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: AppColors.white,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
