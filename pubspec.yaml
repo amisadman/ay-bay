@@ -1,9 +1,9 @@
 name: aybay_flutter
 description: "AyBay - Income, Expense, Loan & Debt Manager with Walleo AI Agent"
-publish_to: 'none'
-version: 1.1.19
+publish_to: "none"
+version: 1.1.27
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -47,6 +47,7 @@ dependencies:
   connectivity_plus: ^6.1.0
   package_info_plus: ^8.0.0
   flutter_markdown: ^0.7.7+1
+  share_plus: ^12.0.2
 
 dev_dependencies:
   flutter_test:
@@ -66,4 +67,3 @@ flutter:
     - .env
     - assets/images/
     - assets/animations/
-
