@@ -20,15 +20,21 @@ Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proa
 
 - **Agentic AI (Walleo)**: Powered by Groq's lightning-fast Llama-3 models, Walleo understands conversational commands, logs transactions via JSON tool calling, and provides deep analytics on your spending habits.
 - **"Super-App" Modules**: Go beyond personal finance with dedicated hubs for:
+  - **Garage Management (Pro)**: Manage auto-repair jobs, vehicle statuses, inventory, and mechanic commissions with PDF invoice generation.
+  - **Gym Management (Pro)**: Track memberships, payment logs, trainer assignments, and automatically calculate active/expired member statuses.
   - **Shop Management**: POS, Inventory, Employee Management, and Daily Logs.
   - **Home & Apartment**: Track rent, tenants, and utility cycles.
   - **Donations**: Dedicated logging for your charitable contributions.
+- **Personal Finance Trackers**: Dedicated trackers with advanced, categorized logging for:
+  - **Car & Vehicles**: Track fuel, maintenance, insurance, and store digital documents in a vault.
+  - **Tuition**: Manage student fees, exam payments, and monthly fee cycles.
+  - **Subscriptions**: Stay on top of recurring Netflix, Spotify, or Gym bills with visual charts.
 - **Income & Expense Tracking**: Beautifully visualize your cash flow with interactive FL charts.
 - **Loans & Owes**: Keep track of money you've lent out or borrowed with partial installments.
 - **Advanced Budgeting**: Set monthly budgets per category and track your progress with live progress bars.
 - **Shared Event Management**: Planning a trip? Create cloud-synced events (via Firebase), add participants, pool shared budgets, and split expenses seamlessly.
 - **Export Data**: Generate professional PDF or Excel reports for your personal records or tax purposes.
-- **Offline First**: All your personal financial data is securely stored locally using SQLite. Only collaborative events touch the cloud.
+- **Offline First**: All your personal financial data is securely stored locally using SQLite. Only collaborative events and Pro modules touch the cloud.
 - **Clean Aesthetic**: A gorgeous, minimalist flat UI without unnecessary gradients, featuring fluid micro-animations (Lottie) and bottom-pinned layouts.
 
 ---
