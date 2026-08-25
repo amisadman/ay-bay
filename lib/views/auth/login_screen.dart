@@ -223,8 +223,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(width: 8),
                   Image.asset(
                     'assets/images/aybay-logo.png',
-                    width: 24,
-                    height: 24,
+                    width: 30,
+                    height: 30,
                     errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
                   ),
                 ],
