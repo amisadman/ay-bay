@@ -90,7 +90,7 @@ class AIProvider extends ChangeNotifier {
           'Authorization': 'Bearer $apiKey',
         },
         body: jsonEncode({
-          'model': 'llama-3.1-8b-instant',
+          'model': 'openai/gpt-oss-120b',
           'messages': _chatHistory,
           'tools': _getTools(),
           'tool_choice': 'auto',
@@ -129,9 +129,7 @@ class AIProvider extends ChangeNotifier {
               );
 
               await financeProvider.addTransaction(tx);
-              addMessage(ChatMessage(
-                  text: 'Action Successful: Added $note ($amount) to database.',
-                  isUser: false));
+
 
               toolResult = jsonEncode({
                 'status': 'Success',
