@@ -35,6 +35,7 @@ class AIProvider extends ChangeNotifier {
           'If the user provides an image of a receipt, bill, or ticket, gently remind them that your vision capabilities are temporarily offline, but they can type the amount manually.'
           'If a user asks about their spending, how to save money, what their month/year looks like, or any analytics question, you MUST call the analyze_spending tool to get their raw transaction data. '
           'When you receive the data from analyze_spending, you MUST look at the dates and categories, filter them according to the user\'s question, and provide a final text response with a personalized, detailed summary. '
+          'CRITICAL RULE: DO NOT use any emojis in your responses. DO NOT use markdown tables in your responses under any circumstances. '
           'Never hallucinate data. Only rely on the tool responses.'
     });
   }
