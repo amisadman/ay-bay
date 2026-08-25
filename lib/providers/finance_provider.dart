@@ -7,6 +7,8 @@ import '../models/loan_model.dart';
 import '../models/savings_model.dart';
 import '../models/budget_model.dart';
 import '../models/donation_model.dart';
+import '../models/car_model.dart';
+import '../models/tuition_model.dart';
 import '../services/database_helper.dart';
 
 enum FilterTimeFrame { all, today, thisMonth, thisYear, custom }
@@ -17,6 +19,8 @@ class FinanceProvider extends ChangeNotifier {
   List<SavingsModel> _savings = [];
   List<BudgetModel> _budgets = [];
   List<DonationModel> _donations = [];
+  List<CarModel> _cars = [];
+  List<TuitionModel> _tuitions = [];
 
   bool _isLoading = false;
   String _selectedCategory = 'all';
@@ -36,6 +40,8 @@ class FinanceProvider extends ChangeNotifier {
   List<SavingsModel> get savings => _savings;
   List<BudgetModel> get budgets => _budgets;
   List<DonationModel> get donations => _donations;
+  List<CarModel> get cars => _cars;
+  List<TuitionModel> get tuitions => _tuitions;
   bool get isLoading => _isLoading;
   String get selectedCategory => _selectedCategory;
   String get selectedType => _selectedType;
@@ -115,6 +121,8 @@ class FinanceProvider extends ChangeNotifier {
     _savings = await DatabaseHelper.instance.getAllSavings();
     _budgets = await DatabaseHelper.instance.getAllBudgets();
     _donations = await DatabaseHelper.instance.getDonations();
+    _cars = await DatabaseHelper.instance.getAllCars();
+    _tuitions = await DatabaseHelper.instance.getAllTuitions();
 
     _isLoading = false;
     notifyListeners();
@@ -279,7 +287,8 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateLoanInstallment(int loanId, int installmentIndex, double newAmount, String newDate) async {
+  Future<void> updateLoanInstallment(int loanId, int installmentIndex,
+      double newAmount, String newDate) async {
     final idx = _loans.indexWhere((l) => l.id == loanId);
     if (idx != -1) {
       final loan = _loans[idx];
@@ -288,15 +297,19 @@ class FinanceProvider extends ChangeNotifier {
         parsedInstallments = jsonDecode(loan.installments);
       } catch (e) {}
 
-      if (installmentIndex >= 0 && installmentIndex < parsedInstallments.length) {
-        final oldAmount = (parsedInstallments[installmentIndex]['amount'] as num?)?.toDouble() ?? 0.0;
-        
+      if (installmentIndex >= 0 &&
+          installmentIndex < parsedInstallments.length) {
+        final oldAmount =
+            (parsedInstallments[installmentIndex]['amount'] as num?)
+                    ?.toDouble() ??
+                0.0;
+
         parsedInstallments[installmentIndex]['amount'] = newAmount;
         parsedInstallments[installmentIndex]['date'] = newDate;
 
         final amountDifference = newAmount - oldAmount;
         final newAmountPaid = loan.amountPaid + amountDifference;
-        
+
         String newStatus = loan.status;
         if (newAmountPaid >= loan.amount) {
           newStatus = 'settled';
@@ -333,10 +346,11 @@ class FinanceProvider extends ChangeNotifier {
         parsedInstallments = jsonDecode(loan.installments);
       } catch (e) {}
 
-      if (installmentIndex >= 0 && installmentIndex < parsedInstallments.length) {
+      if (installmentIndex >= 0 &&
+          installmentIndex < parsedInstallments.length) {
         final removed = parsedInstallments.removeAt(installmentIndex);
         final amountRemoved = (removed['amount'] as num?)?.toDouble() ?? 0.0;
-        
+
         final newAmountPaid = loan.amountPaid - amountRemoved;
         String newStatus = loan.status;
         if (newStatus == 'settled' && newAmountPaid < loan.amount) {
@@ -495,7 +509,8 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateSavingsTransaction(int savingsId, int transactionIndex, double newAmount, String newDate) async {
+  Future<void> updateSavingsTransaction(int savingsId, int transactionIndex,
+      double newAmount, String newDate) async {
     final idx = _savings.indexWhere((s) => s.id == savingsId);
     if (idx != -1) {
       final acc = _savings[idx];
@@ -504,16 +519,21 @@ class FinanceProvider extends ChangeNotifier {
         parsedTransactions = jsonDecode(acc.transactions);
       } catch (e) {}
 
-      if (transactionIndex >= 0 && transactionIndex < parsedTransactions.length) {
-        final oldAmount = (parsedTransactions[transactionIndex]['amount'] as num?)?.toDouble() ?? 0.0;
-        final type = parsedTransactions[transactionIndex]['type'] as String? ?? 'add';
-        
+      if (transactionIndex >= 0 &&
+          transactionIndex < parsedTransactions.length) {
+        final oldAmount =
+            (parsedTransactions[transactionIndex]['amount'] as num?)
+                    ?.toDouble() ??
+                0.0;
+        final type =
+            parsedTransactions[transactionIndex]['type'] as String? ?? 'add';
+
         parsedTransactions[transactionIndex]['amount'] = newAmount;
         parsedTransactions[transactionIndex]['date'] = newDate;
 
         double newBalance = acc.balance;
         final amountDifference = newAmount - oldAmount;
-        
+
         if (type == 'add') {
           newBalance += amountDifference;
         } else if (type == 'retrieve') {
@@ -538,7 +558,8 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteSavingsTransaction(int savingsId, int transactionIndex) async {
+  Future<void> deleteSavingsTransaction(
+      int savingsId, int transactionIndex) async {
     final idx = _savings.indexWhere((s) => s.id == savingsId);
     if (idx != -1) {
       final acc = _savings[idx];
@@ -547,7 +568,8 @@ class FinanceProvider extends ChangeNotifier {
         parsedTransactions = jsonDecode(acc.transactions);
       } catch (e) {}
 
-      if (transactionIndex >= 0 && transactionIndex < parsedTransactions.length) {
+      if (transactionIndex >= 0 &&
+          transactionIndex < parsedTransactions.length) {
         final removed = parsedTransactions.removeAt(transactionIndex);
         final amountRemoved = (removed['amount'] as num?)?.toDouble() ?? 0.0;
         final typeRemoved = removed['type'] as String? ?? 'add';
@@ -620,7 +642,8 @@ class FinanceProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateBudgetCategory(int budgetId, String catId, String newName, double newAmount) async {
+  Future<void> updateBudgetCategory(
+      int budgetId, String catId, String newName, double newAmount) async {
     final idx = _budgets.indexWhere((b) => b.id == budgetId);
     if (idx != -1) {
       final b = _budgets[idx];
@@ -800,5 +823,204 @@ class FinanceProvider extends ChangeNotifier {
       createdAt: donation.createdAt,
     );
     await updateDonation(updated);
+  }
+
+  // --- Cars ---
+  Future<void> addCar(CarModel car) async {
+    await DatabaseHelper.instance.insertCar(car);
+    await fetchData();
+  }
+
+  Future<void> updateCar(CarModel car) async {
+    await DatabaseHelper.instance.updateCar(car);
+    await fetchData();
+  }
+
+  Future<void> deleteCar(int id) async {
+    await DatabaseHelper.instance.deleteCar(id);
+    await fetchData();
+  }
+
+  Future<void> addCarLog(int carId, Map<String, dynamic> logData,
+      {bool createGlobalTx = false}) async {
+    final idx = _cars.indexWhere((c) => c.id == carId);
+    if (idx != -1) {
+      final car = _cars[idx];
+      List<dynamic> parsed = [];
+      try {
+        parsed = jsonDecode(car.expenses);
+      } catch (e) {}
+      parsed.add(logData);
+      final updated = CarModel(
+          id: car.id,
+          carName: car.carName,
+          licensePlate: car.licensePlate,
+          expenses: jsonEncode(parsed),
+          createdAt: car.createdAt);
+      await DatabaseHelper.instance.updateCar(updated);
+
+      if (createGlobalTx && logData.containsKey('amount')) {
+        final amount = (logData['amount'] as num).toDouble();
+        final note = logData['note'] ?? logData['type'] ?? 'Car Expense';
+        final tx = TransactionModel(
+            title: 'Car Expense: ${car.carName} - $note',
+            amount: amount,
+            type: 'expense',
+            category: 'Car',
+            date: logData['date'] ??
+                DateTime.now().toIso8601String().split('T')[0],
+            createdAt: DateTime.now().toIso8601String());
+        await DatabaseHelper.instance.insertTransaction(tx);
+      }
+      await fetchData();
+    }
+  }
+
+  Future<void> updateCarLog(
+      int carId, int logIndex, Map<String, dynamic> logData) async {
+    final idx = _cars.indexWhere((c) => c.id == carId);
+    if (idx != -1) {
+      final car = _cars[idx];
+      List<dynamic> parsed = [];
+      try {
+        parsed = jsonDecode(car.expenses);
+      } catch (e) {}
+      if (logIndex >= 0 && logIndex < parsed.length) {
+        parsed[logIndex] = logData;
+        final updated = CarModel(
+            id: car.id,
+            carName: car.carName,
+            licensePlate: car.licensePlate,
+            expenses: jsonEncode(parsed),
+            createdAt: car.createdAt);
+        await DatabaseHelper.instance.updateCar(updated);
+        await fetchData();
+      }
+    }
+  }
+
+  Future<void> deleteCarLog(int carId, int logIndex) async {
+    final idx = _cars.indexWhere((c) => c.id == carId);
+    if (idx != -1) {
+      final car = _cars[idx];
+      List<dynamic> parsed = [];
+      try {
+        parsed = jsonDecode(car.expenses);
+      } catch (e) {}
+      if (logIndex >= 0 && logIndex < parsed.length) {
+        parsed.removeAt(logIndex);
+        final updated = CarModel(
+            id: car.id,
+            carName: car.carName,
+            licensePlate: car.licensePlate,
+            expenses: jsonEncode(parsed),
+            createdAt: car.createdAt);
+        await DatabaseHelper.instance.updateCar(updated);
+        await fetchData();
+      }
+    }
+  }
+
+  // --- Tuitions ---
+  Future<void> addTuition(TuitionModel tuition) async {
+    await DatabaseHelper.instance.insertTuition(tuition);
+    await fetchData();
+  }
+
+  Future<void> updateTuition(TuitionModel tuition) async {
+    await DatabaseHelper.instance.updateTuition(tuition);
+    await fetchData();
+  }
+
+  Future<void> deleteTuition(int id) async {
+    await DatabaseHelper.instance.deleteTuition(id);
+    await fetchData();
+  }
+
+  Future<void> addTuitionLog(int tuitionId, Map<String, dynamic> logData,
+      {bool createGlobalTx = false}) async {
+    final idx = _tuitions.indexWhere((t) => t.id == tuitionId);
+    if (idx != -1) {
+      final t = _tuitions[idx];
+      List<dynamic> parsed = [];
+      try {
+        parsed = jsonDecode(t.expenses);
+      } catch (e) {}
+      parsed.add(logData);
+      final updated = TuitionModel(
+          id: t.id,
+          studentName: t.studentName,
+          institution: t.institution,
+          monthlyFee: t.monthlyFee,
+          dueDate: t.dueDate,
+          expenses: jsonEncode(parsed),
+          createdAt: t.createdAt);
+      await DatabaseHelper.instance.updateTuition(updated);
+
+      if (createGlobalTx && logData.containsKey('amount')) {
+        final amount = (logData['amount'] as num).toDouble();
+        final type = logData['type'] ?? 'Monthly Fee';
+        final monthYear = logData['monthYear'] ?? '';
+        final tx = TransactionModel(
+            title: 'Tuition: ${t.studentName} - $type $monthYear',
+            amount: amount,
+            type: 'expense',
+            category: 'Tuition',
+            date: logData['date'] ??
+                DateTime.now().toIso8601String().split('T')[0],
+            createdAt: DateTime.now().toIso8601String());
+        await DatabaseHelper.instance.insertTransaction(tx);
+      }
+      await fetchData();
+    }
+  }
+
+  Future<void> updateTuitionLog(
+      int tuitionId, int logIndex, Map<String, dynamic> logData) async {
+    final idx = _tuitions.indexWhere((t) => t.id == tuitionId);
+    if (idx != -1) {
+      final t = _tuitions[idx];
+      List<dynamic> parsed = [];
+      try {
+        parsed = jsonDecode(t.expenses);
+      } catch (e) {}
+      if (logIndex >= 0 && logIndex < parsed.length) {
+        parsed[logIndex] = logData;
+        final updated = TuitionModel(
+            id: t.id,
+            studentName: t.studentName,
+            institution: t.institution,
+            monthlyFee: t.monthlyFee,
+            dueDate: t.dueDate,
+            expenses: jsonEncode(parsed),
+            createdAt: t.createdAt);
+        await DatabaseHelper.instance.updateTuition(updated);
+        await fetchData();
+      }
+    }
+  }
+
+  Future<void> deleteTuitionLog(int tuitionId, int logIndex) async {
+    final idx = _tuitions.indexWhere((t) => t.id == tuitionId);
+    if (idx != -1) {
+      final t = _tuitions[idx];
+      List<dynamic> parsed = [];
+      try {
+        parsed = jsonDecode(t.expenses);
+      } catch (e) {}
+      if (logIndex >= 0 && logIndex < parsed.length) {
+        parsed.removeAt(logIndex);
+        final updated = TuitionModel(
+            id: t.id,
+            studentName: t.studentName,
+            institution: t.institution,
+            monthlyFee: t.monthlyFee,
+            dueDate: t.dueDate,
+            expenses: jsonEncode(parsed),
+            createdAt: t.createdAt);
+        await DatabaseHelper.instance.updateTuition(updated);
+        await fetchData();
+      }
+    }
   }
 }

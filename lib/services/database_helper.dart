@@ -6,6 +6,8 @@ import '../models/loan_model.dart';
 import '../models/savings_model.dart';
 import '../models/budget_model.dart';
 import '../models/donation_model.dart';
+import '../models/car_model.dart';
+import '../models/tuition_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -15,6 +17,8 @@ class DatabaseHelper {
   final List<SavingsModel> _webSavings = [];
   final List<BudgetModel> _webBudgets = [];
   final List<DonationModel> _webDonations = [];
+  final List<CarModel> _webCars = [];
+  final List<TuitionModel> _webTuitions = [];
 
   DatabaseHelper._init() {
     if (kIsWeb) {
@@ -39,16 +43,31 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: _createDB,
       onUpgrade: (db, oldV, newV) async {
-        await db.execute('DROP TABLE IF EXISTS transactions');
-        await db.execute('DROP TABLE IF EXISTS loans');
-        await db.execute('DROP TABLE IF EXISTS chat_messages');
-        await db.execute('DROP TABLE IF EXISTS savings');
-        await db.execute('DROP TABLE IF EXISTS budgets');
-        await db.execute('DROP TABLE IF EXISTS donations');
-        await _createDB(db, newV);
+        if (oldV < 6) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS cars (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              carName TEXT NOT NULL,
+              licensePlate TEXT NOT NULL,
+              expenses TEXT NOT NULL,
+              createdAt TEXT NOT NULL
+            )
+          ''');
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS tuitions (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              studentName TEXT NOT NULL,
+              institution TEXT NOT NULL,
+              monthlyFee REAL NOT NULL,
+              dueDate INTEGER NOT NULL,
+              expenses TEXT NOT NULL,
+              createdAt TEXT NOT NULL
+            )
+          ''');
+        }
       },
     );
   }
@@ -122,6 +141,28 @@ class DatabaseHelper {
         amount REAL NOT NULL,
         totalDonated REAL NOT NULL,
         note TEXT,
+        createdAt TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE cars (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        carName TEXT NOT NULL,
+        licensePlate TEXT NOT NULL,
+        expenses TEXT NOT NULL,
+        createdAt TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE tuitions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        studentName TEXT NOT NULL,
+        institution TEXT NOT NULL,
+        monthlyFee REAL NOT NULL,
+        dueDate INTEGER NOT NULL,
+        expenses TEXT NOT NULL,
         createdAt TEXT NOT NULL
       )
     ''');
@@ -356,5 +397,101 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  // --- Cars ---
+  Future<int> insertCar(CarModel car) async {
+    if (kIsWeb) {
+      final newCar = CarModel(
+        id: _webCars.length + 1,
+        carName: car.carName,
+        licensePlate: car.licensePlate,
+        expenses: car.expenses,
+        createdAt: car.createdAt,
+      );
+      _webCars.add(newCar);
+      return newCar.id!;
+    }
+    final db = await instance.database;
+    return await db!.insert('cars', car.toMap());
+  }
+
+  Future<List<CarModel>> getAllCars() async {
+    if (kIsWeb) return List.from(_webCars);
+    final db = await instance.database;
+    final result = await db!.query('cars');
+    return result.map((json) => CarModel.fromMap(json)).toList();
+  }
+
+  Future<int> updateCar(CarModel car) async {
+    if (kIsWeb) {
+      final index = _webCars.indexWhere((c) => c.id == car.id);
+      if (index != -1) {
+        _webCars[index] = car;
+        return 1;
+      }
+      return 0;
+    }
+    final db = await instance.database;
+    return await db!
+        .update('cars', car.toMap(), where: 'id = ?', whereArgs: [car.id]);
+  }
+
+  Future<int> deleteCar(int id) async {
+    if (kIsWeb) {
+      _webCars.removeWhere((c) => c.id == id);
+      return 1;
+    }
+    final db = await instance.database;
+    return await db!.delete('cars', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // --- Tuitions ---
+  Future<int> insertTuition(TuitionModel tuition) async {
+    if (kIsWeb) {
+      final newTuition = TuitionModel(
+        id: _webTuitions.length + 1,
+        studentName: tuition.studentName,
+        institution: tuition.institution,
+        monthlyFee: tuition.monthlyFee,
+        dueDate: tuition.dueDate,
+        expenses: tuition.expenses,
+        createdAt: tuition.createdAt,
+      );
+      _webTuitions.add(newTuition);
+      return newTuition.id!;
+    }
+    final db = await instance.database;
+    return await db!.insert('tuitions', tuition.toMap());
+  }
+
+  Future<List<TuitionModel>> getAllTuitions() async {
+    if (kIsWeb) return List.from(_webTuitions);
+    final db = await instance.database;
+    final result = await db!.query('tuitions');
+    return result.map((json) => TuitionModel.fromMap(json)).toList();
+  }
+
+  Future<int> updateTuition(TuitionModel tuition) async {
+    if (kIsWeb) {
+      final index = _webTuitions.indexWhere((t) => t.id == tuition.id);
+      if (index != -1) {
+        _webTuitions[index] = tuition;
+        return 1;
+      }
+      return 0;
+    }
+    final db = await instance.database;
+    return await db!.update('tuitions', tuition.toMap(),
+        where: 'id = ?', whereArgs: [tuition.id]);
+  }
+
+  Future<int> deleteTuition(int id) async {
+    if (kIsWeb) {
+      _webTuitions.removeWhere((t) => t.id == id);
+      return 1;
+    }
+    final db = await instance.database;
+    return await db!.delete('tuitions', where: 'id = ?', whereArgs: [id]);
   }
 }
