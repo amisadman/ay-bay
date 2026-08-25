@@ -16,7 +16,7 @@ class ChatMessage {
 class AIProvider extends ChangeNotifier {
   final List<ChatMessage> _messages = [];
   bool _isThinking = false;
-  
+
   // Keep track of OpenAI message history
   final List<Map<String, dynamic>> _chatHistory = [];
 
@@ -44,10 +44,12 @@ class AIProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> sendMessage(String text, FinanceProvider financeProvider, {Uint8List? imageBytes}) async {
+  Future<void> sendMessage(String text, FinanceProvider financeProvider,
+      {Uint8List? imageBytes}) async {
     final apiKey = dotenv.env['GROQ_API_KEY'];
     if (apiKey == null || apiKey.isEmpty) {
-      addMessage(ChatMessage(text: 'Error: GROQ_API_KEY is missing in .env', isUser: false));
+      addMessage(ChatMessage(
+          text: 'Error: GROQ_API_KEY is missing in .env', isUser: false));
       return;
     }
 
@@ -61,21 +63,25 @@ class AIProvider extends ChangeNotifier {
 
     _chatHistory.add({
       'role': 'user',
-      'content': text.isNotEmpty ? text : 'Please analyze this receipt and log the expense.',
+      'content': text.isNotEmpty
+          ? text
+          : 'Please analyze this receipt and log the expense.',
     });
 
     if (imageBytes != null) {
       // Add a system prompt injecting the limitation gracefully for the LLM
       _chatHistory.add({
         'role': 'system',
-        'content': 'System note: The user has attached an image. Remember that you currently cannot see images. Politely ask them to type the amount/details.',
+        'content':
+            'System note: The user has attached an image. Remember that you currently cannot see images. Politely ask them to type the amount/details.',
       });
     }
 
     await _callGroqApi(apiKey, financeProvider);
   }
 
-  Future<void> _callGroqApi(String apiKey, FinanceProvider financeProvider) async {
+  Future<void> _callGroqApi(
+      String apiKey, FinanceProvider financeProvider) async {
     try {
       final response = await http.post(
         Uri.parse(_groqUrl),
@@ -84,7 +90,7 @@ class AIProvider extends ChangeNotifier {
           'Authorization': 'Bearer $apiKey',
         },
         body: jsonEncode({
-          'model': 'llama-3.3-70b-versatile',
+          'model': 'llama-3.1-8b-instant',
           'messages': _chatHistory,
           'tools': _getTools(),
           'tool_choice': 'auto',
@@ -94,8 +100,9 @@ class AIProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final choice = data['choices'][0]['message'];
-        
-        _chatHistory.add(choice); // Append assistant's raw message containing tool_calls
+
+        _chatHistory.add(
+            choice); // Append assistant's raw message containing tool_calls
 
         if (choice['tool_calls'] != null) {
           // Handle tool calls
@@ -103,9 +110,9 @@ class AIProvider extends ChangeNotifier {
             final functionCall = toolCall['function'];
             final name = functionCall['name'];
             final args = jsonDecode(functionCall['arguments']);
-            
+
             String toolResult = '';
-            
+
             if (name == 'add_transaction') {
               final amount = (args['amount'] as num).toDouble();
               final type = args['type'] as String;
@@ -122,16 +129,22 @@ class AIProvider extends ChangeNotifier {
               );
 
               await financeProvider.addTransaction(tx);
-              addMessage(ChatMessage(text: 'Action Successful: Added $note ($amount) to database.', isUser: false));
-              
+              addMessage(ChatMessage(
+                  text: 'Action Successful: Added $note ($amount) to database.',
+                  isUser: false));
+
               toolResult = jsonEncode({
                 'status': 'Success',
                 'message': 'Transaction added: $note ($amount)'
               });
             } else if (name == 'analyze_spending') {
               final allTx = financeProvider.transactions;
-              final recentTx = allTx.take(500).map((t) => '${t.date}: ${t.type} - ${t.amount} (${t.category}) - ${t.title}').toList();
-              
+              final recentTx = allTx
+                  .take(500)
+                  .map((t) =>
+                      '${t.date}: ${t.type} - ${t.amount} (${t.category}) - ${t.title}')
+                  .toList();
+
               toolResult = jsonEncode({
                 'status': 'Success',
                 'summary_data': {
@@ -154,7 +167,6 @@ class AIProvider extends ChangeNotifier {
 
           // Follow up call to get final response
           await _callGroqApi(apiKey, financeProvider);
-          
         } else if (choice['content'] != null) {
           addMessage(ChatMessage(text: choice['content'], isUser: false));
           _isThinking = false;
@@ -172,7 +184,8 @@ class AIProvider extends ChangeNotifier {
     debugPrint('Groq API Error: $error');
     String errorMessage = 'Error: $error';
     if (error.contains('503') || error.contains('UNAVAILABLE')) {
-      errorMessage = 'Walleo is currently experiencing high demand. Please try again in a few moments.';
+      errorMessage =
+          'Walleo is currently experiencing high demand. Please try again in a few moments.';
     }
     addMessage(ChatMessage(text: errorMessage, isUser: false));
     _isThinking = false;
@@ -185,14 +198,28 @@ class AIProvider extends ChangeNotifier {
         'type': 'function',
         'function': {
           'name': 'add_transaction',
-          'description': 'Add a new financial transaction (income or expense) based on user input.',
+          'description':
+              'Add a new financial transaction (income or expense) based on user input.',
           'parameters': {
             'type': 'object',
             'properties': {
-              'amount': {'type': 'number', 'description': 'The transaction amount.'},
-              'type': {'type': 'string', 'description': 'Either "income" or "expense"'},
-              'category': {'type': 'string', 'description': 'Category of the transaction e.g., Food, Salary, Vacation'},
-              'note': {'type': 'string', 'description': 'A brief note or reason for the transaction.'},
+              'amount': {
+                'type': 'number',
+                'description': 'The transaction amount.'
+              },
+              'type': {
+                'type': 'string',
+                'description': 'Either "income" or "expense"'
+              },
+              'category': {
+                'type': 'string',
+                'description':
+                    'Category of the transaction e.g., Food, Salary, Vacation'
+              },
+              'note': {
+                'type': 'string',
+                'description': 'A brief note or reason for the transaction.'
+              },
             },
             'required': ['amount', 'type', 'category', 'note'],
           },
@@ -202,11 +229,16 @@ class AIProvider extends ChangeNotifier {
         'type': 'function',
         'function': {
           'name': 'analyze_spending',
-          'description': 'Analyzes user spending patterns, identifies unnecessary expenses, and gives a financial summary for a specific period.',
+          'description':
+              'Analyzes user spending patterns, identifies unnecessary expenses, and gives a financial summary for a specific period.',
           'parameters': {
             'type': 'object',
             'properties': {
-              'period': {'type': 'string', 'description': 'The time period to analyze, e.g., "month", "year", "today"'},
+              'period': {
+                'type': 'string',
+                'description':
+                    'The time period to analyze, e.g., "month", "year", "today"'
+              },
             },
             'required': ['period'],
           },
