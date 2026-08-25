@@ -117,7 +117,11 @@ class AIProvider extends ChangeNotifier {
       await _handleResponse(response, financeProvider);
     } catch (e) {
       debugPrint('Error communicating with Gemini: $e');
-      addMessage(ChatMessage(text: 'Error: $e', isUser: false));
+      String errorMessage = 'Error: $e';
+      if (e.toString().contains('503') || e.toString().contains('UNAVAILABLE')) {
+        errorMessage = 'Walleo is currently experiencing high demand. Please try again in a few moments.';
+      }
+      addMessage(ChatMessage(text: errorMessage, isUser: false));
       _isThinking = false;
       notifyListeners();
     }
@@ -189,6 +193,11 @@ class AIProvider extends ChangeNotifier {
         await _handleResponse(followUpResponse, financeProvider);
       } catch (e) {
         debugPrint('Error sending function response to Gemini: $e');
+        String errorMessage = 'Error: $e';
+        if (e.toString().contains('503') || e.toString().contains('UNAVAILABLE')) {
+          errorMessage = 'Walleo is currently experiencing high demand. Please try again in a few moments.';
+        }
+        addMessage(ChatMessage(text: errorMessage, isUser: false));
         _isThinking = false;
         notifyListeners();
       }
