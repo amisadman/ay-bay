@@ -67,7 +67,7 @@ class AIProvider extends ChangeNotifier {
     );
 
     _model = GenerativeModel(
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-pro',
       apiKey: apiKey,
       tools: [addTransactionTool],
       systemInstruction: Content.system(
