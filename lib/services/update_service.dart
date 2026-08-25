@@ -22,7 +22,8 @@ class UpdateService {
       final data = doc.data()!;
       final latestVersion = data['latest_version'] as String? ?? '1.0.0';
       final downloadUrl = data['download_url'] as String? ?? '';
-      final releaseNotes = data['release_notes'] as String? ?? 'Bug fixes and performance improvements.';
+      final rawNotes = data['release_notes'] as String? ?? 'Bug fixes and performance improvements.';
+      final releaseNotes = rawNotes.replaceAll('\\n', '\n');
       final isForceUpdate = data['force_update'] as bool? ?? false;
 
       if (_isUpdateAvailable(currentVersion, latestVersion)) {
