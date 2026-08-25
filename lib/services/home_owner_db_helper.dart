@@ -10,17 +10,7 @@ class HomeOwnerDBHelper {
 
   HomeOwnerDBHelper._init() {
     if (kIsWeb) {
-      _webApartments.add(
-        ApartmentModel(
-          id: 1,
-          name: 'Demo Appt 1A',
-          boarderName: 'John Doe',
-          boarderPhone: '01711223344',
-          rentAmount: 12000,
-          paidMonths: [],
-          createdAt: DateTime.now().toIso8601String(),
-        )
-      );
+      // No demo data for production release
     }
   }
 
