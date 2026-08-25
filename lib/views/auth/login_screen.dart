@@ -132,25 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/aybay-logo.png',
-                          width: 40,
-                          height: 40,
-                          errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
-                        ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          'Welcome',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.brown,
-                          ),
-                        ),
-                      ],
+                    const Text(
+                      'Welcome',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.brown,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextField(
@@ -221,6 +209,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Powered by', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey, fontSize: 14)),
+                  const SizedBox(width: 8),
+                  Image.asset(
+                    'assets/images/aybay-logo.png',
+                    width: 24,
+                    height: 24,
+                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(width: 6),
+                  const Text('AyBay', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.brown, fontSize: 16)),
+                ],
               ),
               const SizedBox(height: 20),
             ],
