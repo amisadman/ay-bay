@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:aybay_flutter/core/constants/app_colors.dart';
 import 'package:aybay_flutter/providers/ai_provider.dart';
 import 'package:aybay_flutter/providers/finance_provider.dart';
@@ -235,22 +236,19 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                               ),
                             ],
                           )
-                        : AnimatedTextKit(
-                            animatedTexts: [
-                              TypewriterAnimatedText(
-                                msg.text,
-                                textStyle: TextStyle(
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color ??
-                                        AppColors.black,
-                                    fontSize: 15),
-                                speed: const Duration(milliseconds: 30),
+                        : MarkdownBody(
+                            data: msg.text,
+                            selectable: true,
+                            styleSheet: MarkdownStyleSheet(
+                              p: TextStyle(
+                                color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black,
+                                fontSize: 15,
                               ),
-                            ],
-                            isRepeatingAnimation: false,
-                            displayFullTextOnTap: true,
+                              strong: const TextStyle(fontWeight: FontWeight.bold),
+                              h1: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                              h2: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              h3: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
                           ),
                   ),
                 );
