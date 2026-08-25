@@ -8,7 +8,32 @@
 
 ---
 
-## 📸 App Gallery
+## Overview
+
+Managing money shouldn't be stressful. AyBay brings everything related to your finances into one unified, secure, and offline-first ecosystem with cloud collaboration features. From tracking your daily coffee to managing complex loan installments or splitting budgets for a group vacation, AyBay handles it gracefully.
+
+Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proactive assistant capable of understanding complex natural language (both English and Bengali). Just tap the mic and say *"I spent 500 taka on groceries"*, and Walleo will automatically categorize and log the transaction into your database.
+
+---
+
+## Features
+
+- **Agentic AI (Walleo)**: Powered by Groq's lightning-fast Llama-3 models, Walleo understands conversational commands, logs transactions via JSON tool calling, and provides deep analytics on your spending habits.
+- **"Super-App" Modules**: Go beyond personal finance with dedicated hubs for:
+  - **Shop Management**: POS, Inventory, Employee Management, and Daily Logs.
+  - **Home & Apartment**: Track rent, tenants, and utility cycles.
+  - **Donations**: Dedicated logging for your charitable contributions.
+- **Income & Expense Tracking**: Beautifully visualize your cash flow with interactive FL charts.
+- **Loans & Owes**: Keep track of money you've lent out or borrowed with partial installments.
+- **Advanced Budgeting**: Set monthly budgets per category and track your progress with live progress bars.
+- **Shared Event Management**: Planning a trip? Create cloud-synced events (via Firebase), add participants, pool shared budgets, and split expenses seamlessly.
+- **Export Data**: Generate professional PDF or Excel reports for your personal records or tax purposes.
+- **Offline First**: All your personal financial data is securely stored locally using SQLite. Only collaborative events touch the cloud.
+- **Clean Aesthetic**: A gorgeous, minimalist flat UI without unnecessary gradients, featuring fluid micro-animations (Lottie) and bottom-pinned layouts.
+
+---
+
+## App Gallery
 
 <table>
   <tr>
@@ -160,32 +185,7 @@
 
 ---
 
-## Overview
-
-Managing money shouldn't be stressful. AyBay brings everything related to your finances into one unified, secure, and offline-first ecosystem with cloud collaboration features. From tracking your daily coffee to managing complex loan installments or splitting budgets for a group vacation, AyBay handles it gracefully.
-
-Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proactive assistant capable of understanding complex natural language (both English and Bengali). Just tap the mic and say *"I spent 500 taka on groceries"*, and Walleo will automatically categorize and log the transaction into your database.
-
----
-
-## 🔥 Features
-
-- **Agentic AI (Walleo)**: Powered by Groq's lightning-fast Llama-3 models, Walleo understands conversational commands, logs transactions via JSON tool calling, and provides deep analytics on your spending habits.
-- **"Super-App" Modules**: Go beyond personal finance with dedicated hubs for:
-  - **Shop Management**: POS, Inventory, Employee Management, and Daily Logs.
-  - **Home & Apartment**: Track rent, tenants, and utility cycles.
-  - **Donations**: Dedicated logging for your charitable contributions.
-- **Income & Expense Tracking**: Beautifully visualize your cash flow with interactive FL charts.
-- **Loans & Owes**: Keep track of money you've lent out or borrowed with partial installments.
-- **Advanced Budgeting**: Set monthly budgets per category and track your progress with live progress bars.
-- **Shared Event Management**: Planning a trip? Create cloud-synced events (via Firebase), add participants, pool shared budgets, and split expenses seamlessly.
-- **Export Data**: Generate professional PDF or Excel reports for your personal records or tax purposes.
-- **Offline First**: All your personal financial data is securely stored locally using SQLite. Only collaborative events touch the cloud.
-- **Clean Aesthetic**: A gorgeous, minimalist flat UI without unnecessary gradients, featuring fluid micro-animations (Lottie) and bottom-pinned layouts.
-
----
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: [Flutter](https://flutter.dev/) (Dart)
 - **Local Database**: [sqflite](https://pub.dev/packages/sqflite)
@@ -198,7 +198,7 @@ Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proa
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Flutter SDK (>=3.0.0 <4.0.0)
