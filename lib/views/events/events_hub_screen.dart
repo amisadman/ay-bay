@@ -65,9 +65,11 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
                 if (mounted) {
                   Navigator.pop(ctx);
                   String message = 'Successfully joined event!';
-                  if (result == 'not_found') message = 'Invalid code or event not found.';
-                  if (result == 'already_joined') message = 'You are already a member of this event.';
-                  
+                  if (result == 'not_found')
+                    message = 'Invalid code or event not found.';
+                  if (result == 'already_joined')
+                    message = 'You are already a member of this event.';
+
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(message),
                   ));
@@ -184,12 +186,17 @@ class _EventsHubScreenState extends State<EventsHubScreen> {
                             fontWeight: FontWeight.bold, fontSize: 18)),
                     subtitle: Row(
                       children: [
-                        Expanded(child: Text('${event.members.length} members • Code: ${event.inviteCode}')),
+                        Expanded(
+                            child: Text(
+                                '${event.members.length} members • Code: ${event.inviteCode}')),
                         IconButton(
-                          icon: const Icon(Icons.copy, size: 16, color: AppColors.brown),
+                          icon: const Icon(Icons.copy,
+                              size: 16, color: AppColors.brown),
                           onPressed: () {
-                            Clipboard.setData(ClipboardData(text: event.inviteCode));
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Code copied!')));
+                            Clipboard.setData(
+                                ClipboardData(text: event.inviteCode));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Code copied!')));
                           },
                         ),
                       ],

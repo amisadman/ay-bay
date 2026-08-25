@@ -74,12 +74,13 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
   }
 
   void _sendMessage() {
-    if (_textController.text.trim().isEmpty && _selectedImageBytes == null) return;
+    if (_textController.text.trim().isEmpty && _selectedImageBytes == null)
+      return;
 
     final text = _textController.text.trim();
     _textController.clear();
     final imageBytes = _selectedImageBytes;
-    
+
     setState(() {
       _selectedImageBytes = null;
     });
@@ -94,7 +95,8 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
 
   Future<void> _pickImage(ImageSource source) async {
     try {
-      final XFile? image = await _picker.pickImage(source: source, maxWidth: 1024, maxHeight: 1024);
+      final XFile? image = await _picker.pickImage(
+          source: source, maxWidth: 1024, maxHeight: 1024);
       if (image != null) {
         final bytes = await image.readAsBytes();
         setState(() {
@@ -109,7 +111,8 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
   void _showAttachmentOptions() {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => SafeArea(
         child: Wrap(
           children: [
@@ -225,7 +228,8 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                               if (msg.imageBytes != null) ...[
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(12),
-                                  child: Image.memory(msg.imageBytes!, width: 200, fit: BoxFit.cover),
+                                  child: Image.memory(msg.imageBytes!,
+                                      width: 200, fit: BoxFit.cover),
                                 ),
                                 const SizedBox(height: 8),
                               ],
@@ -241,13 +245,21 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                             selectable: true,
                             styleSheet: MarkdownStyleSheet(
                               p: TextStyle(
-                                color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.black,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    AppColors.black,
                                 fontSize: 15,
                               ),
-                              strong: const TextStyle(fontWeight: FontWeight.bold),
-                              h1: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                              h2: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                              h3: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              strong:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                              h1: const TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
+                              h2: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                              h3: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                           ),
                   ),
@@ -309,9 +321,11 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey.withOpacity(0.3)),
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(0.3)),
                         ),
-                        child: Icon(Icons.attach_file, color: Theme.of(context).iconTheme.color),
+                        child: Icon(Icons.attach_file,
+                            color: Theme.of(context).iconTheme.color),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -320,7 +334,9 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: _isListening ? AppColors.red : Theme.of(context).scaffoldBackgroundColor,
+                          color: _isListening
+                              ? AppColors.red
+                              : Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                           border: Border.all(
                               color: _isListening
@@ -365,8 +381,8 @@ class _WalleoAIChatScreenState extends State<WalleoAIChatScreen> {
                               AppColors.black,
                           shape: BoxShape.circle,
                         ),
-                        child:
-                            const Icon(Icons.send, color: Colors.white, size: 20),
+                        child: const Icon(Icons.send,
+                            color: Colors.white, size: 20),
                       ),
                     ),
                   ],

@@ -131,7 +131,6 @@ class AIProvider extends ChangeNotifier {
 
               await financeProvider.addTransaction(tx);
 
-
               toolResult = jsonEncode({
                 'status': 'Success',
                 'message': 'Transaction added: $note ($amount)'

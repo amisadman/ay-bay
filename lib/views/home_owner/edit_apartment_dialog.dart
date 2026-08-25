@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/home_owner_provider.dart';
 import '../../models/apartment_model.dart';
@@ -24,9 +24,12 @@ class _EditApartmentDialogState extends State<EditApartmentDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.apartment.name);
-    _boarderNameController = TextEditingController(text: widget.apartment.boarderName);
-    _boarderPhoneController = TextEditingController(text: widget.apartment.boarderPhone);
-    _rentController = TextEditingController(text: widget.apartment.rentAmount.toStringAsFixed(0));
+    _boarderNameController =
+        TextEditingController(text: widget.apartment.boarderName);
+    _boarderPhoneController =
+        TextEditingController(text: widget.apartment.boarderPhone);
+    _rentController = TextEditingController(
+        text: widget.apartment.rentAmount.toStringAsFixed(0));
   }
 
   @override
@@ -52,7 +55,8 @@ class _EditApartmentDialogState extends State<EditApartmentDialog> {
         rentAmount: rent,
       );
 
-      Provider.of<HomeOwnerProvider>(context, listen: false).updateApartment(updatedAppt);
+      Provider.of<HomeOwnerProvider>(context, listen: false)
+          .updateApartment(updatedAppt);
       Navigator.pop(context, updatedAppt);
     }
   }

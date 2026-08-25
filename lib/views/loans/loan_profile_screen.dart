@@ -87,7 +87,8 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
             ));
   }
 
-  void _showEditProfileDialog(BuildContext context, FinanceProvider finProv, var loan) {
+  void _showEditProfileDialog(
+      BuildContext context, FinanceProvider finProv, var loan) {
     final amountCtrl = TextEditingController(text: loan.amount.toString());
     final nameCtrl = TextEditingController(text: loan.personName);
 
@@ -95,7 +96,8 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Edit Profile',
-            style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+            style:
+                TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -103,7 +105,8 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
               controller: nameCtrl,
               decoration: InputDecoration(
                 labelText: 'Name',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
             const SizedBox(height: 12),
@@ -112,16 +115,19 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Amount',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.black, foregroundColor: Colors.white),
+                backgroundColor: AppColors.black,
+                foregroundColor: Colors.white),
             onPressed: () async {
               final newAmount = double.tryParse(amountCtrl.text.trim()) ?? 0.0;
               final newName = nameCtrl.text.trim();
@@ -141,7 +147,8 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
     );
   }
 
-  void _showEditInstallmentDialog(BuildContext context, FinanceProvider finProv, int originalIndex, double currentAmount, String currentDate) {
+  void _showEditInstallmentDialog(BuildContext context, FinanceProvider finProv,
+      int originalIndex, double currentAmount, String currentDate) {
     final amountCtrl = TextEditingController(text: currentAmount.toString());
     final dateCtrl = TextEditingController(text: currentDate);
 
@@ -149,7 +156,8 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Edit Installment',
-            style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+            style:
+                TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -158,7 +166,8 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Installment Amount',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
             const SizedBox(height: 12),
@@ -166,21 +175,25 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
               controller: dateCtrl,
               decoration: InputDecoration(
                 labelText: 'Date (YYYY-MM-DD)',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.black, foregroundColor: Colors.white),
+                backgroundColor: AppColors.black,
+                foregroundColor: Colors.white),
             onPressed: () async {
               final newAmount = double.tryParse(amountCtrl.text.trim()) ?? 0.0;
               final newDate = dateCtrl.text.trim();
               if (newAmount > 0 && newDate.isNotEmpty) {
-                await finProv.updateLoanInstallment(widget.loanId, originalIndex, newAmount, newDate);
+                await finProv.updateLoanInstallment(
+                    widget.loanId, originalIndex, newAmount, newDate);
                 if (mounted) Navigator.pop(ctx);
               }
             },
@@ -442,15 +455,20 @@ class _LoanProfileScreenState extends State<LoanProfileScreen> {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16)),
                             PopupMenuButton<String>(
-                              icon: const Icon(Icons.more_vert, color: Colors.grey),
+                              icon: const Icon(Icons.more_vert,
+                                  color: Colors.grey),
                               onSelected: (val) async {
                                 if (val == 'delete') {
                                   // The index in the reversed list maps to the original index
-                                  final originalIndex = installments.length - 1 - index;
-                                  await finProv.deleteLoanInstallment(widget.loanId, originalIndex);
+                                  final originalIndex =
+                                      installments.length - 1 - index;
+                                  await finProv.deleteLoanInstallment(
+                                      widget.loanId, originalIndex);
                                 } else if (val == 'edit') {
-                                  final originalIndex = installments.length - 1 - index;
-                                  _showEditInstallmentDialog(context, finProv, originalIndex, amount, date);
+                                  final originalIndex =
+                                      installments.length - 1 - index;
+                                  _showEditInstallmentDialog(context, finProv,
+                                      originalIndex, amount, date);
                                 }
                               },
                               itemBuilder: (context) => [

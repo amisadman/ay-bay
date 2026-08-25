@@ -398,25 +398,32 @@ class ProfileSettingsScreen extends StatelessWidget {
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (val) => themeProv.toggleTheme(val),
           ),
-          
+
           // Check for Updates
           ListTile(
-            leading: Icon(Icons.system_update, color: Theme.of(context).colorScheme.primary),
+            leading: Icon(Icons.system_update,
+                color: Theme.of(context).colorScheme.primary),
             title: const Text('Check for Updates'),
             subtitle: const Text('Ensure you have the latest features'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => UpdateService.checkForUpdate(context, manualCheck: true),
+            onTap: () =>
+                UpdateService.checkForUpdate(context, manualCheck: true),
           ),
 
           const Divider(color: Colors.grey),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text('Add-on Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.grey)),
+            child: Text('Add-on Modules',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.grey)),
           ),
-          
+
           // Home Owner Mode
           SwitchListTile(
-            secondary: Icon(Icons.home_work, color: Theme.of(context).colorScheme.primary),
+            secondary: Icon(Icons.home_work,
+                color: Theme.of(context).colorScheme.primary),
             title: const Text('My Home (Home Owner)'),
             subtitle: const Text('Manage apartments, boarders, and rent'),
             value: authProv.isHomeOwnerMode,
@@ -426,13 +433,71 @@ class ProfileSettingsScreen extends StatelessWidget {
 
           // Shop Owner Mode
           SwitchListTile(
-            secondary: Icon(Icons.storefront, color: Theme.of(context).colorScheme.primary),
+            secondary: Icon(Icons.storefront,
+                color: Theme.of(context).colorScheme.primary),
             title: const Text('My Shop (Shop Owner)'),
             subtitle: const Text('Manage inventory, sales, and POS'),
             value: authProv.isShopOwnerMode,
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (val) => authProv.toggleShopOwnerMode(val),
           ),
+
+          // Subscription Mode
+          SwitchListTile(
+            secondary: Icon(Icons.subscriptions,
+                color: Theme.of(context).colorScheme.primary),
+            title: const Text('My Subscriptions'),
+            subtitle: const Text('Track recurring bills and payments'),
+            value: authProv.isSubscriptionMode,
+            activeColor: Theme.of(context).colorScheme.primary,
+            onChanged: (val) => authProv.toggleSubscriptionMode(val),
+          ),
+
+          // Gym Owner Mode
+          SwitchListTile(
+            secondary: Icon(Icons.fitness_center,
+                color: Theme.of(context).colorScheme.primary),
+            title: const Text('My Gym (Gym Owner)'),
+            subtitle: const Text('Manage members and memberships'),
+            value: authProv.isGymOwnerMode,
+            activeColor: Theme.of(context).colorScheme.primary,
+            onChanged: (val) => authProv.toggleGymOwnerMode(val),
+          ),
+
+          // Garage Owner Mode
+          SwitchListTile(
+            secondary: Icon(Icons.directions_car,
+                color: Theme.of(context).colorScheme.primary),
+            title: const Text('My Garage (Garage Owner)'),
+            subtitle: const Text('Manage mechanic jobs and shop inventory'),
+            value: authProv.isGarageOwnerMode,
+            activeColor: Theme.of(context).colorScheme.primary,
+            onChanged: (val) => authProv.toggleGarageOwnerMode(val),
+          ),
+
+          // Car Owner Mode
+          SwitchListTile(
+            secondary: Icon(Icons.time_to_leave,
+                color: Theme.of(context).colorScheme.primary),
+            title: const Text('My Car (Car Expenses)'),
+            subtitle: const Text('Track fuel, maintenance, and car expenses'),
+            value: authProv.isCarOwnerMode,
+            activeColor: Theme.of(context).colorScheme.primary,
+            onChanged: (val) => authProv.toggleCarOwnerMode(val),
+          ),
+
+          // Tuition Mode
+          SwitchListTile(
+            secondary: Icon(Icons.school,
+                color: Theme.of(context).colorScheme.primary),
+            title: const Text('Tuition Fees'),
+            subtitle: const Text('Track personal or child tuition payments'),
+            value: authProv.isTuitionMode,
+            activeColor: Theme.of(context).colorScheme.primary,
+            onChanged: (val) => authProv.toggleTuitionMode(val),
+          ),
+
+          const SizedBox(height: 100), // padding for bottom scrolling
         ],
       ),
     );

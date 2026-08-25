@@ -16,8 +16,11 @@ class ShopCustomersScreen extends StatefulWidget {
 class _ShopCustomersScreenState extends State<ShopCustomersScreen> {
   void _showCustomerDialog([CustomerModel? existingCustomer]) {
     final nameCtrl = TextEditingController(text: existingCustomer?.name ?? '');
-    final phoneCtrl = TextEditingController(text: existingCustomer?.phone ?? '');
-    final debtCtrl = TextEditingController(text: existingCustomer != null ? existingCustomer.debt.toString() : '0');
+    final phoneCtrl =
+        TextEditingController(text: existingCustomer?.phone ?? '');
+    final debtCtrl = TextEditingController(
+        text:
+            existingCustomer != null ? existingCustomer.debt.toString() : '0');
     final isEdit = existingCustomer != null;
 
     showDialog(
@@ -44,14 +47,17 @@ class _ShopCustomersScreenState extends State<ShopCustomersScreen> {
                   TextField(
                     controller: debtCtrl,
                     keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: 'Outstanding Debt (Khata)'),
+                    decoration: const InputDecoration(
+                        labelText: 'Outstanding Debt (Khata)'),
                   ),
                 ]
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel')),
             ElevatedButton(
               onPressed: () async {
                 final name = nameCtrl.text.trim();
@@ -59,16 +65,20 @@ class _ShopCustomersScreenState extends State<ShopCustomersScreen> {
                 final debt = double.tryParse(debtCtrl.text.trim()) ?? 0.0;
 
                 if (name.isNotEmpty) {
-                  final prov = Provider.of<ShopOwnerProvider>(context, listen: false);
+                  final prov =
+                      Provider.of<ShopOwnerProvider>(context, listen: false);
                   if (isEdit) {
-                    await prov.updateCustomer(existingCustomer!.copyWith(name: name, phone: phone, debt: debt));
+                    await prov.updateCustomer(existingCustomer!
+                        .copyWith(name: name, phone: phone, debt: debt));
                   } else {
-                    await prov.addCustomer(CustomerModel(name: name, phone: phone, debt: 0.0));
+                    await prov.addCustomer(
+                        CustomerModel(name: name, phone: phone, debt: 0.0));
                   }
                   if (mounted) Navigator.pop(ctx);
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green, foregroundColor: Colors.white),
               child: const Text('Save'),
             ),
           ],
@@ -99,17 +109,24 @@ class _ShopCustomersScreenState extends State<ShopCustomersScreen> {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ListTile(
-                    leading: const CircleAvatar(backgroundColor: Colors.green, child: Icon(Icons.person, color: Colors.white)),
-                    title: Text(c.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    leading: const CircleAvatar(
+                        backgroundColor: Colors.green,
+                        child: Icon(Icons.person, color: Colors.white)),
+                    title: Text(c.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text(c.phone),
                     trailing: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text('Due', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                        const Text('Due',
+                            style: TextStyle(fontSize: 10, color: Colors.grey)),
                         Text(
                           CurrencyFormatter.formatSimple(c.debt, sym),
-                          style: TextStyle(fontWeight: FontWeight.bold, color: c.debt > 0 ? AppColors.red : Colors.grey, fontSize: 14),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: c.debt > 0 ? AppColors.red : Colors.grey,
+                              fontSize: 14),
                         ),
                       ],
                     ),

@@ -68,7 +68,7 @@ class SaleItem {
   final String productId;
   final String productName;
   final int quantity;
-  final double price; 
+  final double price;
   final double cost;
 
   SaleItem({
@@ -98,7 +98,7 @@ class SaleItem {
 
 class SaleModel {
   final String? id;
-  final String date; 
+  final String date;
   final List<SaleItem> items;
   final double totalAmount;
   final double totalProfit;
@@ -157,7 +157,8 @@ class CustomerModel {
     this.debt = 0.0,
   });
 
-  CustomerModel copyWith({String? id, String? name, String? phone, double? debt}) {
+  CustomerModel copyWith(
+      {String? id, String? name, String? phone, double? debt}) {
     return CustomerModel(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -167,10 +168,10 @@ class CustomerModel {
   }
 
   Map<String, dynamic> toMap() => {
-    'name': name,
-    'phone': phone,
-    'debt': debt,
-  };
+        'name': name,
+        'phone': phone,
+        'debt': debt,
+      };
 
   factory CustomerModel.fromMap(Map<String, dynamic> map, String docId) {
     return CustomerModel(
@@ -194,12 +195,12 @@ class EmployeeModel {
     required this.phone,
     required this.role,
   });
-  
+
   Map<String, dynamic> toMap() => {
-    'name': name,
-    'phone': phone,
-    'role': role,
-  };
+        'name': name,
+        'phone': phone,
+        'role': role,
+      };
 
   factory EmployeeModel.fromMap(Map<String, dynamic> map, String docId) {
     return EmployeeModel(
@@ -227,11 +228,11 @@ class LedgerModel {
   });
 
   Map<String, dynamic> toMap() => {
-    'title': title,
-    'amount': amount,
-    'type': type,
-    'date': date,
-  };
+        'title': title,
+        'amount': amount,
+        'type': type,
+        'date': date,
+      };
 
   factory LedgerModel.fromMap(Map<String, dynamic> map, String docId) {
     return LedgerModel(

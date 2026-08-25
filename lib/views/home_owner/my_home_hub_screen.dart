@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/home_owner_provider.dart';
 import '../../core/constants/app_colors.dart';
@@ -47,7 +47,8 @@ class _MyHomeHubScreenState extends State<MyHomeHubScreen> {
         onPressed: () => _showAddApartmentDialog(context),
         backgroundColor: AppColors.deepTeal,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('Add Apartment', style: TextStyle(color: Colors.white)),
+        label:
+            const Text('Add Apartment', style: TextStyle(color: Colors.white)),
       ),
       body: homeProv.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -81,7 +82,8 @@ class _MyHomeHubScreenState extends State<MyHomeHubScreen> {
                         itemCount: homeProv.apartments.length,
                         itemBuilder: (context, index) {
                           final appt = homeProv.apartments[index];
-                          final isPaid = appt.paidMonths.contains(currentMonthKey);
+                          final isPaid =
+                              appt.paidMonths.contains(currentMonthKey);
 
                           return Card(
                             elevation: 2,
@@ -97,19 +99,21 @@ class _MyHomeHubScreenState extends State<MyHomeHubScreen> {
                                     : AppColors.red.withValues(alpha: 0.2),
                                 child: Icon(
                                   isPaid ? Icons.check_circle : Icons.cancel,
-                                  color: isPaid ? AppColors.green : AppColors.red,
+                                  color:
+                                      isPaid ? AppColors.green : AppColors.red,
                                 ),
                               ),
                               title: Text(
                                 appt.name,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(appt.boarderName),
                                   Text(
-                                    'Rent: ৳${appt.rentAmount.toStringAsFixed(2)}',
+                                    'Rent: ?${appt.rentAmount.toStringAsFixed(2)}',
                                     style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme

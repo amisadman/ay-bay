@@ -67,9 +67,11 @@ class _EventsScreenState extends State<EventsScreen> {
                 if (mounted) {
                   Navigator.pop(ctx);
                   String message = 'Successfully joined event!';
-                  if (result == 'not_found') message = 'Invalid code or event not found.';
-                  if (result == 'already_joined') message = 'You are already a member of this event.';
-                  
+                  if (result == 'not_found')
+                    message = 'Invalid code or event not found.';
+                  if (result == 'already_joined')
+                    message = 'You are already a member of this event.';
+
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(message),
                   ));

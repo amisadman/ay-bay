@@ -138,8 +138,7 @@ class _BudgetProfileScreenState extends State<BudgetProfileScreen> {
           children: [
             TextField(
                 controller: catCtrl,
-                decoration: const InputDecoration(
-                    labelText: 'Category Name')),
+                decoration: const InputDecoration(labelText: 'Category Name')),
             TextField(
                 controller: amountCtrl,
                 keyboardType: TextInputType.number,
@@ -341,7 +340,8 @@ class _BudgetProfileScreenState extends State<BudgetProfileScreen> {
                                               budget.id!, catId, 50.0),
                                     ),
                                     PopupMenuButton<String>(
-                                      icon: const Icon(Icons.more_vert, color: Colors.grey),
+                                      icon: const Icon(Icons.more_vert,
+                                          color: Colors.grey),
                                       onSelected: (val) async {
                                         if (val == 'log') {
                                           _showLogExpenseDialog(
@@ -350,8 +350,8 @@ class _BudgetProfileScreenState extends State<BudgetProfileScreen> {
                                           await finProv.deleteBudgetCategory(
                                               widget.budgetId, catId);
                                         } else if (val == 'edit') {
-                                          _showEditCategoryDialog(
-                                              context, finProv, catId, catName, amount);
+                                          _showEditCategoryDialog(context,
+                                              finProv, catId, catName, amount);
                                         }
                                       },
                                       itemBuilder: (context) => [

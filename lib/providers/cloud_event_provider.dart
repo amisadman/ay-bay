@@ -104,7 +104,8 @@ class CloudEventProvider extends ChangeNotifier {
         .update({'title': newTitle});
   }
 
-  Future<void> updateExpense(String eventId, String expenseId, String newTitle, double newAmount) async {
+  Future<void> updateExpense(String eventId, String expenseId, String newTitle,
+      double newAmount) async {
     await _firestore
         .collection('events')
         .doc(eventId)

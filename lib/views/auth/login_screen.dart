@@ -104,131 +104,142 @@ class _LoginScreenState extends State<LoginScreen> {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight - 32),
+                constraints:
+                    BoxConstraints(minHeight: constraints.maxHeight - 32),
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
-              const SizedBox(height: 40),
-              SizedBox(
-                height: 220,
-                child: GestureDetector(
-                  onTap: () {
-                    // Tap teddy to make him shy/fail
-                    _teddyControls.play('fail');
-                    Future.delayed(const Duration(seconds: 1), () {
-                      if (!mounted) return;
-                      if (_isPasswordFocused) {
-                        _teddyControls
-                            .play(_obscurePin ? 'hands_up' : 'hands_down');
-                      }
-                    });
-                  },
-                  child: FlareActor(
-                    'assets/animations/Teddy.flr',
-                    alignment: Alignment.center,
-                    fit: BoxFit.contain,
-                    controller: _teddyControls,
-                    animation: 'idle',
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Welcome',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.brown,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _pwdController,
-                      focusNode: _pwdFocusNode,
-                      obscureText: _obscurePin,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Enter 4-digit PIN',
-                        prefixIcon:
-                            const Icon(Icons.lock, color: AppColors.brown),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePin
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                            color: AppColors.brown,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePin = !_obscurePin;
+                      const SizedBox(height: 40),
+                      SizedBox(
+                        height: 220,
+                        child: GestureDetector(
+                          onTap: () {
+                            // Tap teddy to make him shy/fail
+                            _teddyControls.play('fail');
+                            Future.delayed(const Duration(seconds: 1), () {
+                              if (!mounted) return;
                               if (_isPasswordFocused) {
                                 _teddyControls.play(
                                     _obscurePin ? 'hands_up' : 'hands_down');
                               }
                             });
                           },
-                        ),
-                        errorText: _errorMsg,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: AppColors.grey),
+                          child: FlareActor(
+                            'assets/animations/Teddy.flr',
+                            alignment: Alignment.center,
+                            fit: BoxFit.contain,
+                            controller: _teddyControls,
+                            animation: 'idle',
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.green,
-                        foregroundColor: AppColors.white,
-                        minimumSize: const Size(double.infinity, 55),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 4,
-                      ),
-                      onPressed: _doLogin,
-                      child: const Text(
-                        'Log in',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Consumer<AuthProvider>(
-                      builder: (context, authProv, child) {
-                        if (authProv.isBiometricEnabled) {
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: IconButton(
-                              icon: const Icon(Icons.fingerprint,
-                                  size: 48, color: AppColors.green),
-                              onPressed: _doBiometricLogin,
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Column(
+                          children: [
+                            const Text(
+                              'Welcome',
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.brown,
+                              ),
                             ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Powered by', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey, fontSize: 14)),
-                  const SizedBox(width: 8),
-                  Image.asset(
-                    'assets/images/aybay-logo.png',
-                    width: 30,
-                    height: 30,
-                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
-                  ),
-                ],
-              ),
+                            const SizedBox(height: 20),
+                            TextField(
+                              controller: _pwdController,
+                              focusNode: _pwdFocusNode,
+                              obscureText: _obscurePin,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Enter 4-digit PIN',
+                                prefixIcon: const Icon(Icons.lock,
+                                    color: AppColors.brown),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePin
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: AppColors.brown,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePin = !_obscurePin;
+                                      if (_isPasswordFocused) {
+                                        _teddyControls.play(_obscurePin
+                                            ? 'hands_up'
+                                            : 'hands_down');
+                                      }
+                                    });
+                                  },
+                                ),
+                                errorText: _errorMsg,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide:
+                                      const BorderSide(color: AppColors.grey),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.green,
+                                foregroundColor: AppColors.white,
+                                minimumSize: const Size(double.infinity, 55),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                elevation: 4,
+                              ),
+                              onPressed: _doLogin,
+                              child: const Text(
+                                'Log in',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Consumer<AuthProvider>(
+                              builder: (context, authProv, child) {
+                                if (authProv.isBiometricEnabled) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 16.0),
+                                    child: IconButton(
+                                      icon: const Icon(Icons.fingerprint,
+                                          size: 48, color: AppColors.green),
+                                      onPressed: _doBiometricLogin,
+                                    ),
+                                  );
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Powered by',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color ??
+                                      Colors.grey,
+                                  fontSize: 14)),
+                          const SizedBox(width: 8),
+                          Image.asset(
+                            'assets/images/aybay-logo.png',
+                            width: 30,
+                            height: 30,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

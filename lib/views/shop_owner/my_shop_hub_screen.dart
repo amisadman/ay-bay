@@ -37,7 +37,8 @@ class _MyShopHubScreenState extends State<MyShopHubScreen> {
     }
   }
 
-  Widget _buildDashboardButton(BuildContext context, String title, IconData icon, Color color, Widget destination) {
+  Widget _buildDashboardButton(BuildContext context, String title,
+      IconData icon, Color color, Widget destination) {
     return InkWell(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (_) => destination));
@@ -58,7 +59,12 @@ class _MyShopHubScreenState extends State<MyShopHubScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
-                child: Text(title, textAlign: TextAlign.center, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+                child: Text(title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: color)),
               ),
             ),
           ],
@@ -74,7 +80,7 @@ class _MyShopHubScreenState extends State<MyShopHubScreen> {
     }
 
     final prov = Provider.of<ShopOwnerProvider>(context);
-    
+
     if (prov.shopId == null) {
       return const ShopRoomAuthScreen();
     }
@@ -123,19 +129,28 @@ class _MyShopHubScreenState extends State<MyShopHubScreen> {
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Your shop room code is:\n\n${prov.shopId}\n\nShare this code with employees so they can join the shop.', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(
+                          'Your shop room code is:\n\n${prov.shopId}\n\nShare this code with employees so they can join the shop.',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                         icon: const Icon(Icons.copy),
                         label: const Text('Copy Code'),
                         onPressed: () {
                           Clipboard.setData(ClipboardData(text: prov.shopId!));
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Code copied!')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Code copied!')));
                         },
                       ),
                     ],
                   ),
-                  actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('OK'))],
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('OK'))
+                  ],
                 ),
               );
             },
@@ -154,12 +169,18 @@ class _MyShopHubScreenState extends State<MyShopHubScreen> {
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         children: [
-          _buildDashboardButton(context, 'POS Checkout', Icons.point_of_sale, AppColors.orange, const POSScreen()),
-          _buildDashboardButton(context, 'Inventory', Icons.inventory_2, AppColors.deepTeal, const InventoryScreen()),
-          _buildDashboardButton(context, 'Customers', Icons.people, Colors.green, const ShopCustomersScreen()),
-          _buildDashboardButton(context, 'Ledger', Icons.book, AppColors.vibrantGold, const ShopLedgerScreen()),
-          _buildDashboardButton(context, 'Analytics', Icons.analytics, Colors.blue, const ShopAnalyticsScreen()),
-          _buildDashboardButton(context, 'Employees', Icons.badge, Colors.purple, const ShopEmployeesScreen()),
+          _buildDashboardButton(context, 'POS Checkout', Icons.point_of_sale,
+              AppColors.orange, const POSScreen()),
+          _buildDashboardButton(context, 'Inventory', Icons.inventory_2,
+              AppColors.deepTeal, const InventoryScreen()),
+          _buildDashboardButton(context, 'Customers', Icons.people,
+              Colors.green, const ShopCustomersScreen()),
+          _buildDashboardButton(context, 'Ledger', Icons.book,
+              AppColors.vibrantGold, const ShopLedgerScreen()),
+          _buildDashboardButton(context, 'Analytics', Icons.analytics,
+              Colors.blue, const ShopAnalyticsScreen()),
+          _buildDashboardButton(context, 'Employees', Icons.badge,
+              Colors.purple, const ShopEmployeesScreen()),
         ],
       ),
     );

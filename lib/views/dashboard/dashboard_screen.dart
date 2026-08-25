@@ -23,6 +23,11 @@ import 'package:aybay_flutter/views/analytics/analytics_screen.dart';
 import 'package:aybay_flutter/views/donations/donation_screen.dart';
 import 'package:aybay_flutter/views/home_owner/my_home_hub_screen.dart';
 import 'package:aybay_flutter/views/shop_owner/my_shop_hub_screen.dart';
+import '../subscriptions/subscriptions_hub_screen.dart';
+import '../gym_owner/my_gym_hub_screen.dart';
+import '../garage_owner/my_garage_hub_screen.dart';
+import '../car/my_car_hub_screen.dart';
+import '../tuition/tuition_hub_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -41,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _initConnectivity();
     _connectivitySubscription =
         Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       UpdateService.checkForUpdate(context);
     });
@@ -740,39 +745,126 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               const SizedBox(height: 20),
 
-              if (authProv.isHomeOwnerMode || authProv.isShopOwnerMode) ...[
+              if (authProv.isHomeOwnerMode ||
+                  authProv.isShopOwnerMode ||
+                  authProv.isSubscriptionMode ||
+                  authProv.isGymOwnerMode ||
+                  authProv.isGarageOwnerMode ||
+                  authProv.isCarOwnerMode ||
+                  authProv.isTuitionMode) ...[
                 const Divider(color: Colors.grey, height: 40),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Text('Add-on Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Theme.of(context).textTheme.bodyLarge?.color)),
+                  child: Text('Add-on Modules',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Theme.of(context).textTheme.bodyLarge?.color)),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 16.0,
+                  alignment: WrapAlignment.start,
                   children: [
                     if (authProv.isHomeOwnerMode)
-                      Expanded(
+                      SizedBox(
+                        width: (MediaQuery.of(context).size.width - 48) / 3,
                         child: _buildVectorGridButton(
                           context: context,
                           icon: Icons.home_work_rounded,
                           label: 'My Home',
                           color: AppColors.deepTeal,
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyHomeHubScreen())),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const MyHomeHubScreen())),
                         ),
                       ),
                     if (authProv.isShopOwnerMode)
-                      Expanded(
+                      SizedBox(
+                        width: (MediaQuery.of(context).size.width - 48) / 3,
                         child: _buildVectorGridButton(
                           context: context,
                           icon: Icons.storefront_rounded,
                           label: 'My Shop',
                           color: AppColors.orange,
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyShopHubScreen())),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const MyShopHubScreen())),
                         ),
                       ),
-                    if (!authProv.isHomeOwnerMode || !authProv.isShopOwnerMode)
-                      Expanded(child: const SizedBox()), // Empty spaces for alignment
-                    if (!authProv.isHomeOwnerMode && !authProv.isShopOwnerMode)
-                      Expanded(child: const SizedBox()),
+                    if (authProv.isSubscriptionMode)
+                      SizedBox(
+                        width: (MediaQuery.of(context).size.width - 48) / 3,
+                        child: _buildVectorGridButton(
+                          context: context,
+                          icon: Icons.subscriptions_rounded,
+                          label: 'My Subs',
+                          color: AppColors.purple,
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) =>
+                                      const SubscriptionsHubScreen())),
+                        ),
+                      ),
+                    if (authProv.isGymOwnerMode)
+                      SizedBox(
+                        width: (MediaQuery.of(context).size.width - 48) / 3,
+                        child: _buildVectorGridButton(
+                          context: context,
+                          icon: Icons.fitness_center_rounded,
+                          label: 'My Gym',
+                          color: AppColors.blue,
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const MyGymHubScreen())),
+                        ),
+                      ),
+                    if (authProv.isGarageOwnerMode)
+                      SizedBox(
+                        width: (MediaQuery.of(context).size.width - 48) / 3,
+                        child: _buildVectorGridButton(
+                          context: context,
+                          icon: Icons.directions_car_rounded,
+                          label: 'My Garage',
+                          color: AppColors.brown,
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const MyGarageHubScreen())),
+                        ),
+                      ),
+                    if (authProv.isCarOwnerMode)
+                      SizedBox(
+                        width: (MediaQuery.of(context).size.width - 48) / 3,
+                        child: _buildVectorGridButton(
+                          context: context,
+                          icon: Icons.time_to_leave,
+                          label: 'My Car',
+                          color: AppColors.blue,
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const MyCarHubScreen())),
+                        ),
+                      ),
+                    if (authProv.isTuitionMode)
+                      SizedBox(
+                        width: (MediaQuery.of(context).size.width - 48) / 3,
+                        child: _buildVectorGridButton(
+                          context: context,
+                          icon: Icons.school,
+                          label: 'Tuition Fees',
+                          color: AppColors.purple,
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const TuitionHubScreen())),
+                        ),
+                      ),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -1028,7 +1120,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: DropdownButton<String>(
                           isExpanded: true,
                           value: selectedCategory,
-                          dropdownColor: Theme.of(context).dialogBackgroundColor,
+                          dropdownColor:
+                              Theme.of(context).dialogBackgroundColor,
                           icon: Icon(Icons.arrow_drop_down, color: themeColor),
                           items: categories.map((cat) {
                             return DropdownMenuItem(

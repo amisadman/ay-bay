@@ -5,13 +5,17 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:aybay_flutter/core/constants/app_colors.dart';
 
 class UpdateService {
-  static Future<void> checkForUpdate(BuildContext context, {bool manualCheck = false}) async {
+  static Future<void> checkForUpdate(BuildContext context,
+      {bool manualCheck = false}) async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
 
-      final doc = await FirebaseFirestore.instance.collection('app_config').doc('update_info').get();
-      
+      final doc = await FirebaseFirestore.instance
+          .collection('app_config')
+          .doc('update_info')
+          .get();
+
       if (!doc.exists) {
         if (manualCheck && context.mounted) {
           _showNoUpdateDialog(context);
@@ -22,13 +26,15 @@ class UpdateService {
       final data = doc.data()!;
       final latestVersion = data['latest_version'] as String? ?? '1.0.0';
       final downloadUrl = data['download_url'] as String? ?? '';
-      final rawNotes = data['release_notes'] as String? ?? 'Bug fixes and performance improvements.';
+      final rawNotes = data['release_notes'] as String? ??
+          'Bug fixes and performance improvements.';
       final releaseNotes = rawNotes.replaceAll('\\n', '\n');
       final isForceUpdate = data['force_update'] as bool? ?? false;
 
       if (_isUpdateAvailable(currentVersion, latestVersion)) {
         if (context.mounted) {
-          _showUpdateDialog(context, latestVersion, downloadUrl, releaseNotes, isForceUpdate);
+          _showUpdateDialog(
+              context, latestVersion, downloadUrl, releaseNotes, isForceUpdate);
         }
       } else {
         if (manualCheck && context.mounted) {
@@ -39,15 +45,19 @@ class UpdateService {
       debugPrint('Error checking for updates: $e');
       if (manualCheck && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to check for updates. Please check your internet connection.')),
+          const SnackBar(
+              content: Text(
+                  'Failed to check for updates. Please check your internet connection.')),
         );
       }
     }
   }
 
   static bool _isUpdateAvailable(String current, String latest) {
-    List<int> currentParts = current.split('.').map((e) => int.tryParse(e) ?? 0).toList();
-    List<int> latestParts = latest.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+    List<int> currentParts =
+        current.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+    List<int> latestParts =
+        latest.split('.').map((e) => int.tryParse(e) ?? 0).toList();
 
     for (int i = 0; i < latestParts.length; i++) {
       int c = i < currentParts.length ? currentParts[i] : 0;
@@ -63,7 +73,8 @@ class UpdateService {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Up to date', style: TextStyle(color: AppColors.green)),
+        title:
+            const Text('Up to date', style: TextStyle(color: AppColors.green)),
         content: const Text('You are already on the latest version of AyBay.'),
         actions: [
           TextButton(
@@ -75,7 +86,8 @@ class UpdateService {
     );
   }
 
-  static void _showUpdateDialog(BuildContext context, String newVersion, String url, String notes, bool isForceUpdate) {
+  static void _showUpdateDialog(BuildContext context, String newVersion,
+      String url, String notes, bool isForceUpdate) {
     showDialog(
       context: context,
       barrierDismissible: !isForceUpdate, // Prevent dismissing if forced
@@ -83,7 +95,8 @@ class UpdateService {
         onWillPop: () async => !isForceUpdate,
         child: AlertDialog(
           backgroundColor: Theme.of(context).dialogBackgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Row(
             children: [
               const Icon(Icons.system_update, color: AppColors.green),
@@ -96,7 +109,8 @@ class UpdateService {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('What\'s new:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('What\'s new:',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(notes, style: const TextStyle(fontSize: 14)),
               ],
@@ -106,13 +120,15 @@ class UpdateService {
             if (!isForceUpdate)
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                child:
+                    const Text('Cancel', style: TextStyle(color: Colors.grey)),
               ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.green,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
               onPressed: () async {
                 final uri = Uri.parse(url);

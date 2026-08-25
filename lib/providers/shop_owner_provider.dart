@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ShopOwnerProvider extends ChangeNotifier {
   ShopCloudService? _cloudService;
-  
+
   String? _shopId;
   String? _shopName;
   String? _role; // "Admin" or "Staff"
@@ -19,7 +19,7 @@ class ShopOwnerProvider extends ChangeNotifier {
   List<CustomerModel> _customers = [];
   List<EmployeeModel> _employees = [];
   List<LedgerModel> _ledger = [];
-  
+
   bool _isLoading = false;
 
   List<ProductModel> get products => _products;
@@ -29,12 +29,13 @@ class ShopOwnerProvider extends ChangeNotifier {
   List<LedgerModel> get ledger => _ledger;
   bool get isLoading => _isLoading;
 
-  Future<void> initShop(String id, String name, String userRole, String userName) async {
+  Future<void> initShop(
+      String id, String name, String userRole, String userName) async {
     _shopId = id;
     _shopName = name;
     _role = userRole;
     _cloudService = ShopCloudService(id);
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('shop_id', id);
     await prefs.setString('shop_name', name);
@@ -66,33 +67,33 @@ class ShopOwnerProvider extends ChangeNotifier {
     await prefs.remove('shop_id');
     await prefs.remove('shop_name');
     await prefs.remove('shop_role');
-    
+
     _shopId = null;
     _shopName = null;
     _role = null;
     _cloudService = null;
-    
+
     _products.clear();
     _sales.clear();
     _customers.clear();
     _employees.clear();
     _ledger.clear();
-    
+
     notifyListeners();
   }
 
   Future<void> loadData() async {
     if (_cloudService == null) return;
-    
+
     _isLoading = true;
     notifyListeners();
-    
+
     _products = await _cloudService!.getProducts();
     _sales = await _cloudService!.getSales();
     _customers = await _cloudService!.getCustomers();
     _employees = await _cloudService!.getEmployees();
     _ledger = await _cloudService!.getLedger();
-    
+
     // Sync role from cloud
     final prefs = await SharedPreferences.getInstance();
     final myName = prefs.getString('shop_user_name');
@@ -131,14 +132,15 @@ class ShopOwnerProvider extends ChangeNotifier {
   }
 
   // --- Sales ---
-  Future<void> recordSale(List<SaleItem> items, {double discount = 0, String? customerId, String? employeeId}) async {
+  Future<void> recordSale(List<SaleItem> items,
+      {double discount = 0, String? customerId, String? employeeId}) async {
     double totalAmt = 0;
     double totalProfit = 0;
 
     for (var item in items) {
       totalAmt += (item.price * item.quantity);
       totalProfit += ((item.price - item.cost) * item.quantity);
-      
+
       // Reduce stock
       final pIndex = _products.indexWhere((p) => p.id == item.productId);
       if (pIndex != -1) {
@@ -163,7 +165,7 @@ class ShopOwnerProvider extends ChangeNotifier {
 
     final newSale = await _cloudService!.recordSale(sale);
     _sales.add(newSale);
-    
+
     if (customerId != null) {
       final cIndex = _customers.indexWhere((c) => c.id == customerId);
       if (cIndex != -1) {
@@ -171,7 +173,7 @@ class ShopOwnerProvider extends ChangeNotifier {
         _customers[cIndex] = c.copyWith(debt: c.debt + totalAmt);
       }
     }
-    
+
     notifyListeners();
   }
 
@@ -208,7 +210,11 @@ class ShopOwnerProvider extends ChangeNotifier {
     await _cloudService!.updateEmployeeRole(id, newRole);
     final index = _employees.indexWhere((e) => e.id == id);
     if (index != -1) {
-      _employees[index] = EmployeeModel(id: id, name: _employees[index].name, phone: _employees[index].phone, role: newRole);
+      _employees[index] = EmployeeModel(
+          id: id,
+          name: _employees[index].name,
+          phone: _employees[index].phone,
+          role: newRole);
       notifyListeners();
     }
   }

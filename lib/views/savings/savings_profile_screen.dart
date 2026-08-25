@@ -82,7 +82,8 @@ class _SavingsProfileScreenState extends State<SavingsProfileScreen> {
             ));
   }
 
-  void _showEditTransactionDialog(BuildContext context, FinanceProvider finProv, int originalIndex, double currentAmount, String currentDate) {
+  void _showEditTransactionDialog(BuildContext context, FinanceProvider finProv,
+      int originalIndex, double currentAmount, String currentDate) {
     final amountCtrl = TextEditingController(text: currentAmount.toString());
     final dateCtrl = TextEditingController(text: currentDate);
 
@@ -90,7 +91,8 @@ class _SavingsProfileScreenState extends State<SavingsProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Edit Transaction',
-            style: TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
+            style:
+                TextStyle(color: AppColors.brown, fontWeight: FontWeight.bold)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -99,7 +101,8 @@ class _SavingsProfileScreenState extends State<SavingsProfileScreen> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Amount',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
             const SizedBox(height: 12),
@@ -107,21 +110,25 @@ class _SavingsProfileScreenState extends State<SavingsProfileScreen> {
               controller: dateCtrl,
               decoration: InputDecoration(
                 labelText: 'Date (YYYY-MM-DD)',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.black, foregroundColor: Colors.white),
+                backgroundColor: AppColors.black,
+                foregroundColor: Colors.white),
             onPressed: () async {
               final newAmount = double.tryParse(amountCtrl.text.trim()) ?? 0.0;
               final newDate = dateCtrl.text.trim();
               if (newAmount > 0 && newDate.isNotEmpty) {
-                await finProv.updateSavingsTransaction(widget.savingsId, originalIndex, newAmount, newDate);
+                await finProv.updateSavingsTransaction(
+                    widget.savingsId, originalIndex, newAmount, newDate);
                 if (mounted) Navigator.pop(ctx);
               }
             },
@@ -386,19 +393,25 @@ class _SavingsProfileScreenState extends State<SavingsProfileScreen> {
                             Text(
                                 '${isAdd ? '+' : '-'} ${CurrencyFormatter.formatSimple(amount, sym)}',
                                 style: TextStyle(
-                                    color: isAdd ? AppColors.green : AppColors.red,
+                                    color:
+                                        isAdd ? AppColors.green : AppColors.red,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16)),
                             PopupMenuButton<String>(
-                              icon: const Icon(Icons.more_vert, color: Colors.grey),
+                              icon: const Icon(Icons.more_vert,
+                                  color: Colors.grey),
                               onSelected: (val) async {
                                 if (val == 'delete') {
                                   // The index in the reversed list maps to the original index
-                                  final originalIndex = transactions.length - 1 - index;
-                                  await finProv.deleteSavingsTransaction(widget.savingsId, originalIndex);
+                                  final originalIndex =
+                                      transactions.length - 1 - index;
+                                  await finProv.deleteSavingsTransaction(
+                                      widget.savingsId, originalIndex);
                                 } else if (val == 'edit') {
-                                  final originalIndex = transactions.length - 1 - index;
-                                  _showEditTransactionDialog(context, finProv, originalIndex, amount, date);
+                                  final originalIndex =
+                                      transactions.length - 1 - index;
+                                  _showEditTransactionDialog(context, finProv,
+                                      originalIndex, amount, date);
                                 }
                               },
                               itemBuilder: (context) => [

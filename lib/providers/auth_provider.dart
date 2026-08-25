@@ -9,6 +9,11 @@ class AuthProvider extends ChangeNotifier {
   bool _hasSetup = false;
   bool _isHomeOwnerMode = false;
   bool _isShopOwnerMode = false;
+  bool _isSubscriptionMode = false;
+  bool _isGymOwnerMode = false;
+  bool _isGarageOwnerMode = false;
+  bool _isCarOwnerMode = false;
+  bool _isTuitionMode = false;
   String _currentPin = '1234';
   String _userName = 'AyBay User';
   String? _profileImagePath;
@@ -18,6 +23,11 @@ class AuthProvider extends ChangeNotifier {
   bool get hasSetup => _hasSetup;
   bool get isHomeOwnerMode => _isHomeOwnerMode;
   bool get isShopOwnerMode => _isShopOwnerMode;
+  bool get isSubscriptionMode => _isSubscriptionMode;
+  bool get isGymOwnerMode => _isGymOwnerMode;
+  bool get isGarageOwnerMode => _isGarageOwnerMode;
+  bool get isCarOwnerMode => _isCarOwnerMode;
+  bool get isTuitionMode => _isTuitionMode;
   String get currentPin => _currentPin;
   String get userName => _userName;
   String? get profileImagePath => _profileImagePath;
@@ -36,6 +46,11 @@ class AuthProvider extends ChangeNotifier {
     _hasSetup = prefs.getBool('has_setup') ?? false;
     _isHomeOwnerMode = prefs.getBool('is_home_owner_mode') ?? false;
     _isShopOwnerMode = prefs.getBool('is_shop_owner_mode') ?? false;
+    _isSubscriptionMode = prefs.getBool('is_subscription_mode') ?? false;
+    _isGymOwnerMode = prefs.getBool('is_gym_owner_mode') ?? false;
+    _isGarageOwnerMode = prefs.getBool('is_garage_owner_mode') ?? false;
+    _isCarOwnerMode = prefs.getBool('is_car_owner_mode') ?? false;
+    _isTuitionMode = prefs.getBool('is_tuition_mode') ?? false;
     _currentPin = prefs.getString('user_pin') ?? '1234';
     _userName = prefs.getString('user_name') ?? 'AyBay User';
     _profileImagePath = prefs.getString('profile_image_path');
@@ -67,6 +82,41 @@ class AuthProvider extends ChangeNotifier {
     _isShopOwnerMode = enabled;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('is_shop_owner_mode', enabled);
+    notifyListeners();
+  }
+
+  Future<void> toggleSubscriptionMode(bool enabled) async {
+    _isSubscriptionMode = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_subscription_mode', enabled);
+    notifyListeners();
+  }
+
+  Future<void> toggleGymOwnerMode(bool enabled) async {
+    _isGymOwnerMode = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_gym_owner_mode', enabled);
+    notifyListeners();
+  }
+
+  Future<void> toggleGarageOwnerMode(bool enabled) async {
+    _isGarageOwnerMode = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_garage_owner_mode', enabled);
+    notifyListeners();
+  }
+
+  Future<void> toggleCarOwnerMode(bool enabled) async {
+    _isCarOwnerMode = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_car_owner_mode', enabled);
+    notifyListeners();
+  }
+
+  Future<void> toggleTuitionMode(bool enabled) async {
+    _isTuitionMode = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_tuition_mode', enabled);
     notifyListeners();
   }
 

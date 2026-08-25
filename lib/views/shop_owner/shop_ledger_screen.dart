@@ -33,7 +33,8 @@ class _ShopLedgerScreenState extends State<ShopLedgerScreen> {
                   children: [
                     TextField(
                       controller: titleCtrl,
-                      decoration: const InputDecoration(labelText: 'Description/Title'),
+                      decoration:
+                          const InputDecoration(labelText: 'Description/Title'),
                     ),
                     const SizedBox(height: 12),
                     TextField(
@@ -46,7 +47,8 @@ class _ShopLedgerScreenState extends State<ShopLedgerScreen> {
                       value: type,
                       decoration: const InputDecoration(labelText: 'Type'),
                       items: ['Income', 'Expense']
-                          .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                          .map(
+                              (t) => DropdownMenuItem(value: t, child: Text(t)))
                           .toList(),
                       onChanged: (v) {
                         if (v != null) setState(() => type = v);
@@ -56,13 +58,16 @@ class _ShopLedgerScreenState extends State<ShopLedgerScreen> {
                 ),
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () async {
                     final title = titleCtrl.text.trim();
                     final amt = double.tryParse(amountCtrl.text.trim()) ?? 0.0;
                     if (title.isNotEmpty && amt > 0) {
-                      final prov = Provider.of<ShopOwnerProvider>(context, listen: false);
+                      final prov = Provider.of<ShopOwnerProvider>(context,
+                          listen: false);
                       await prov.addLedgerEntry(
                         LedgerModel(
                           title: title,
@@ -74,7 +79,9 @@ class _ShopLedgerScreenState extends State<ShopLedgerScreen> {
                       if (mounted) Navigator.pop(ctx);
                     }
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.vibrantGold, foregroundColor: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.vibrantGold,
+                      foregroundColor: Colors.white),
                   child: const Text('Save'),
                 ),
               ],
@@ -96,42 +103,55 @@ class _ShopLedgerScreenState extends State<ShopLedgerScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Date: ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(sale.date))}'),
+                Text(
+                    'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(sale.date))}'),
                 const SizedBox(height: 8),
                 const Divider(),
                 ...sale.items.map((item) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(child: Text('${item.productName} (x${item.quantity})')),
-                      Text(CurrencyFormatter.formatSimple(item.price * item.quantity, sym)),
-                    ],
-                  ),
-                )),
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                              child: Text(
+                                  '${item.productName} (x${item.quantity})')),
+                          Text(CurrencyFormatter.formatSimple(
+                              item.price * item.quantity, sym)),
+                        ],
+                      ),
+                    )),
                 const Divider(),
                 if (sale.discount > 0)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Discount:', style: TextStyle(color: Colors.red)),
-                      Text('- ${CurrencyFormatter.formatSimple(sale.discount, sym)}', style: const TextStyle(color: Colors.red)),
+                      const Text('Discount:',
+                          style: TextStyle(color: Colors.red)),
+                      Text(
+                          '- ${CurrencyFormatter.formatSimple(sale.discount, sym)}',
+                          style: const TextStyle(color: Colors.red)),
                     ],
                   ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Total:', style: TextStyle(fontWeight: FontWeight.bold)),
-                    Text(CurrencyFormatter.formatSimple(sale.totalAmount, sym), style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const Text('Total:',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(CurrencyFormatter.formatSimple(sale.totalAmount, sym),
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text('Profit: ${CurrencyFormatter.formatSimple(sale.totalProfit, sym)}', style: const TextStyle(color: Colors.green, fontSize: 12)),
+                Text(
+                    'Profit: ${CurrencyFormatter.formatSimple(sale.totalProfit, sym)}',
+                    style: const TextStyle(color: Colors.green, fontSize: 12)),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Close')),
           ],
         );
       },
@@ -177,11 +197,20 @@ class _ShopLedgerScreenState extends State<ShopLedgerScreen> {
                           margin: const EdgeInsets.only(bottom: 12),
                           child: ListTile(
                             leading: CircleAvatar(
-                              backgroundColor: isIncome ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
-                              child: Icon(isIncome ? Icons.arrow_downward : Icons.arrow_upward, color: isIncome ? Colors.green : Colors.red),
+                              backgroundColor: isIncome
+                                  ? Colors.green.withValues(alpha: 0.1)
+                                  : Colors.red.withValues(alpha: 0.1),
+                              child: Icon(
+                                  isIncome
+                                      ? Icons.arrow_downward
+                                      : Icons.arrow_upward,
+                                  color: isIncome ? Colors.green : Colors.red),
                             ),
-                            title: Text(entry.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Text(DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(entry.date))),
+                            title: Text(entry.title,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Text(DateFormat('yyyy-MM-dd HH:mm')
+                                .format(DateTime.parse(entry.date))),
                             trailing: Text(
                               '${isIncome ? '+' : '-'} ${CurrencyFormatter.formatSimple(entry.amount, sym)}',
                               style: TextStyle(
@@ -216,19 +245,26 @@ class _ShopLedgerScreenState extends State<ShopLedgerScreen> {
                             backgroundColor: Colors.blue,
                             child: Icon(Icons.receipt, color: Colors.white),
                           ),
-                          title: Text('Sale #${sale.id?.substring(0, 5) ?? index}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(sale.date))),
+                          title: Text(
+                              'Sale #${sale.id?.substring(0, 5) ?? index}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          subtitle: Text(DateFormat('yyyy-MM-dd HH:mm')
+                              .format(DateTime.parse(sale.date))),
                           trailing: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                CurrencyFormatter.formatSimple(sale.totalAmount, sym),
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                CurrencyFormatter.formatSimple(
+                                    sale.totalAmount, sym),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                               Text(
                                 'Items: ${sale.items.length}',
-                                style: const TextStyle(fontSize: 10, color: Colors.grey),
+                                style: const TextStyle(
+                                    fontSize: 10, color: Colors.grey),
                               ),
                             ],
                           ),

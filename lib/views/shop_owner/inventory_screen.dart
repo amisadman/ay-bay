@@ -21,7 +21,10 @@ class InventoryScreen extends StatelessWidget {
     final shopProv = Provider.of<ShopOwnerProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Inventory'), backgroundColor: AppColors.orange, foregroundColor: Colors.white),
+      appBar: AppBar(
+          title: const Text('Inventory'),
+          backgroundColor: AppColors.orange,
+          foregroundColor: Colors.white),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showProductDialog(context),
         backgroundColor: AppColors.orange,
@@ -43,7 +46,9 @@ class InventoryScreen extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 12),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
-                          side: isLowStock ? const BorderSide(color: Colors.red, width: 1.5) : BorderSide.none),
+                          side: isLowStock
+                              ? const BorderSide(color: Colors.red, width: 1.5)
+                              : BorderSide.none),
                       child: ListTile(
                         onTap: () => _showProductDialog(context, prod),
                         leading: prod.imagePath != null
@@ -62,22 +67,36 @@ class InventoryScreen extends StatelessWidget {
                                 decoration: BoxDecoration(
                                     color: Colors.grey.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(8)),
-                                child: const Icon(Icons.image, color: Colors.grey),
+                                child:
+                                    const Icon(Icons.image, color: Colors.grey),
                               ),
                         title: Row(
                           children: [
                             Expanded(
-                              child: Text(prod.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                              child: Text(prod.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
                             ),
                             if (isLowStock)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(4)),
-                                child: const Text('Low Stock', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(4)),
+                                child: const Text('Low Stock',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold)),
                               ),
                           ],
                         ),
-                        subtitle: Text('Stock: ${prod.stock}', style: TextStyle(color: isLowStock ? Colors.red : null, fontWeight: isLowStock ? FontWeight.bold : null)),
+                        subtitle: Text('Stock: ${prod.stock}',
+                            style: TextStyle(
+                                color: isLowStock ? Colors.red : null,
+                                fontWeight:
+                                    isLowStock ? FontWeight.bold : null)),
                         trailing: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Column(
@@ -86,11 +105,13 @@ class InventoryScreen extends StatelessWidget {
                             children: [
                               Text('৳${prod.price.toStringAsFixed(2)}',
                                   style: TextStyle(
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16)),
                               Text('Cost: ৳${prod.cost.toStringAsFixed(2)}',
-                                  style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                                  style: const TextStyle(
+                                      color: Colors.grey, fontSize: 12)),
                             ],
                           ),
                         ),
@@ -122,9 +143,12 @@ class _ProductDialogState extends State<ProductDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.product?.name ?? '');
-    _priceController = TextEditingController(text: widget.product?.price.toStringAsFixed(2) ?? '');
-    _costController = TextEditingController(text: widget.product?.cost.toStringAsFixed(2) ?? '');
-    _stockController = TextEditingController(text: widget.product?.stock.toString() ?? '');
+    _priceController = TextEditingController(
+        text: widget.product?.price.toStringAsFixed(2) ?? '');
+    _costController = TextEditingController(
+        text: widget.product?.cost.toStringAsFixed(2) ?? '');
+    _stockController =
+        TextEditingController(text: widget.product?.stock.toString() ?? '');
     _imagePath = widget.product?.imagePath;
   }
 
@@ -157,7 +181,8 @@ class _ProductDialogState extends State<ProductDialog> {
         cost: double.parse(_costController.text),
         stock: int.parse(_stockController.text),
         imagePath: _imagePath,
-        createdAt: widget.product?.createdAt ?? DateTime.now().toIso8601String(),
+        createdAt:
+            widget.product?.createdAt ?? DateTime.now().toIso8601String(),
       );
 
       final shopProv = Provider.of<ShopOwnerProvider>(context, listen: false);
@@ -172,7 +197,8 @@ class _ProductDialogState extends State<ProductDialog> {
 
   void _deleteProduct() {
     if (widget.product != null) {
-      Provider.of<ShopOwnerProvider>(context, listen: false).deleteProduct(widget.product!.id!);
+      Provider.of<ShopOwnerProvider>(context, listen: false)
+          .deleteProduct(widget.product!.id!);
       Navigator.pop(context);
     }
   }
@@ -195,7 +221,10 @@ class _ProductDialogState extends State<ProductDialog> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(isEditing ? 'Edit Product' : 'New Product',
-                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.orange)),
+                        style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.orange)),
                     if (isEditing)
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
@@ -212,19 +241,23 @@ class _ProductDialogState extends State<ProductDialog> {
                     decoration: BoxDecoration(
                       color: Colors.grey.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.orange.withValues(alpha: 0.5)),
+                      border: Border.all(
+                          color: AppColors.orange.withValues(alpha: 0.5)),
                     ),
                     child: _imagePath != null
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.file(File(_imagePath!), fit: BoxFit.cover),
+                            child: Image.file(File(_imagePath!),
+                                fit: BoxFit.cover),
                           )
                         : const Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.add_a_photo, color: AppColors.orange),
                               SizedBox(height: 4),
-                              Text('Add Photo', style: TextStyle(fontSize: 10, color: AppColors.orange)),
+                              Text('Add Photo',
+                                  style: TextStyle(
+                                      fontSize: 10, color: AppColors.orange)),
                             ],
                           ),
                   ),
@@ -260,9 +293,13 @@ class _ProductDialogState extends State<ProductDialog> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                    TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel')),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: AppColors.orange, foregroundColor: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.orange,
+                          foregroundColor: Colors.white),
                       onPressed: _saveProduct,
                       child: const Text('Save'),
                     ),
