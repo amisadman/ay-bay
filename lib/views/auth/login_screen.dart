@@ -132,13 +132,25 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   children: [
-                    const Text(
-                      'Welcome',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.brown,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/aybay-logo.png',
+                          width: 40,
+                          height: 40,
+                          errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Welcome',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.brown,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     TextField(
@@ -209,13 +221,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 40),
-              Image.asset(
-                'assets/images/aybay-logo.png',
-                width: 60,
-                height: 60,
-                errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
               ),
               const SizedBox(height: 20),
             ],
