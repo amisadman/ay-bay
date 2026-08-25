@@ -10,6 +10,9 @@ import 'package:aybay_flutter/providers/auth_provider.dart';
 import 'package:aybay_flutter/views/auth/login_screen.dart';
 import 'package:aybay_flutter/views/filter/filter_screen.dart';
 import 'package:aybay_flutter/views/walleo_ai/walleo_ai_chat_screen.dart';
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:aybay_flutter/services/update_service.dart';
 import 'package:aybay_flutter/views/backup/backup_restore_screen.dart';
 import 'package:aybay_flutter/views/profile/profile_settings_screen.dart';
 import 'package:aybay_flutter/views/events/events_screen.dart';
@@ -18,9 +21,54 @@ import 'package:aybay_flutter/views/savings/savings_screen.dart';
 import 'package:aybay_flutter/views/budget/budget_screen.dart';
 import 'package:aybay_flutter/views/analytics/analytics_screen.dart';
 import 'package:aybay_flutter/views/donations/donation_screen.dart';
+import 'package:aybay_flutter/views/home_owner/my_home_hub_screen.dart';
+import 'package:aybay_flutter/views/shop_owner/my_shop_hub_screen.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  List<ConnectivityResult> _connectionStatus = [ConnectivityResult.none];
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _initConnectivity();
+    _connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen(_updateConnectionStatus);
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UpdateService.checkForUpdate(context);
+    });
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> _initConnectivity() async {
+    late List<ConnectivityResult> result;
+    try {
+      result = await Connectivity().checkConnectivity();
+    } catch (e) {
+      return;
+    }
+    if (!mounted) return;
+    _updateConnectionStatus(result);
+  }
+
+  void _updateConnectionStatus(List<ConnectivityResult> result) {
+    setState(() {
+      _connectionStatus = result;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,11 +130,26 @@ class DashboardScreen extends StatelessWidget {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(15)),
         ),
-        title: Text('Welcome back',
-            style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold)),
+        title: Row(
+          children: [
+            Icon(
+              _connectionStatus.contains(ConnectivityResult.none)
+                  ? Icons.cloud_off
+                  : Icons.cloud,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              _connectionStatus.contains(ConnectivityResult.none)
+                  ? 'Offline'
+                  : 'Online',
+              style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: Container(
@@ -327,7 +390,7 @@ class DashboardScreen extends StatelessWidget {
                       // AyBay Logo (Bottom Right) with subtle white glow for dark themes
                       Positioned(
                         bottom: 0,
-                        right: 10,
+                        right: 12,
                         child: Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
@@ -677,6 +740,44 @@ class DashboardScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
+              if (authProv.isHomeOwnerMode || authProv.isShopOwnerMode) ...[
+                const Divider(color: Colors.grey, height: 40),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Text('Add-on Modules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Theme.of(context).textTheme.bodyLarge?.color)),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    if (authProv.isHomeOwnerMode)
+                      Expanded(
+                        child: _buildVectorGridButton(
+                          context: context,
+                          icon: Icons.home_work_rounded,
+                          label: 'My Home',
+                          color: AppColors.deepTeal,
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyHomeHubScreen())),
+                        ),
+                      ),
+                    if (authProv.isShopOwnerMode)
+                      Expanded(
+                        child: _buildVectorGridButton(
+                          context: context,
+                          icon: Icons.storefront_rounded,
+                          label: 'My Shop',
+                          color: AppColors.orange,
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyShopHubScreen())),
+                        ),
+                      ),
+                    if (!authProv.isHomeOwnerMode || !authProv.isShopOwnerMode)
+                      Expanded(child: const SizedBox()), // Empty spaces for alignment
+                    if (!authProv.isHomeOwnerMode && !authProv.isShopOwnerMode)
+                      Expanded(child: const SizedBox()),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
+
               const SizedBox(height: 40),
             ],
           ),
@@ -817,7 +918,7 @@ class DashboardScreen extends StatelessWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return Dialog(
-              backgroundColor: AppColors.white,
+              backgroundColor: Theme.of(context).dialogBackgroundColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24)),
               child: SingleChildScrollView(
@@ -927,6 +1028,7 @@ class DashboardScreen extends StatelessWidget {
                         child: DropdownButton<String>(
                           isExpanded: true,
                           value: selectedCategory,
+                          dropdownColor: Theme.of(context).dialogBackgroundColor,
                           icon: Icon(Icons.arrow_drop_down, color: themeColor),
                           items: categories.map((cat) {
                             return DropdownMenuItem(
