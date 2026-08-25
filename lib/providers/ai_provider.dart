@@ -84,7 +84,7 @@ class AIProvider extends ChangeNotifier {
           'Authorization': 'Bearer $apiKey',
         },
         body: jsonEncode({
-          'model': 'llama-3.1-70b-versatile',
+          'model': 'llama-3.3-70b-versatile',
           'messages': _chatHistory,
           'tools': _getTools(),
           'tool_choice': 'auto',
