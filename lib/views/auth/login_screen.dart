@@ -99,10 +99,15 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight - 32),
+                child: IntrinsicHeight(
+                  child: Column(
+                    children: [
               const SizedBox(height: 40),
               SizedBox(
                 height: 220,
@@ -210,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 40),
+              const Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -222,13 +227,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 24,
                     errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
                   ),
-                  const SizedBox(width: 6),
-                  const Text('AyBay', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.brown, fontSize: 16)),
                 ],
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
