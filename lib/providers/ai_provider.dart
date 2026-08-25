@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:aybay_flutter/providers/finance_provider.dart';
 import 'package:aybay_flutter/models/transaction_model.dart';
-import 'package:intl/intl.dart';
 import 'dart:typed_data';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ChatMessage {
   final String text;
@@ -14,73 +14,29 @@ class ChatMessage {
 }
 
 class AIProvider extends ChangeNotifier {
-  GenerativeModel? _model;
-  ChatSession? _chatSession;
   final List<ChatMessage> _messages = [];
   bool _isThinking = false;
+  
+  // Keep track of OpenAI message history
+  final List<Map<String, dynamic>> _chatHistory = [];
 
   List<ChatMessage> get messages => _messages;
   bool get isThinking => _isThinking;
 
-  Future<void> initializeModel() async {
-    final apiKey = dotenv.env['GEMINI_API_KEY'];
-    if (apiKey == null || apiKey.isEmpty) {
-      debugPrint('Gemini API Key is missing');
-      return;
-    }
+  final String _groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
-    final addTransactionTool = Tool(
-      functionDeclarations: [
-        FunctionDeclaration(
-          'add_transaction',
-          'Add a new financial transaction (income or expense) based on user input.',
-          Schema(
-            SchemaType.object,
-            properties: {
-              'amount': Schema(SchemaType.number,
-                  description: 'The transaction amount.'),
-              'type': Schema(SchemaType.string,
-                  description: 'Either "income" or "expense"'),
-              'category': Schema(SchemaType.string,
-                  description:
-                      'Category of the transaction e.g., Food, Salary, Vacation'),
-              'note': Schema(SchemaType.string,
-                  description: 'A brief note or reason for the transaction.'),
-            },
-            requiredProperties: ['amount', 'type', 'category', 'note'],
-          ),
-        ),
-        FunctionDeclaration(
-          'analyze_spending',
-          'Analyzes user spending patterns, identifies unnecessary expenses, and gives a financial summary for a specific period.',
-          Schema(
-            SchemaType.object,
-            properties: {
-              'period': Schema(SchemaType.string,
-                  description:
-                      'The time period to analyze, e.g., "month", "year", "today"'),
-            },
-            requiredProperties: ['period'],
-          ),
-        ),
-      ],
-    );
-
-    _model = GenerativeModel(
-      model: 'gemini-flash-latest',
-      apiKey: apiKey,
-      tools: [addTransactionTool],
-      systemInstruction: Content.system(
-          'You are Walleo, an advanced, highly intelligent Agentic AI financial assistant embedded in the AyBay app. '
+  void initializeModel() {
+    _chatHistory.clear();
+    _chatHistory.add({
+      'role': 'system',
+      'content': 'You are Walleo, an advanced, highly intelligent Agentic AI financial assistant embedded in the AyBay app. '
           'You speak to the user in a friendly, concise tone. You can understand Bengali and English natively. '
           'If a user tells you they spent money or got income, you MUST call the add_transaction tool to save it. '
-          'If the user provides an image of a receipt, bill, or ticket (like a thermal printer receipt from Shwapno, school, etc.), you MUST analyze the image, extract the total expense amount, infer a suitable category (e.g., Groceries, Education, Transport), and immediately call the add_transaction tool to save it. '
+          'If the user provides an image of a receipt, bill, or ticket, gently remind them that your vision capabilities are temporarily offline, but they can type the amount manually.'
           'If a user asks about their spending, how to save money, what their month/year looks like, or any analytics question, you MUST call the analyze_spending tool to get their raw transaction data. '
-          'When you receive the data from analyze_spending, you MUST look at the dates and categories, filter them according to the user\'s question (e.g. "last 6 months", "most spending category"), and provide a final text response with a personalized, detailed summary.'
-          'Never hallucinate data. Only rely on the tool responses. '),
-    );
-
-    _chatSession = _model!.startChat();
+          'When you receive the data from analyze_spending, you MUST look at the dates and categories, filter them according to the user\'s question, and provide a final text response with a personalized, detailed summary. '
+          'Never hallucinate data. Only rely on the tool responses.'
+    });
   }
 
   void addMessage(ChatMessage message) {
@@ -89,125 +45,173 @@ class AIProvider extends ChangeNotifier {
   }
 
   Future<void> sendMessage(String text, FinanceProvider financeProvider, {Uint8List? imageBytes}) async {
-    if (_chatSession == null) {
-      await initializeModel();
-      if (_chatSession == null) {
-        addMessage(ChatMessage(
-            text: 'Error: Gemini API Key not configured properly.',
-            isUser: false));
-        return;
-      }
+    final apiKey = dotenv.env['GROQ_API_KEY'];
+    if (apiKey == null || apiKey.isEmpty) {
+      addMessage(ChatMessage(text: 'Error: GROQ_API_KEY is missing in .env', isUser: false));
+      return;
+    }
+
+    if (_chatHistory.isEmpty) {
+      initializeModel();
     }
 
     addMessage(ChatMessage(text: text, isUser: true, imageBytes: imageBytes));
     _isThinking = true;
     notifyListeners();
 
+    _chatHistory.add({
+      'role': 'user',
+      'content': text.isNotEmpty ? text : 'Please analyze this receipt and log the expense.',
+    });
+
+    if (imageBytes != null) {
+      // Add a system prompt injecting the limitation gracefully for the LLM
+      _chatHistory.add({
+        'role': 'system',
+        'content': 'System note: The user has attached an image. Remember that you currently cannot see images. Politely ask them to type the amount/details.',
+      });
+    }
+
+    await _callGroqApi(apiKey, financeProvider);
+  }
+
+  Future<void> _callGroqApi(String apiKey, FinanceProvider financeProvider) async {
     try {
-      final Content content;
-      if (imageBytes != null) {
-        content = Content.multi([
-          TextPart(text.isNotEmpty ? text : 'Please analyze this receipt and log the expense.'),
-          DataPart('image/jpeg', imageBytes)
-        ]);
+      final response = await http.post(
+        Uri.parse(_groqUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $apiKey',
+        },
+        body: jsonEncode({
+          'model': 'llama-3.1-70b-versatile',
+          'messages': _chatHistory,
+          'tools': _getTools(),
+          'tool_choice': 'auto',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final choice = data['choices'][0]['message'];
+        
+        _chatHistory.add(choice); // Append assistant's raw message containing tool_calls
+
+        if (choice['tool_calls'] != null) {
+          // Handle tool calls
+          for (final toolCall in choice['tool_calls']) {
+            final functionCall = toolCall['function'];
+            final name = functionCall['name'];
+            final args = jsonDecode(functionCall['arguments']);
+            
+            String toolResult = '';
+            
+            if (name == 'add_transaction') {
+              final amount = (args['amount'] as num).toDouble();
+              final type = args['type'] as String;
+              final category = args['category'] as String;
+              final note = args['note'] as String;
+
+              final tx = TransactionModel(
+                title: note,
+                amount: amount,
+                type: type,
+                category: category,
+                date: DateTime.now().toIso8601String().split('T')[0],
+                createdAt: DateTime.now().toIso8601String(),
+              );
+
+              await financeProvider.addTransaction(tx);
+              addMessage(ChatMessage(text: 'Action Successful: Added $note ($amount) to database.', isUser: false));
+              
+              toolResult = jsonEncode({
+                'status': 'Success',
+                'message': 'Transaction added: $note ($amount)'
+              });
+            } else if (name == 'analyze_spending') {
+              final allTx = financeProvider.transactions;
+              final recentTx = allTx.take(500).map((t) => '${t.date}: ${t.type} - ${t.amount} (${t.category}) - ${t.title}').toList();
+              
+              toolResult = jsonEncode({
+                'status': 'Success',
+                'summary_data': {
+                  'total_income': financeProvider.totalIncome,
+                  'total_expense': financeProvider.totalExpense,
+                  'current_balance': financeProvider.netBalance,
+                  'recent_transactions': recentTx,
+                }
+              });
+            }
+
+            // Append tool response
+            _chatHistory.add({
+              'role': 'tool',
+              'tool_call_id': toolCall['id'],
+              'name': name,
+              'content': toolResult,
+            });
+          }
+
+          // Follow up call to get final response
+          await _callGroqApi(apiKey, financeProvider);
+          
+        } else if (choice['content'] != null) {
+          addMessage(ChatMessage(text: choice['content'], isUser: false));
+          _isThinking = false;
+          notifyListeners();
+        }
       } else {
-        content = Content.text(text);
+        _handleApiError(response.body);
       }
-      final response = await _chatSession!.sendMessage(content);
-      await _handleResponse(response, financeProvider);
     } catch (e) {
-      debugPrint('Error communicating with Gemini: $e');
-      String errorMessage = 'Error: $e';
-      if (e.toString().contains('503') || e.toString().contains('UNAVAILABLE')) {
-        errorMessage = 'Walleo is currently experiencing high demand. Please try again in a few moments.';
-      }
-      addMessage(ChatMessage(text: errorMessage, isUser: false));
-      _isThinking = false;
-      notifyListeners();
+      _handleApiError(e.toString());
     }
   }
 
-  Future<void> _handleResponse(
-      GenerateContentResponse response, FinanceProvider financeProvider) async {
-    if (response.functionCalls.isNotEmpty) {
-      final functionResponses = <FunctionResponse>[];
-
-      for (final functionCall in response.functionCalls) {
-        if (functionCall.name == 'add_transaction') {
-          final args = functionCall.args;
-          final amount = (args['amount'] as num).toDouble();
-          final type = args['type'] as String;
-          final category = args['category'] as String;
-          final note = args['note'] as String;
-
-          // Execute action via FinanceProvider
-          final tx = TransactionModel(
-            title: note,
-            amount: amount,
-            type: type,
-            category: category,
-            date: DateTime.now().toIso8601String().split('T')[0],
-            createdAt: DateTime.now().toIso8601String(),
-          );
-
-          await financeProvider.addTransaction(tx);
-          
-          addMessage(ChatMessage(text: 'Action Successful: Added $note ($amount) to database.', isUser: false));
-
-          functionResponses.add(FunctionResponse(functionCall.name, {
-            'status': 'Success',
-            'message': 'Transaction added: $note ($amount)'
-          }));
-        } else if (functionCall.name == 'analyze_spending') {
-          final period = functionCall.args['period'] as String;
-
-          // Get data from FinanceProvider
-          final allTx = financeProvider.transactions;
-          // Simple dump of recent transactions for the AI to analyze
-          // In a real scenario, filter by the requested period
-          final recentTx = allTx
-              .take(500)
-              .map((t) =>
-                  '${t.date}: ${t.type} - ${t.amount} (${t.category}) - ${t.title}')
-              .toList();
-          final totalIncome = financeProvider.totalIncome;
-          final totalExpense = financeProvider.totalExpense;
-          final currentBalance = financeProvider.netBalance;
-
-          functionResponses.add(FunctionResponse(functionCall.name, {
-            'status': 'Success',
-            'summary_data': {
-              'total_income': totalIncome,
-              'total_expense': totalExpense,
-              'current_balance': currentBalance,
-              'recent_transactions': recentTx,
-            }
-          }));
-        }
-      }
-
-      // Send the tool response back to Gemini
-      try {
-        final followUpResponse = await _chatSession!
-            .sendMessage(Content.functionResponses(functionResponses));
-        await _handleResponse(followUpResponse, financeProvider);
-      } catch (e) {
-        debugPrint('Error sending function response to Gemini: $e');
-        String errorMessage = 'Error: $e';
-        if (e.toString().contains('503') || e.toString().contains('UNAVAILABLE')) {
-          errorMessage = 'Walleo is currently experiencing high demand. Please try again in a few moments.';
-        }
-        addMessage(ChatMessage(text: errorMessage, isUser: false));
-        _isThinking = false;
-        notifyListeners();
-      }
-    } else if (response.text != null && response.text!.isNotEmpty) {
-      addMessage(ChatMessage(text: response.text!, isUser: false));
-      _isThinking = false;
-      notifyListeners();
-    } else {
-      _isThinking = false;
-      notifyListeners();
+  void _handleApiError(String error) {
+    debugPrint('Groq API Error: $error');
+    String errorMessage = 'Error: $error';
+    if (error.contains('503') || error.contains('UNAVAILABLE')) {
+      errorMessage = 'Walleo is currently experiencing high demand. Please try again in a few moments.';
     }
+    addMessage(ChatMessage(text: errorMessage, isUser: false));
+    _isThinking = false;
+    notifyListeners();
+  }
+
+  List<Map<String, dynamic>> _getTools() {
+    return [
+      {
+        'type': 'function',
+        'function': {
+          'name': 'add_transaction',
+          'description': 'Add a new financial transaction (income or expense) based on user input.',
+          'parameters': {
+            'type': 'object',
+            'properties': {
+              'amount': {'type': 'number', 'description': 'The transaction amount.'},
+              'type': {'type': 'string', 'description': 'Either "income" or "expense"'},
+              'category': {'type': 'string', 'description': 'Category of the transaction e.g., Food, Salary, Vacation'},
+              'note': {'type': 'string', 'description': 'A brief note or reason for the transaction.'},
+            },
+            'required': ['amount', 'type', 'category', 'note'],
+          },
+        }
+      },
+      {
+        'type': 'function',
+        'function': {
+          'name': 'analyze_spending',
+          'description': 'Analyzes user spending patterns, identifies unnecessary expenses, and gives a financial summary for a specific period.',
+          'parameters': {
+            'type': 'object',
+            'properties': {
+              'period': {'type': 'string', 'description': 'The time period to analyze, e.g., "month", "year", "today"'},
+            },
+            'required': ['period'],
+          },
+        }
+      }
+    ];
   }
 }
