@@ -90,14 +90,16 @@ class UpdateService {
               Expanded(child: Text('New Update Available ($newVersion)')),
             ],
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('What\'s new:', style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              Text(notes, style: const TextStyle(fontSize: 14)),
-            ],
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('What\'s new:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Text(notes, style: const TextStyle(fontSize: 14)),
+              ],
+            ),
           ),
           actions: [
             if (!isForceUpdate)

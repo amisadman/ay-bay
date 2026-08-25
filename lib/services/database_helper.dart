@@ -23,45 +23,7 @@ class DatabaseHelper {
   }
 
   void _seedWebDemoData() {
-    final now = DateTime.now();
-    final todayStr = now.toIso8601String().split('T')[0];
-    _webTransactions.addAll([
-      TransactionModel(
-        id: 1,
-        title: 'Monthly Salary',
-        amount: 45000.0,
-        type: 'income',
-        category: 'cat_salary',
-        date: todayStr,
-        note: 'Company monthly salary deposit',
-        createdAt: now.toIso8601String(),
-      ),
-      TransactionModel(
-        id: 2,
-        title: 'Grocery Shopping',
-        amount: 3500.0,
-        type: 'expense',
-        category: 'cat_food',
-        date: todayStr,
-        note: 'Supermarket monthly groceries',
-        createdAt: now.toIso8601String(),
-      ),
-    ]);
-    _webLoans.addAll([
-      LoanModel(
-        id: 1,
-        personName: 'Rahim Ahmed',
-        phoneNumber: '01711223344',
-        amount: 2500.0,
-        amountPaid: 0.0,
-        type: 'loan',
-        dueDate: todayStr,
-        status: 'pending',
-        installments: '[]',
-        note: 'Lent for emergency repair',
-        createdAt: now.toIso8601String(),
-      ),
-    ]);
+    // No seed data for production release
   }
 
   Future<Database?> get database async {
@@ -164,54 +126,7 @@ class DatabaseHelper {
       )
     ''');
 
-    final now = DateTime.now();
-    final todayStr = now.toIso8601String().split('T')[0];
-
-    await db.insert('transactions', {
-      'title': 'Monthly Salary',
-      'amount': 45000.0,
-      'type': 'income',
-      'category': 'cat_salary',
-      'date': todayStr,
-      'note': 'Company monthly salary deposit',
-      'createdAt': now.toIso8601String(),
-    });
-
-    await db.insert('transactions', {
-      'title': 'Grocery Shopping',
-      'amount': 3500.0,
-      'type': 'expense',
-      'category': 'cat_food',
-      'date': todayStr,
-      'note': 'Supermarket monthly groceries',
-      'createdAt': now.toIso8601String(),
-    });
-
-    await db.insert('loans', {
-      'personName': 'Rahim Ahmed',
-      'phoneNumber': '01711223344',
-      'amount': 2500.0,
-      'amountPaid': 0.0,
-      'type': 'loan',
-      'dueDate': todayStr,
-      'status': 'pending',
-      'installments': '[]',
-      'note': 'Lent for emergency laptop repair',
-      'createdAt': now.toIso8601String(),
-    });
-
-    await db.insert('loans', {
-      'personName': 'Karim Hossain',
-      'phoneNumber': '01811223344',
-      'amount': 1200.0,
-      'amountPaid': 0.0,
-      'type': 'owe',
-      'dueDate': todayStr,
-      'status': 'pending',
-      'installments': '[]',
-      'note': 'Borrowed for lunch bill split',
-      'createdAt': now.toIso8601String(),
-    });
+    // No seed data inserted on database creation for production release
   }
 
   Future<int> insertTransaction(TransactionModel tx) async {

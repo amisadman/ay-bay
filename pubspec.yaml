@@ -1,9 +1,7 @@
 name: aybay_flutter
 description: "AyBay - Income, Expense, Loan & Debt Manager with Walleo AI Agent"
 publish_to: 'none'
-
-version: 1.0.0+1
-
+version: 1.1.17
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
