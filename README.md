@@ -242,6 +242,7 @@ Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proa
 - Android Studio / Xcode for emulators
 - A Free Groq API Key (You can add this directly inside the app Settings)
 
+
 ### Installation
 
 1. **Clone the repository:**
@@ -262,3 +263,11 @@ Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proa
 
 4. **Enable Walleo AI:**
    Once inside the app, go to **Profile -> Settings -> Walleo AI API Key** and enter your free Groq API key securely to activate Voice and Chat AI features.
+
+## License
+
+AyBay is licensed under the **PolyForm Noncommercial License 1.0.0**. 
+
+This means the source code is publicly available and you are completely free to read, modify, and use AyBay for your own personal use, or to contribute improvements back to the project. However, **you may not use AyBay, or modified versions of it, for any commercial purposes** (e.g., you cannot sell it, use it to run a business for profit, or monetize it). 
+
+See the [LICENSE](LICENSE) file for the full legal terms.
