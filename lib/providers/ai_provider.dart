@@ -6,6 +6,8 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 class ChatMessage {
   final String text;
   final bool isUser;
@@ -47,10 +49,11 @@ class AIProvider extends ChangeNotifier {
 
   Future<void> sendMessage(String text, FinanceProvider financeProvider,
       {Uint8List? imageBytes}) async {
-    final apiKey = dotenv.env['GROQ_API_KEY'];
+    const storage = FlutterSecureStorage();
+    final apiKey = await storage.read(key: 'groq_api_key');
     if (apiKey == null || apiKey.isEmpty) {
       addMessage(ChatMessage(
-          text: 'Error: GROQ_API_KEY is missing in .env', isUser: false));
+          text: 'Please set your Groq API Key in Profile Settings to use Walleo. You can get one for free at console.groq.com', isUser: false));
       return;
     }
 

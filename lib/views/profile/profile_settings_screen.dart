@@ -8,6 +8,8 @@ import 'package:aybay_flutter/views/navigation/main_navigation_screen.dart';
 import 'package:aybay_flutter/services/update_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileSettingsScreen extends StatelessWidget {
   const ProfileSettingsScreen({super.key});
@@ -230,6 +232,65 @@ class ProfileSettingsScreen extends StatelessWidget {
     }
   }
 
+  void _showChangeApiKeyDialog(BuildContext context) async {
+    const storage = FlutterSecureStorage();
+    final currentKey = await storage.read(key: 'groq_api_key') ?? '';
+    final keyController = TextEditingController(text: currentKey);
+
+    if (!context.mounted) return;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Walleo API Key',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Enter your free Groq API Key to enable Walleo AI features.', style: TextStyle(fontSize: 14)),
+            const SizedBox(height: 8),
+            InkWell(
+              onTap: () => launchUrl(Uri.parse('https://console.groq.com/keys')),
+              child: const Text('Get one here: console.groq.com', style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline, fontSize: 12)),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: keyController,
+              decoration: InputDecoration(
+                labelText: 'gsk_...',
+                prefixIcon: Icon(Icons.key, color: Theme.of(context).iconTheme.color),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white),
+            onPressed: () async {
+              await storage.write(key: 'groq_api_key', value: keyController.text.trim());
+              if (ctx.mounted) Navigator.pop(ctx);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Walleo API Key securely saved!')),
+                );
+              }
+            },
+            child: const Text('Save Key'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProv = Provider.of<ThemeProvider>(context);
@@ -397,6 +458,16 @@ class ProfileSettingsScreen extends StatelessWidget {
             value: themeProv.isDarkMode,
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: (val) => themeProv.toggleTheme(val),
+          ),
+
+          // Walleo API Key Setting
+          ListTile(
+            leading: Icon(Icons.smart_toy,
+                color: Theme.of(context).colorScheme.primary),
+            title: const Text('Walleo AI API Key'),
+            subtitle: const Text('Set your personal Groq key for Walleo'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => _showChangeApiKeyDialog(context),
           ),
 
           // Check for Updates
