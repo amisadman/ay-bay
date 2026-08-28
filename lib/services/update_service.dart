@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:aybay_flutter/core/constants/app_colors.dart';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 
 class UpdateService {
   static Future<void> checkForUpdate(BuildContext context,
@@ -91,38 +94,140 @@ class UpdateService {
     showDialog(
       context: context,
       barrierDismissible: !isForceUpdate, // Prevent dismissing if forced
-      builder: (ctx) => WillPopScope(
-        onWillPop: () async => !isForceUpdate,
-        child: AlertDialog(
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Row(
+      builder: (ctx) => _UpdateDialogContent(
+        newVersion: newVersion,
+        url: url,
+        notes: notes,
+        isForceUpdate: isForceUpdate,
+      ),
+    );
+  }
+}
+
+class _UpdateDialogContent extends StatefulWidget {
+  final String newVersion;
+  final String url;
+  final String notes;
+  final bool isForceUpdate;
+
+  const _UpdateDialogContent({
+    required this.newVersion,
+    required this.url,
+    required this.notes,
+    required this.isForceUpdate,
+  });
+
+  @override
+  State<_UpdateDialogContent> createState() => _UpdateDialogContentState();
+}
+
+class _UpdateDialogContentState extends State<_UpdateDialogContent> {
+  bool isDownloading = false;
+  double progress = 0.0;
+  String statusText = 'Pending download...';
+
+  Future<void> _startDownload() async {
+    setState(() {
+      isDownloading = true;
+      statusText = 'Starting download...';
+      progress = 0.0;
+    });
+
+    try {
+      Directory? dir;
+      if (Platform.isAndroid) {
+        dir = await getExternalStorageDirectory();
+      } else {
+        dir = await getApplicationDocumentsDirectory();
+      }
+      
+      if (dir == null) {
+        setState(() {
+          statusText = 'Error: Cannot access storage.';
+          isDownloading = false;
+        });
+        return;
+      }
+      final savePath = '${dir.path}/aybay_update_${widget.newVersion}.apk';
+
+      Dio dio = Dio();
+      await dio.download(
+        widget.url,
+        savePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            setState(() {
+              progress = received / total;
+              statusText = 'Downloading... ${(progress * 100).toStringAsFixed(0)}%';
+            });
+          }
+        },
+      );
+
+      setState(() {
+        statusText = 'Download complete. Installing...';
+        progress = 1.0;
+      });
+
+      final result = await OpenFilex.open(savePath);
+      if (result.type != ResultType.done) {
+        setState(() {
+          statusText = 'Failed to open installer: ${result.message}';
+          isDownloading = false;
+        });
+      } else {
+        if (!widget.isForceUpdate && mounted) {
+          Navigator.pop(context);
+        }
+      }
+    } catch (e) {
+      debugPrint('Download error: $e');
+      setState(() {
+        statusText = 'Download failed. Please try again.';
+        isDownloading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: !widget.isForceUpdate && !isDownloading,
+      child: AlertDialog(
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            const Icon(Icons.system_update, color: AppColors.green),
+            const SizedBox(width: 8),
+            Expanded(child: Text('New Update Available (${widget.newVersion})')),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.system_update, color: AppColors.green),
-              const SizedBox(width: 8),
-              Expanded(child: Text('New Update Available ($newVersion)')),
+              const Text('What\'s new:',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Text(widget.notes, style: const TextStyle(fontSize: 14)),
+              if (isDownloading) ...[
+                const SizedBox(height: 20),
+                LinearProgressIndicator(value: progress, color: AppColors.green),
+                const SizedBox(height: 8),
+                Text(statusText, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              ],
             ],
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('What\'s new:',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Text(notes, style: const TextStyle(fontSize: 14)),
-              ],
+        ),
+        actions: [
+          if (!widget.isForceUpdate && !isDownloading)
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
             ),
-          ),
-          actions: [
-            if (!isForceUpdate)
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child:
-                    const Text('Cancel', style: TextStyle(color: Colors.grey)),
-              ),
+          if (!isDownloading)
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.green,
@@ -130,16 +235,10 @@ class UpdateService {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              onPressed: () async {
-                final uri = Uri.parse(url);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                }
-              },
+              onPressed: _startDownload,
               child: const Text('Download & Update'),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

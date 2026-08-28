@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool _isPinEnabled = true;
@@ -139,6 +140,20 @@ class AuthProvider extends ChangeNotifier {
     await prefs.setString(
         'user_pin', _currentPin); // _currentPin is already hashed
     await prefs.setBool('has_setup', true);
+    
+    final hasTracked = prefs.getBool('has_tracked_install') ?? false;
+    if (!hasTracked) {
+      try {
+        await FirebaseFirestore.instance.collection('app_stats').doc('installations').collection('users').add({
+          'name': _userName,
+          'timestamp': DateTime.now().toIso8601String(),
+        });
+        await prefs.setBool('has_tracked_install', true);
+      } catch (e) {
+        debugPrint('Failed to track install: $e');
+      }
+    }
+    
     notifyListeners();
   }
 
