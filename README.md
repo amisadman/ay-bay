@@ -4,6 +4,8 @@
   # AyBay: The Intelligent Financial Ecosystem
   
   **AyBay** is a comprehensive, AI-powered personal and collaborative finance management application built with Flutter. Take complete control of your income, expenses, budgets, loans, shop management, and shared events with a beautiful flat UI design and your own personal Agentic AI assistant, **Walleo**.
+  
+  ![VirusTotal Verified](https://img.shields.io/badge/VirusTotal-100%25_Verified_Safe-success?style=for-the-badge&logo=virustotal)
 </div>
 
 ---
@@ -18,7 +20,7 @@ Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proa
 
 ## Features
 
-- **Agentic AI (Walleo)**: Powered by Groq's lightning-fast Llama-3 models, Walleo understands conversational commands, logs transactions via JSON tool calling, and provides deep analytics on your spending habits.
+- **Agentic AI (Walleo)**: Powered by Groq's lightning-fast Llama-3 models, Walleo understands conversational commands, logs transactions via JSON tool calling, and provides deep analytics on your spending habits. Use your own API key!
 - **"Super-App" Modules**: Go beyond personal finance with dedicated hubs for:
   - **Garage Management (Pro)**: Manage auto-repair jobs, vehicle statuses, inventory, and mechanic commissions with PDF invoice generation.
   - **Gym Management (Pro)**: Track memberships, payment logs, trainer assignments, and automatically calculate active/expired member statuses.
@@ -179,6 +181,33 @@ Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proa
   </tr>
   <tr>
     <td align="center">
+      <img src="readme/my_gym_auth.jpg" width="180" />
+      <br />
+      <b>Gym Management</b>
+    </td>
+    <td align="center">
+      <img src="readme/my_garage_auth.jpg" width="180" />
+      <br />
+      <b>Garage Management</b>
+    </td>
+    <td align="center">
+      <img src="readme/my_cars.jpg" width="180" />
+      <br />
+      <b>My Cars</b>
+    </td>
+    <td align="center">
+      <img src="readme/tuition.jpg" width="180" />
+      <br />
+      <b>Tuition Tracker</b>
+    </td>
+    <td align="center">
+      <img src="readme/my_subscription.jpg" width="180" />
+      <br />
+      <b>Subscriptions</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
       <img src="readme/online_backup.jpg" width="180" />
       <br />
       <b>Cloud Backup</b>
@@ -209,7 +238,7 @@ Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proa
 ### Prerequisites
 - Flutter SDK (>=3.0.0 <4.0.0)
 - Android Studio / Xcode for emulators
-- A Groq API Key (Free tier works perfectly)
+- A Free Groq API Key (You can add this directly inside the app Settings)
 
 ### Installation
 
@@ -224,13 +253,10 @@ Meet **Walleo**, the built-in AI agent. Walleo isn't just a chatbot; it's a proa
    flutter pub get
    ```
 
-3. **Configure the Environment:**
-   Create a `.env` file in the root directory and add your Groq API Key:
-   ```env
-   GROQ_API_KEY=gsk_your_actual_key_here
-   ```
-
-4. **Run the App:**
+3. **Run the App:**
    ```bash
    flutter run
    ```
+
+4. **Enable Walleo AI:**
+   Once inside the app, go to **Profile -> Settings -> Walleo AI API Key** and enter your free Groq API key securely to activate Voice and Chat AI features.

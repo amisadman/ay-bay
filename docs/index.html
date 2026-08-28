@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AyBay - Simple, Offline-First Personal Finance</title>
+    <meta
+      name="description"
+      content="AyBay is an open-source, offline-first application for tracking income, expenses, and shared budgets."
+    />
+
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Color Palette & Variables */
+      :root {
+        /* Slate Gray Palette */
+        --slate-50: #f8fafc;
+        --slate-100: #f1f5f9;
+        --slate-200: #e2e8f0;
+        --slate-300: #cbd5e1;
+        --slate-400: #94a3b8;
+        --slate-500: #64748b;
+        --slate-600: #475569;
+        --slate-700: #334155;
+        --slate-800: #1e293b;
+        --slate-900: #0f172a;
+
+        /* Brand Primary (Subtle Emerald/Teal) */
+        --primary: #059669;
+        --primary-hover: #047857;
+
+        /* Theme */
+        --bg: #ffffff;
+        --bg-alt: var(--slate-50);
+        --text-main: var(--slate-900);
+        --text-muted: var(--slate-600);
+        --border: var(--slate-200);
+
+        --max-width: 1100px;
+      }
+
+      /* Dark Mode Support */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: var(--slate-900);
+          --bg-alt: var(--slate-800);
+          --text-main: var(--slate-50);
+          --text-muted: var(--slate-300);
+          --border: var(--slate-700);
+          --primary: #10b981;
+          --primary-hover: #34d399;
+        }
+      }
+
+      /* Reset & Base */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        background-color: var(--bg);
+        color: var(--text-main);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      a {
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+
+      a:hover {
+        color: var(--primary-hover);
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      /* Typography */
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--text-main);
+      }
+
+      p {
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+      }
+
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .section {
+        padding: 96px 0;
+      }
+
+      .section-alt {
+        background-color: var(--bg-alt);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: 56px;
+        max-width: 700px;
+        margin-inline: auto;
+      }
+
+      .section-title {
+        font-size: 2.25rem;
+        letter-spacing: -0.02em;
+        margin-bottom: 16px;
+      }
+
+      .section-subtitle {
+        font-size: 1.125rem;
+        color: var(--text-muted);
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        color: white;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
+        color: white;
+      }
+
+      .btn-outline {
+        background-color: transparent;
+        color: var(--text-main);
+        border-color: var(--border);
+      }
+
+      .btn-outline:hover {
+        background-color: var(--bg-alt);
+      }
+
+      /* Navbar */
+      header {
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border);
+        background-color: var(--bg);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--text-main);
+        letter-spacing: -0.02em;
+      }
+
+      .logo img {
+        height: 32px;
+        width: 32px;
+        border-radius: 6px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .nav-links a {
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+
+      .nav-links a:hover {
+        color: var(--text-main);
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: 80px 0 100px;
+        text-align: center;
+      }
+
+      .hero-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        letter-spacing: -0.03em;
+        margin-bottom: 24px;
+        max-width: 800px;
+        margin-inline: auto;
+      }
+
+      .hero-desc {
+        font-size: 1.25rem;
+        max-width: 600px;
+        margin: 0 auto 40px;
+        color: var(--text-muted);
+      }
+
+      .hero-ctas {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-bottom: 64px;
+      }
+
+      .hero-mockup {
+        max-width: 900px;
+        margin: 0 auto;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--border);
+        background-color: var(--bg-alt);
+        display: flex;
+        justify-content: center;
+        padding: 40px 20px 0;
+      }
+
+      .hero-mockup img {
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
+        max-height: 600px;
+        width: auto;
+        object-fit: cover;
+        border: 1px solid var(--border);
+        border-bottom: none;
+      }
+
+      /* Product Intro */
+      .intro-text {
+        font-size: 1.5rem;
+        line-height: 1.5;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+        font-weight: 500;
+        color: var(--text-main);
+      }
+
+      /* Features Grid */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 32px;
+      }
+
+      .feature-card {
+        padding: 32px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background-color: var(--bg);
+        transition: box-shadow 0.2s ease;
+      }
+
+      .feature-card:hover {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+      }
+
+      .feature-icon {
+        width: 48px;
+        height: 48px;
+        background-color: var(--bg-alt);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        color: var(--text-main);
+        border: 1px solid var(--border);
+      }
+
+      .feature-card h3 {
+        font-size: 1.125rem;
+        margin-bottom: 12px;
+      }
+
+      .feature-card p {
+        font-size: 0.95rem;
+        margin: 0;
+      }
+
+      /* How it works */
+      .steps-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        text-align: center;
+      }
+
+      .step-item {
+        position: relative;
+      }
+
+      .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin: 0 auto 20px;
+      }
+
+      .step-item h3 {
+        font-size: 1.125rem;
+        margin-bottom: 12px;
+      }
+
+      /* Product Showcase */
+      .showcase-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 24px;
+      }
+
+      .showcase-item {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background-color: var(--bg-alt);
+      }
+
+      .showcase-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* Why AyBay / Philosophy */
+      .philosophy-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+      }
+
+      .philosophy-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+      }
+
+      .philosophy-content ul {
+        list-style: none;
+        margin-top: 24px;
+      }
+
+      .philosophy-content li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+        color: var(--text-muted);
+      }
+
+      .philosophy-content li svg {
+        flex-shrink: 0;
+        margin-top: 2px;
+        color: var(--primary);
+      }
+
+      /* Open Source */
+      .oss-section {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .oss-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 100px;
+        background-color: var(--bg-alt);
+        border: 1px solid var(--border);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 24px;
+      }
+
+      /* Security & Download CTA */
+      .download-card {
+        background-color: var(--bg-alt);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 64px 32px;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .security-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin: 32px auto 0;
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background-color: var(--bg);
+        max-width: 500px;
+        text-align: center;
+      }
+
+      .vt-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-main);
+        font-weight: 600;
+      }
+
+      .vt-icon {
+        color: var(--primary);
+      }
+
+      /* Footer */
+      footer {
+        padding: 48px 0;
+        border-top: 1px solid var(--border);
+        background-color: var(--bg);
+      }
+
+      .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 24px;
+      }
+
+      .footer-text {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+        .hero-title {
+          font-size: 2.5rem;
+        }
+        .hero-ctas {
+          flex-direction: column;
+        }
+        .philosophy-grid {
+          grid-template-columns: 1fr;
+        }
+        .footer-content {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+      /* Animations */
+      .cursor {
+        display: inline-block;
+        width: 3px;
+        background-color: var(--primary);
+        animation: blink 1s step-end infinite;
+        margin-left: 2px;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      #typewriter {
+        color: var(--primary);
+      }
+
+      .highlight-word {
+        opacity: 0.4;
+      }
+
+      #highlight-text.animate .highlight-word {
+        animation: highlight 0.5s forwards;
+      }
+
+      @keyframes highlight {
+        from {
+          opacity: 0.4;
+          color: inherit;
+        }
+        to {
+          opacity: 1;
+          color: var(--primary);
+        }
+      }
+
+      .hero-logo-large {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        margin: 0 auto 32px;
+        display: block;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .bg-watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120%;
+        max-width: 1000px;
+        opacity: 0.03;
+        z-index: -1;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container nav-container">
+        <a href="#" class="logo">
+          <img src="../assets/images/aybay-logo.png" alt="AyBay" />
+          AyBay
+        </a>
+        <nav class="nav-links">
+          <a href="#features">Features</a>
+          <a href="#screenshots">Screenshots</a>
+          <a href="#oss">Open Source</a>
+          <a
+            href="https://github.com/amisadman/ay-bay/releases/latest"
+            class="btn btn-primary"
+            style="color: white"
+            >Download App</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero Section -->
+      <section
+        class="section hero"
+        style="position: relative; overflow: hidden"
+      >
+        <img
+          src="../assets/images/aybay-logo.png"
+          alt=""
+          class="bg-watermark"
+        />
+        <div class="container">
+          <img
+            src="../assets/images/aybay-logo.png"
+            alt="AyBay Logo"
+            class="hero-logo-large"
+          />
+          <h1 class="hero-title">
+            Simple, offline-first <br /><span id="typewriter"></span
+            ><span class="cursor"></span>
+          </h1>
+          <p class="hero-desc">
+            AyBay is an open-source application to track your income, expenses,
+            and shared budgets. Thoughtfully built for utility, with your data
+            securely stored on your device.
+          </p>
+
+          <div class="hero-ctas">
+            <a
+              href="https://github.com/amisadman/ay-bay/releases/latest"
+              class="btn btn-primary"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Download APK
+            </a>
+            <a
+              href="https://github.com/amisadman/ay-bay"
+              class="btn btn-outline"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                ></path>
+              </svg>
+              View Source Code
+            </a>
+          </div>
+
+          <div class="hero-mockup">
+            <img
+              src="../readme/dashboard_screen.jpg"
+              alt="AyBay Dashboard Interface"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Product Intro -->
+      <section class="section section-alt">
+        <div class="container">
+          <p class="intro-text" id="highlight-text">
+            Managing money shouldn't require a subscription or giving up your
+            privacy. AyBay is built to be a fast, practical tool for keeping
+            your finances in order, from daily coffee expenses to managing
+            shared apartment rent.
+          </p>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features" class="section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Core Features</h2>
+            <p class="section-subtitle">
+              Everything you need to manage your money, organized cleanly.
+            </p>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                  <path d="M7 15h0M2 9.5h20"></path>
+                </svg>
+              </div>
+              <h3>Income & Expense Tracking</h3>
+              <p>
+                Quickly log transactions with categorized tags. Visualize your
+                cash flow through intuitive charts.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <img
+                  src="../assets/images/aybay-logo.png"
+                  alt="AyBay Offline"
+                  style="width: 24px; border-radius: 4px"
+                />
+              </div>
+              <h3>Offline-First Architecture</h3>
+              <p>
+                Your personal financial data is stored securely on your device
+                using SQLite. No constant internet connection required.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <h3>Collaborative Events</h3>
+              <p>
+                Planning a trip? Create an event, sync via Firebase, invite
+                friends, and split shared expenses seamlessly.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              </div>
+              <h3>Dedicated Modules</h3>
+              <p>
+                Optional advanced modules allow you to manage small businesses
+                like a shop, gym, or garage right from the app.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                  ></path>
+                </svg>
+              </div>
+              <h3>Budgeting & Loans</h3>
+              <p>
+                Set category-based monthly budgets and track loans or money owed
+                with partial installment tracking.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                  ></path>
+                </svg>
+              </div>
+              <h3>Voice & Text Assistant</h3>
+              <p>
+                Optional Walleo integration lets you bring your own Groq API key
+                to log expenses conversationally.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- How it works -->
+      <section class="section section-alt">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">How it works</h2>
+          </div>
+
+          <div class="steps-container">
+            <div class="step-item">
+              <div class="step-number">1</div>
+              <h3>Install the App</h3>
+              <p>
+                Download the APK directly from GitHub and install it on your
+                Android device.
+              </p>
+            </div>
+            <div class="step-item">
+              <div class="step-number">2</div>
+              <h3>Secure Your Profile</h3>
+              <p>
+                Set a local PIN or enable biometrics to keep your financial data
+                private.
+              </p>
+            </div>
+            <div class="step-item">
+              <div class="step-number">3</div>
+              <h3>Track & Analyze</h3>
+              <p>
+                Start logging your daily transactions and watch your financial
+                health improve over time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Product Showcase -->
+      <section id="screenshots" class="section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Application Interface</h2>
+            <p class="section-subtitle">
+              A clean, functional design focused on getting things done.
+            </p>
+          </div>
+
+          <div class="showcase-grid">
+            <!-- Core Screens -->
+            <div class="showcase-item">
+              <img
+                src="../readme/login_screen.jpg"
+                alt="Login Screen"
+                loading="lazy"
+              />
+            </div>
+            <div class="showcase-item">
+              <img
+                src="../readme/dashboard_screen.jpg"
+                alt="Dashboard"
+                loading="lazy"
+              />
+            </div>
+            <div class="showcase-item">
+              <img
+                src="../readme/add_income.jpg"
+                alt="Add Transaction"
+                loading="lazy"
+              />
+            </div>
+            <div class="showcase-item">
+              <img
+                src="../readme/daily_analytics.jpg"
+                alt="Analytics"
+                loading="lazy"
+              />
+            </div>
+            <!-- Extended Features -->
+            <div class="showcase-item">
+              <img
+                src="../readme/budget_management.jpg"
+                alt="Budgets"
+                loading="lazy"
+              />
+            </div>
+            <div class="showcase-item">
+              <img
+                src="../readme/expense_history.jpg"
+                alt="History"
+                loading="lazy"
+              />
+            </div>
+            <div class="showcase-item">
+              <img
+                src="../readme/event_management_screen.jpg"
+                alt="Shared Events"
+                loading="lazy"
+              />
+            </div>
+            <div class="showcase-item">
+              <img
+                src="../readme/shop_pos.jpg"
+                alt="Shop Management"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech Stack -->
+      <section class="section section-alt">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Powered by Modern Tech</h2>
+            <p class="section-subtitle">
+              AyBay is built on a robust, scalable stack optimized for performance and local-first data.
+            </p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 48px;">
+            <!-- Flutter -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter" style="height: 56px; width: 56px;" />
+              <span style="font-weight: 600; color: var(--text-muted);">Flutter</span>
+            </div>
+            <!-- Dart -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" alt="Dart" style="height: 56px; width: 56px;" />
+              <span style="font-weight: 600; color: var(--text-muted);">Dart</span>
+            </div>
+            <!-- Firebase -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase" style="height: 56px; width: 56px;" />
+              <span style="font-weight: 600; color: var(--text-muted);">Firebase</span>
+            </div>
+            <!-- SQLite -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" alt="SQLite" style="height: 56px; width: 56px;" />
+              <span style="font-weight: 600; color: var(--text-muted);">SQLite</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Philosophy / Why AyBay -->
+      <section class="section">
+        <div class="container philosophy-grid">
+          <div class="philosophy-content">
+            <h2>Built on strong principles.</h2>
+            <ul>
+              <li>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span
+                  ><strong>Privacy First:</strong> Your personal ledger belongs
+                  to you. It's stored locally and not sold to advertisers.</span
+                >
+              </li>
+              <li>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span
+                  ><strong>No Subscriptions:</strong> Personal finance tools
+                  shouldn't cost you a monthly fee. AyBay is truly free.</span
+                >
+              </li>
+              <li>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span
+                  ><strong>Simplicity:</strong> A flat, fast UI without
+                  unnecessary visual clutter. Do what you need to do,
+                  quickly.</span
+                >
+              </li>
+            </ul>
+          </div>
+          <div
+            class="showcase-item"
+            style="
+              max-width: 300px;
+              margin: 0 auto;
+              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <img
+              src="../readme/my_subscription.jpg"
+              alt="Subscriptions Interface"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Open Source -->
+      <section id="oss" class="section section-alt">
+        <div class="container oss-section">
+          <span class="oss-badge">Open Source Project</span>
+          <h2 class="section-title">Built in the open.</h2>
+          <p>
+            AyBay is developed in Dart using the Flutter framework. The entire
+            source code is available on GitHub. Whether you want to audit the
+            code for security, report a bug, or contribute a new feature, you
+            are welcome to join the community.
+          </p>
+          <div style="margin-top: 32px">
+            <a
+              href="https://github.com/amisadman/ay-bay"
+              class="btn btn-outline"
+              target="_blank"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                ></path>
+              </svg>
+              View Repository
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Developer Contact -->
+      <section class="section">
+        <div class="container" style="max-width: 600px; text-align: center">
+          <div style="width: 80px; height: 80px; background-color: var(--bg-alt); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; border: 1px solid var(--border);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <h2 class="section-title" style="font-size: 1.75rem;">Meet the Developer</h2>
+          <p style="margin-bottom: 32px; font-size: 1.1rem;">
+            AyBay is designed and actively maintained by <strong>Sadman Islam</strong>. If you're interested in the project, want to suggest new features, or just want to connect, feel free to reach out!
+          </p>
+          <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <a
+              href="https://github.com/amisadman"
+              class="btn btn-outline"
+              target="_blank"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+              GitHub Profile
+            </a>
+            <a
+              href="https://www.linkedin.com/in/amisadman/" 
+              class="btn btn-primary"
+              target="_blank"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              Connect on LinkedIn
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA & Security -->
+      <section class="section section-alt">
+        <div class="container">
+          <div class="download-card">
+            <h2 class="section-title">Ready to take control?</h2>
+            <p>
+              Download the latest release and start managing your finances
+              locally today.
+            </p>
+
+            <div style="margin-top: 32px">
+              <a
+                href="https://github.com/amisadman/ay-bay/releases/latest"
+                class="btn btn-primary btn-lg"
+                style="padding: 16px 32px; font-size: 1.1rem"
+              >
+                Download AyBay APK
+              </a>
+            </div>
+
+            <div class="security-box">
+              <div class="vt-status">
+                <svg
+                  class="vt-icon"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+                Security checked before download
+              </div>
+              <p style="font-size: 0.9rem; margin-bottom: 8px">
+                AyBay's downloadable release has been scanned with VirusTotal.
+              </p>
+              <div
+                style="
+                  background: var(--bg-alt);
+                  padding: 8px 16px;
+                  border-radius: 8px;
+                  border: 1px solid var(--border);
+                  font-family: monospace;
+                  font-weight: 600;
+                "
+              >
+                0 / 65+ security vendors flagged this file
+              </div>
+              <a
+                href="https://www.virustotal.com/gui/file/07a0cc03f8f1aeb29def10dcc71ff40f5a7535e6350556f409696ebedc04c3f1/detection"
+                target="_blank"
+                style="
+                  font-size: 0.85rem;
+                  margin-top: 8px;
+                  text-decoration: underline;
+                "
+                >View VirusTotal Report</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-content">
+        <div class="logo">
+          <img
+            src="../assets/images/aybay-logo.png"
+            alt="AyBay"
+            style="height: 24px; width: 24px"
+          />
+          AyBay
+        </div>
+        <div class="footer-text">
+          &copy; 2026 AyBay. Open source under the MIT License.
+        </div>
+        <div class="nav-links">
+          <a href="https://github.com/amisadman/ay-bay" target="_blank"
+            >GitHub</a
+          >
+          <a href="https://github.com/amisadman/ay-bay/releases" target="_blank"
+            >Releases</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Navbar Scroll Effect
+      window.addEventListener("scroll", () => {
+        const nav = document.getElementById("navbar");
+        if (nav && window.scrollY > 50) {
+          nav.classList.add("scrolled");
+        } else if (nav) {
+          nav.classList.remove("scrolled");
+        }
+      });
+
+      // Typewriter Effect
+      const words = [
+        "personal finance.",
+        "shop management.",
+        "event planning.",
+        "budget tracking.",
+      ];
+      let currentWordIndex = 0;
+      const typeWriterElement = document.getElementById("typewriter");
+
+      function typeWriter(text, i, cb) {
+        if (!typeWriterElement) return;
+        if (i < text.length) {
+          typeWriterElement.innerHTML = text.substring(0, i + 1);
+          setTimeout(function () {
+            typeWriter(text, i + 1, cb);
+          }, 100); // typing speed
+        } else if (typeof cb == "function") {
+          setTimeout(cb, 2000); // pause after complete word
+        }
+      }
+
+      function deleteWriter(text, i, cb) {
+        if (!typeWriterElement) return;
+        if (i >= 0) {
+          typeWriterElement.innerHTML = text.substring(0, i);
+          setTimeout(function () {
+            deleteWriter(text, i - 1, cb);
+          }, 50); // deleting speed
+        } else if (typeof cb == "function") {
+          setTimeout(cb, 500); // pause before next word
+        }
+      }
+
+      function startTextAnimation(i) {
+        if (i >= words.length) {
+          startTextAnimation(0);
+        } else {
+          typeWriter(words[i], 0, function () {
+            deleteWriter(words[i], words[i].length, function () {
+              startTextAnimation(i + 1);
+            });
+          });
+        }
+      }
+
+      if (typeWriterElement) {
+        startTextAnimation(0);
+      }
+
+      // Word Highlighter Effect
+      const highlightText = document.getElementById("highlight-text");
+      if (highlightText) {
+        const textContent = highlightText.textContent
+          .trim()
+          .replace(/\s+/g, " ");
+        highlightText.innerHTML = "";
+
+        const textWords = textContent.split(" ");
+        textWords.forEach((word, index) => {
+          const span = document.createElement("span");
+          span.textContent = word + " ";
+          span.classList.add("highlight-word");
+          span.style.animationDelay = `${index * 0.5}s`;
+          highlightText.appendChild(span);
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("animate");
+            } else {
+              entry.target.classList.remove("animate");
+            }
+          });
+        });
+        observer.observe(highlightText);
+      }
+    </script>
+  </body>
+</html>
