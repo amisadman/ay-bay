@@ -5,7 +5,9 @@
   
   **AyBay** is a comprehensive, AI-powered personal and collaborative finance management application built with Flutter. Take complete control of your income, expenses, budgets, loans, shop management, and shared events with a beautiful flat UI design and your own personal Agentic AI assistant, **Walleo**.
   
-  ![VirusTotal Verified](https://img.shields.io/badge/VirusTotal-100%25_Verified_Safe-success?style=for-the-badge&logo=virustotal)
+  [![VirusTotal Verified](https://img.shields.io/badge/VirusTotal-100%25_Verified_Safe-success?style=for-the-badge&logo=virustotal)](https://www.virustotal.com/gui/file/07a0cc03f8f1aeb29def10dcc71ff40f5a7535e6350556f409696ebedc04c3f1/detection)
+
+  [🌐 Visit the Official Product Portfolio](https://amisadman.github.io/ay-bay/)
 </div>
 
 ---
