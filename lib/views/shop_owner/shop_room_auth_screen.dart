@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../../providers/shop_owner_provider.dart';
 import '../../core/constants/app_colors.dart';
+import '../../services/super_module_db_helper.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../models/shop_owner_model.dart';
@@ -19,7 +20,7 @@ class _ShopRoomAuthScreenState extends State<ShopRoomAuthScreen> {
   final _createNameController = TextEditingController();
   final _uuid = const Uuid();
 
-  void _createShop() async {
+  Future<void> _createShop() async {
     if (_createNameController.text.trim().isEmpty) return;
 
     final roomCode = _uuid.v4().substring(0, 6).toUpperCase();
@@ -32,9 +33,12 @@ class _ShopRoomAuthScreenState extends State<ShopRoomAuthScreen> {
     await prov.initShop(roomCode, shopName, 'Admin', userName);
     await prov
         .addEmployee(EmployeeModel(name: userName, phone: '', role: 'Admin'));
+        
+    await SuperModuleDBHelper.instance.insertRoomHistory('Shop', roomCode, shopName);
+    _loadHistory();
   }
 
-  void _joinShop() async {
+  Future<void> _joinShop() async {
     if (_joinCodeController.text.trim().isEmpty) return;
 
     final roomCode = _joinCodeController.text.trim().toUpperCase();
@@ -49,6 +53,24 @@ class _ShopRoomAuthScreenState extends State<ShopRoomAuthScreen> {
       await prov.addEmployee(
           EmployeeModel(name: userName, phone: '', role: 'Pending'));
     }
+    
+    await SuperModuleDBHelper.instance.insertRoomHistory('Shop', roomCode, 'Joined Shop ($roomCode)');
+    _loadHistory();
+  }
+  
+  List<Map<String, dynamic>> _recentRooms = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    final history = await SuperModuleDBHelper.instance.getRoomHistory('Shop');
+    setState(() {
+      _recentRooms = history;
+    });
   }
 
   @override
@@ -109,6 +131,31 @@ class _ShopRoomAuthScreenState extends State<ShopRoomAuthScreen> {
                     minimumSize: const Size(double.infinity, 50)),
                 child: const Text('Create Room'),
               ),
+              
+              if (_recentRooms.isNotEmpty) ...[
+                const SizedBox(height: 40),
+                const Text('Recent Rooms', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                const SizedBox(height: 16),
+                ..._recentRooms.map((room) => Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    leading: const Icon(Icons.history, color: AppColors.orange),
+                    title: Text(room['roomName']),
+                    subtitle: Text('Code: ${room['roomCode']}'),
+                    onTap: () {
+                      _joinCodeController.text = room['roomCode'];
+                      _joinShop();
+                    },
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.redAccent),
+                      onPressed: () async {
+                        await SuperModuleDBHelper.instance.deleteRoomHistory('Shop', room['roomCode']);
+                        _loadHistory();
+                      },
+                    ),
+                  ),
+                )).toList(),
+              ]
             ],
           ),
         ),

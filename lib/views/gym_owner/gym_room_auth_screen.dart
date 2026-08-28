@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../providers/gym_owner_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../core/constants/app_colors.dart';
+import '../../services/super_module_db_helper.dart';
 
 class GymRoomAuthScreen extends StatefulWidget {
   const GymRoomAuthScreen({super.key});
@@ -16,25 +17,42 @@ class _GymRoomAuthScreenState extends State<GymRoomAuthScreen> {
   final _joinCtrl = TextEditingController();
   final _createCtrl = TextEditingController();
 
-  void _joinGym() {
-    final code = _joinCtrl.text.trim();
+  Future<void> _joinGym() async {
+    final code = _joinCtrl.text.trim().toUpperCase();
     if (code.isEmpty) return;
 
-    final me =
-        Provider.of<AuthProvider>(context, listen: false).userName ?? 'Unknown';
+    final me = Provider.of<AuthProvider>(context, listen: false).userName ?? 'Unknown';
     final prov = Provider.of<GymOwnerProvider>(context, listen: false);
     prov.initGym(code, 'Gym Room $code', 'Pending', me);
+    await SuperModuleDBHelper.instance.insertRoomHistory('Gym', code, 'Gym Room $code');
+    _loadHistory();
   }
 
-  void _createGym() {
+  Future<void> _createGym() async {
     final name = _createCtrl.text.trim();
     if (name.isEmpty) return;
 
     final code = const Uuid().v4().substring(0, 6).toUpperCase();
-    final me =
-        Provider.of<AuthProvider>(context, listen: false).userName ?? 'Unknown';
+    final me = Provider.of<AuthProvider>(context, listen: false).userName ?? 'Unknown';
     final prov = Provider.of<GymOwnerProvider>(context, listen: false);
     prov.initGym(code, name, 'Admin', me);
+    await SuperModuleDBHelper.instance.insertRoomHistory('Gym', code, name);
+    _loadHistory();
+  }
+
+  List<Map<String, dynamic>> _recentRooms = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    final history = await SuperModuleDBHelper.instance.getRoomHistory('Gym');
+    setState(() {
+      _recentRooms = history;
+    });
   }
 
   @override
@@ -113,6 +131,30 @@ class _GymRoomAuthScreenState extends State<GymRoomAuthScreen> {
                   ),
                 ),
               ),
+              if (_recentRooms.isNotEmpty) ...[
+                const SizedBox(height: 40),
+                const Text('Recent Rooms', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                const SizedBox(height: 16),
+                ..._recentRooms.map((room) => Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    leading: const Icon(Icons.history, color: AppColors.blue),
+                    title: Text(room['roomName']),
+                    subtitle: Text('Code: ${room['roomCode']}'),
+                    onTap: () {
+                      _joinCtrl.text = room['roomCode'];
+                      _joinGym();
+                    },
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.redAccent),
+                      onPressed: () async {
+                        await SuperModuleDBHelper.instance.deleteRoomHistory('Gym', room['roomCode']);
+                        _loadHistory();
+                      },
+                    ),
+                  ),
+                )).toList(),
+              ]
             ],
           ),
         ),

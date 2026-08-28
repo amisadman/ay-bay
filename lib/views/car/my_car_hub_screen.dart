@@ -18,7 +18,7 @@ class MyCarHubScreen extends StatelessWidget {
         backgroundColor: AppColors.blue,
         foregroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('My Car', style: TextStyle(color: Colors.white)),
+        title: const Text('My Car',style: TextStyle(color: Colors.white)),
         elevation: 0,
       ),
       body: cars.isEmpty

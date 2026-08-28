@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../../providers/garage_owner_provider.dart';
 import '../../core/constants/app_colors.dart';
+import '../../services/super_module_db_helper.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../models/garage_employee_model.dart';
@@ -19,7 +20,7 @@ class _GarageRoomAuthScreenState extends State<GarageRoomAuthScreen> {
   final _createNameController = TextEditingController();
   final _uuid = const Uuid();
 
-  void _createGarage() async {
+  Future<void> _createGarage() async {
     if (_createNameController.text.trim().isEmpty) return;
 
     final roomCode = _uuid.v4().substring(0, 6).toUpperCase();
@@ -32,9 +33,12 @@ class _GarageRoomAuthScreenState extends State<GarageRoomAuthScreen> {
     await prov.initGarage(roomCode, garageName, 'Admin', userName);
     await prov.addEmployee(
         GarageEmployeeModel(name: userName, phone: '', role: 'Admin'));
+        
+    await SuperModuleDBHelper.instance.insertRoomHistory('Garage', roomCode, garageName);
+    _loadHistory();
   }
 
-  void _joinGarage() async {
+  Future<void> _joinGarage() async {
     if (_joinCodeController.text.trim().isEmpty) return;
 
     final roomCode = _joinCodeController.text.trim().toUpperCase();
@@ -49,6 +53,24 @@ class _GarageRoomAuthScreenState extends State<GarageRoomAuthScreen> {
       await prov.addEmployee(
           GarageEmployeeModel(name: userName, phone: '', role: 'Pending'));
     }
+    
+    await SuperModuleDBHelper.instance.insertRoomHistory('Garage', roomCode, 'Joined Garage ($roomCode)');
+    _loadHistory();
+  }
+
+  List<Map<String, dynamic>> _recentRooms = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    final history = await SuperModuleDBHelper.instance.getRoomHistory('Garage');
+    setState(() {
+      _recentRooms = history;
+    });
   }
 
   @override
@@ -147,6 +169,31 @@ class _GarageRoomAuthScreenState extends State<GarageRoomAuthScreen> {
                 ),
               ),
             ),
+            
+            if (_recentRooms.isNotEmpty) ...[
+              const SizedBox(height: 40),
+              const Text('Recent Rooms', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              const SizedBox(height: 16),
+              ..._recentRooms.map((room) => Card(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: ListTile(
+                  leading: const Icon(Icons.history, color: AppColors.brown),
+                  title: Text(room['roomName']),
+                  subtitle: Text('Code: ${room['roomCode']}'),
+                  onTap: () {
+                    _joinCodeController.text = room['roomCode'];
+                    _joinGarage();
+                  },
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.redAccent),
+                    onPressed: () async {
+                      await SuperModuleDBHelper.instance.deleteRoomHistory('Garage', room['roomCode']);
+                      _loadHistory();
+                    },
+                  ),
+                ),
+              )).toList(),
+            ]
           ],
         ),
       ),
